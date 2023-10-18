@@ -56,13 +56,17 @@
         <a-entity babia-ui="target: graph2" ></a-entity>
         <a-entity babia-ui-link position="-20 9 0" ></a-entity>
 
-        <!-- ********** -->
-        <a-text id ="nameFile" position="-5 12 0" scale="7 7 7"></a-text>
+        <!-- Escribir nombre JSON -->
+        <a-entity position="-5 12 0">
+          <a-box color="blue" width="20" height="3" depth="2">
+            <a-text id ="nameFile" scale="6 6 6"></a-text>
+          </a-box>
+        </a-entity>
 
-        <!-- ***** Nombre JSON *****-->
+        <!-- Obtener nombre JSON -->
         <script>
           // Ruta al archivo JSON
-          var fileJSON = './data.json';
+          var fileJSON = './data_pruebas.json';
           // Acceder al elemento A-Frame
           var componentTEXT = document.querySelector('#nameFile');
           // Solicitud para cargar el archivo JSON
