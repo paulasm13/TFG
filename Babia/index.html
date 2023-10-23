@@ -16,6 +16,9 @@
     <script src="https://unpkg.com/aframe-babia-components/dist/aframe-babia-components.min.js"></script>
     <script src="https://unpkg.com/aframe-environment-component@1.0.0/dist/aframe-environment-component.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
+    <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
+
+
     
   </head>  
   <body>
@@ -45,7 +48,7 @@
         <!-- 3DBars-->
         <a-entity id="graph2" babia-barsmap="from: data; legend: true; palette: ubuntu;
                   x_axis: model; z_axis: color; height: sales" 
-                  position="-15 0 0" scale="1 1 1"></a-entity>
+                  position="-20 0 0" scale="1 1 1"></a-entity>
 
         
 
@@ -56,11 +59,19 @@
         <a-entity babia-ui="target: graph2" ></a-entity>
         <a-entity babia-ui-link position="-20 9 0" ></a-entity>
 
+
         <!-- Escribir nombre JSON -->
+
         <a-entity position="-5 12 0">
-          <a-box color="blue" width="20" height="3" depth="2">
-            <a-text id ="nameFile" scale="6 6 6"></a-text>
-          </a-box>
+          <a-text id ="nameFile" scale="6 6 6"></a-text>
+        </a-entity>
+
+        <a-entity id="jsondescription" position="-5 8 0" rotation="-15 0 0">
+          <a-box width="3" height="3" depth="0.1" position="0 0 0"></a-box>
+            <a-entity htmlembed position="0 0.1 0.1" width="380px" height="400px">
+              <h1>TEXTO-TEXTO-TEXTO</h1>
+              <a-text id ="nameFile" scale="6 6 6"></a-text>
+            </a-entity>
         </a-entity>
 
         <!-- Obtener nombre JSON -->
@@ -74,12 +85,17 @@
             .then(response => response.json())
             .then(data => {
               // Extrae el nombre del archivo
-              const name = fileJSON.split('/').pop();
+             const name = fileJSON.split('/').pop();
               // Establece el valor del componente 'text' con el nombre del archivo
               componentTEXT.setAttribute('value', name);
             })
             .catch(error => console.log("Error al cargar archivo JSON", error));
           </script>
+
+       
+
+       
+
 
 
        
