@@ -17,9 +17,27 @@
     <script src="https://unpkg.com/aframe-environment-component@1.0.0/dist/aframe-environment-component.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
     <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
-
+    <script src="https://unpkg.com/super-hands/dist/super-hands.min.js"></script>
 
     
+    
+    <script>
+      AFRAME.registerComponent('change-color', {
+        schema: {
+          color: {default: "red"}
+        },
+        
+        init: function () {
+          var data = this.data;
+          var el = this.el;
+          this.el.addEventListener('click', function () {
+            this.setAttribute('color', data.color);
+          });
+        }
+      });
+
+    </script>
+
   </head>  
   <body>
     <a-scene>
@@ -44,37 +62,20 @@
 
         <!-- Data -->      
         <a-entity id="data" babia-queryjson="url: ./data.json"></a-entity>
-        
+                
         <!-- 3DBars-->
         <a-entity id="graph2" babia-barsmap="from: data; legend: true; palette: ubuntu;
                   x_axis: model; z_axis: color; height: sales" 
                   position="-20 0 0" scale="1 1 1"></a-entity>
 
-        
-
-      
-        <!-- Filtered Data -->
-        <a-entity id="filter-data" babia-filter="from: data; filter:motor=diesel"></a-entity>
-        <!-- *** -->
-        <a-entity babia-ui="target: graph2" ></a-entity>
-        <a-entity babia-ui-link position="-20 9 0" ></a-entity>
-
-
-        <!-- Escribir nombre JSON -->
+        <!-- NUEVO -->
 
         <a-entity position="-5 12 0">
-          <a-text id ="nameFile" scale="6 6 6"></a-text>
+          <a-text color="blue" id ="nameFile" scale="6 6 6" change-color></a-text>
+          <a-box color="green" position="-4 -2 -5" rotation="0 45 45" scale="2 2 2" change-color></a-box>
         </a-entity>
 
-        <a-entity id="jsondescription" position="-5 8 0" rotation="-15 0 0">
-          <a-box width="3" height="3" depth="0.1" position="0 0 0"></a-box>
-            <a-entity htmlembed position="0 0.1 0.1" width="380px" height="400px">
-              <h1>TEXTO-TEXTO-TEXTO</h1>
-              <a-text id ="nameFile" scale="6 6 6"></a-text>
-            </a-entity>
-        </a-entity>
-
-        <!-- Obtener nombre JSON -->
+         <!-- Obtener nombre JSON -->
         <script>
           // Ruta al archivo JSON
           var fileJSON = './data_pruebas.json';
@@ -90,23 +91,10 @@
               componentTEXT.setAttribute('value', name);
             })
             .catch(error => console.log("Error al cargar archivo JSON", error));
-          </script>
+          
+        </script>
 
-       
-
-       
-
-
-
-       
-        <a-entity id="nav" babia-navigator></a-entity>
-
-
-
-        <!-- Cylinders -->
-        <a-entity babia-tr="from: filter-data; legend: true; palette:foxy; 
-                  x_axis: model; height: sales; radius: doors"
-                  position="18 3 0" scale="0.5 0.5 0.5"></a-entity>
+        
 
         <!-- Camera -->
         <a-entity movement-controls="fly: true" position="0 5 20">
