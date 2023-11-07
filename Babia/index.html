@@ -22,6 +22,7 @@
     
     
     <script>
+      // Cambio de color al hacer click
       AFRAME.registerComponent('change-color', {
         schema: {
           color: {default: "red"}
@@ -44,7 +45,11 @@
           var el = this.el;
 
           // Obtener elemento 'babia-queryjson'
-          var value = el.getAttribute('babia-queryjson').url;
+          console.log("PRUEBAS OK")          
+          var value = el.components['babia-queryjson'].data.url;
+          console.log("VALUE")
+          console.log(value)
+          console.log(data)
 
           // Obtener referencia de entidad por id
           var entity = document.querySelector('#url');
@@ -79,25 +84,27 @@
                 position="-20 2 0" rotation="90 0 0" scale="2 2 2"></a-entity>
 
         <!-- Data -->      
-        <a-entity id="data" babia-queryjson="url: ./data.json" visualizer>
+        <a-entity id="data" babia-queryjson="url: ./data.json" visualizer></a-entity>
+
+         <!-- Filtered Data -->
+         <a-entity id="filter-data" babia-filter="from: data; filter:motor=diesel"></a-entity>
         
-        <!-- Nombre del JSON -->
-        <a-entity position="-5 12 0" scale="6 6 6" color="blue">
-          <a-text id ="url" value></a-text>
-        </a-entity>  
-          
-                
+
         <!-- 3DBars-->
-        <!-- <a-entity id="graph2" babia-barsmap="from: data; legend: true; palette: ubuntu;
+        <a-entity id="graph2" babia-barsmap="from: data; legend: true; palette: ubuntu;
                   x_axis: model; z_axis: color; height: sales" 
                   position="-20 0 0" scale="1 1 1"></a-entity>
-        -->
-
+        
+        
         <!-- NUEVO -->
-
         <a-entity position="-5 12 0">
           <a-box color="green" position="-4 -2 -5" rotation="0 45 45" scale="2 2 2" change-color></a-box>
         </a-entity>
+
+         <!-- Nombre del JSON -->
+        <a-entity position="-5 12 0" scale="6 6 6" >
+          <a-text id ="url" color="blue"  value change-color></a-text>
+        </a-entity>  
 
         <!-- Camera -->
         <a-entity movement-controls="fly: true" position="0 5 20">
