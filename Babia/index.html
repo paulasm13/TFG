@@ -31,8 +31,26 @@
           var data = this.data;
           var el = this.el;
           this.el.addEventListener('click', function () {
-            this.setAttribute('color', data.color);
+            el.setAttribute('color', data.color);
           });
+        }
+      });
+
+      // Nombre del archivo json 
+      AFRAME.registerComponent('visualizer', {
+        schema: {},
+        
+        init: function () {
+          var el = this.el;
+
+          // Obtener elemento 'babia-queryjson'
+          var value = el.getAttribute('babia-queryjson').url;
+
+          // Obtener referencia de entidad por id
+          var entity = document.querySelector('#url');
+
+          // Agregar componente a esa entidad
+          entity.setAttribute('value', value);
         }
       });
 
@@ -61,40 +79,25 @@
                 position="-20 2 0" rotation="90 0 0" scale="2 2 2"></a-entity>
 
         <!-- Data -->      
-        <a-entity id="data" babia-queryjson="url: ./data.json"></a-entity>
+        <a-entity id="data" babia-queryjson="url: ./data.json" visualizer>
+        
+        <!-- Nombre del JSON -->
+        <a-entity position="-5 12 0" scale="6 6 6" color="blue">
+          <a-text id ="url" value></a-text>
+        </a-entity>  
+          
                 
         <!-- 3DBars-->
-        <a-entity id="graph2" babia-barsmap="from: data; legend: true; palette: ubuntu;
+        <!-- <a-entity id="graph2" babia-barsmap="from: data; legend: true; palette: ubuntu;
                   x_axis: model; z_axis: color; height: sales" 
                   position="-20 0 0" scale="1 1 1"></a-entity>
+        -->
 
         <!-- NUEVO -->
 
         <a-entity position="-5 12 0">
-          <a-text color="blue" id ="nameFile" scale="6 6 6" change-color></a-text>
           <a-box color="green" position="-4 -2 -5" rotation="0 45 45" scale="2 2 2" change-color></a-box>
         </a-entity>
-
-         <!-- Obtener nombre JSON -->
-        <script>
-          // Ruta al archivo JSON
-          var fileJSON = './data_pruebas.json';
-          // Acceder al elemento A-Frame
-          var componentTEXT = document.querySelector('#nameFile');
-          // Solicitud para cargar el archivo JSON
-          fetch(fileJSON)
-            .then(response => response.json())
-            .then(data => {
-              // Extrae el nombre del archivo
-             const name = fileJSON.split('/').pop();
-              // Establece el valor del componente 'text' con el nombre del archivo
-              componentTEXT.setAttribute('value', name);
-            })
-            .catch(error => console.log("Error al cargar archivo JSON", error));
-          
-        </script>
-
-        
 
         <!-- Camera -->
         <a-entity movement-controls="fly: true" position="0 5 20">
