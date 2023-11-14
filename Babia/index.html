@@ -59,6 +59,31 @@
         }
       });
 
+      // Menu al hacer click
+      AFRAME.registerComponent('menu', {
+        schema: {},
+        
+        init: function () {
+          var el = this.el;
+          let visible = false;
+          el.addEventListener('click', function () {
+            if(visible == false){
+              visible = true;
+              // Nuevo elemento 
+              var newEntity = document.createElement('a-box');
+              newEntity.setAttribute('position', '5 7 18');
+              newEntity.setAttribute('width', '2');
+              newEntity.setAttribute('height', '2');
+              newEntity.setAttribute('depth', '0.3');
+              console.log('ENTIDAD CREADA')
+              // Añadir a la escena
+              document.querySelector('scene').appendChild(newEntity);
+              console.log('ESCENA NUEVA')
+            }
+          });
+        }
+      });
+
     </script>
 
   </head>  
@@ -98,7 +123,7 @@
         
         <!-- NUEVO -->
         <a-entity >
-          <a-box position="5 4 18" width="2" height="2" depth="0.3" color="green" change-color></a-box>
+          <a-box position="5 4 18" width="2" height="2" depth="0.3" color="green" menu></a-box>
           <a-text id="url"  position="4.5 4 18.3"  value  change-color></a-text>
         </a-entity>
 
