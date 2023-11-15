@@ -19,8 +19,6 @@
     <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
     <script src="https://unpkg.com/super-hands/dist/super-hands.min.js"></script>
 
-    
-    
     <script>
       // Cambio de color al hacer click - NO SE USA
       AFRAME.registerComponent('change-color', {
@@ -71,19 +69,20 @@
             option.setAttribute('width', '3'); 
             option.setAttribute('height', '2'); 
             option.setAttribute('depth', '0.3');
-            option.setAttribute('color', 'white');
+            option.setAttribute('color', 'red');
             
-            //var text = document.createElement('a-text');
+            var text = document.createElement('a-text');
             //text.setAttribute('id', 'url');
-            //text.setAttribute('position', '0 7 18.3');
-            //text.setAttribute('value', '');
+            text.setAttribute('position', '0 7 18.3');
+            text.setAttribute('value', 'PRUEBASSS');
 
             // Añadir al conjunto de elementos
             options.appendChild(option);
-            //options.appendChild(text);
+            options.appendChild(text);
 
             console.log(option)
             console.log(options)
+            console.log(text.components)
 
             // Nuevo elemento
             var option2 = document.createElement('a-box');
