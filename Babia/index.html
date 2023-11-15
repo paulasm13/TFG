@@ -22,7 +22,7 @@
     
     
     <script>
-      // Cambio de color al hacer click
+      // Cambio de color al hacer click - NO SE USA
       AFRAME.registerComponent('change-color', {
         schema: {
           color: {default: "blue"}
@@ -60,26 +60,53 @@
       });
 
       // Menu al hacer click
-      AFRAME.registerComponent('menu', {
-        schema: {},
-        
+      AFRAME.registerComponent('menu', {        
         init: function () {
           var el = this.el;
-          let visible = false;
+          var options = document.getElementById('options'); 
           el.addEventListener('click', function () {
-            if(visible == false){
-              visible = true;
-              // Nuevo elemento 
-              var newEntity = document.createElement('a-box');
-              newEntity.setAttribute('position', '5 7 18');
-              newEntity.setAttribute('width', '2');
-              newEntity.setAttribute('height', '2');
-              newEntity.setAttribute('depth', '0.3');
-              console.log('ENTIDAD CREADA')
-              // Añadir a la escena
-              document.querySelector('scene').appendChild(newEntity);
-              console.log('ESCENA NUEVA')
-            }
+            // Nuevo elemento 
+            var option = document.createElement('a-box');
+            option.setAttribute('position', '1 7 18');
+            option.setAttribute('width', '3'); 
+            option.setAttribute('height', '2'); 
+            option.setAttribute('depth', '0.3');
+            option.setAttribute('color', 'white');
+            
+            //var text = document.createElement('a-text');
+            //text.setAttribute('id', 'url');
+            //text.setAttribute('position', '0 7 18.3');
+            //text.setAttribute('value', '');
+
+            // Añadir al conjunto de elementos
+            options.appendChild(option);
+            //options.appendChild(text);
+
+            console.log(option)
+            console.log(options)
+
+            // Nuevo elemento
+            var option2 = document.createElement('a-box');
+            option2.setAttribute('position', '5 7 18');
+            option2.setAttribute('width', '3'); 
+            option2.setAttribute('height', '2'); 
+            option2.setAttribute('depth', '0.3');
+            option2.setAttribute('color', 'white');
+              
+            // Añadir al conjunto de elementos
+            options.appendChild(option2);
+
+            // Nuevo elemento
+            var option3 = document.createElement('a-box');
+            option3.setAttribute('position', '9 7 18');
+            option3.setAttribute('width', '3'); 
+            option3.setAttribute('height', '2'); 
+            option3.setAttribute('depth', '0.3');
+            option3.setAttribute('color', 'white');
+              
+            // Añadir al conjunto de elementos
+            options.appendChild(option3);
+
           });
         }
       });
@@ -109,7 +136,9 @@
                 position="-20 2 0" rotation="90 0 0" scale="2 2 2"></a-entity>
 
         <!-- Data -->      
-        <a-entity id="data" babia-queryjson="url: ./data.json" visualizer></a-entity>
+        <a-entity id="data" babia-queryjson="url: ./data.json;  url: ./data_pruebas.json" visualizer></a-entity>
+        <!-- <a-entity id="data2" babia-queryjson="url: ./data_pruebas.json" visualizer></a-entity> -->
+
 
          <!-- Filtered Data -->
          <a-entity id="filter-data" babia-filter="from: data; filter:motor=diesel"></a-entity>
@@ -122,10 +151,18 @@
         
         
         <!-- NUEVO -->
-        <a-entity >
-          <a-box position="5 4 18" width="2" height="2" depth="0.3" color="green" menu></a-box>
-          <a-text id="url"  position="4.5 4 18.3"  value  change-color></a-text>
+        <a-entity>
+          <a-box position="5 4 18" width="3" height="2" depth="0.3" color="orange" menu></a-box>
+          <!-- <a-text id="url" position="4 4 18.3" value></a-text> -->
+          <a-text value="Biblioteca JSON" position="4 4 18.3"></a-text>
         </a-entity>
+
+        
+        <!-- Controlador de eventos para el clic en el objeto -->
+        <!-- <a-entity id="controller" raycaster="objects: [menu]"></a-entity> -->
+        <a-entity id="options"></a-entity>
+
+        
 
         <!-- Camera -->
         <a-entity movement-controls="fly: true" position="0 5 20">
