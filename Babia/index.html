@@ -80,9 +80,6 @@
             options.appendChild(option);
             options.appendChild(text);
 
-            console.log(option)
-            console.log(options)
-            console.log(text.components)
 
             // Opción B
             var option2 = document.createElement('a-box');
@@ -100,17 +97,23 @@
             options.appendChild(option2);
             options.appendChild(text);
 
+
             // Opción C
             var option3 = document.createElement('a-box');
             option3.setAttribute('position', '9 7 18');
             option3.setAttribute('width', '3'); 
             option3.setAttribute('height', '2'); 
             option3.setAttribute('depth', '0.3');
-            option3.setAttribute('color', 'white');
+            option3.setAttribute('color', 'pink');
+            
+            var text = document.createElement('a-text');
+            text.setAttribute('position', '8 7 18.3');
+            text.setAttribute('value', data.components['babia-queryjson'].data.url2);
+          
               
             // Añadir al conjunto de elementos
             options.appendChild(option3);
-
+            options.appendChild(text);
           });
         }
       });
@@ -139,15 +142,12 @@
                 {"model": "panda", "motor": "gasoline", "color": "black", "doors": 3, "sales": 13}]'
                 position="-20 2 0" rotation="90 0 0" scale="2 2 2"></a-entity>
 
-        <!-- Data -->      
-        <a-entity id="data" babia-queryjson="url: ./data.json" visualizer></a-entity>
-        <!-- <a-entity id="data2" babia-queryjson="url: ./data_pruebas.json" visualizer></a-entity> -->
+        <!-- Data - Varios JSON -->      
+        <a-entity id="data" babia-queryjson="url: ./data.json; url2: ./data_pruebas.json" visualizer></a-entity>
 
-
-         <!-- Filtered Data -->
-         <a-entity id="filter-data" babia-filter="from: data; filter:motor=diesel"></a-entity>
+        <!-- Filtered Data -->
+        <a-entity id="filter-data" babia-filter="from: data; filter:motor=diesel"></a-entity>
         
-
         <!-- 3DBars-->
         <a-entity id="graph2" babia-barsmap="from: data; legend: true; palette: ubuntu;
                   x_axis: model; z_axis: color; height: sales" 
@@ -165,8 +165,6 @@
         <!-- Controlador de eventos para el clic en el objeto -->
         <!-- <a-entity id="controller" raycaster="objects: [menu]"></a-entity> -->
         <a-entity id="options"></a-entity>
-
-        
 
         <!-- Camera -->
         <a-entity movement-controls="fly: true" position="0 5 20">
