@@ -63,7 +63,7 @@
           var el = this.el;
           var options = document.getElementById('options'); 
           el.addEventListener('click', function () {
-            // Nuevo elemento 
+            // Opción A
             var option = document.createElement('a-box');
             option.setAttribute('position', '1 7 18');
             option.setAttribute('width', '3'); 
@@ -84,18 +84,23 @@
             console.log(options)
             console.log(text.components)
 
-            // Nuevo elemento
+            // Opción B
             var option2 = document.createElement('a-box');
             option2.setAttribute('position', '5 7 18');
             option2.setAttribute('width', '3'); 
             option2.setAttribute('height', '2'); 
             option2.setAttribute('depth', '0.3');
-            option2.setAttribute('color', 'white');
-              
+            option2.setAttribute('color', 'green');
+
+            var text = document.createElement('a-text');
+            text.setAttribute('position', '4 7 18.3');
+            text.setAttribute('value', data.components['babia-queryjson'].data.url);
+          
             // Añadir al conjunto de elementos
             options.appendChild(option2);
+            options.appendChild(text);
 
-            // Nuevo elemento
+            // Opción C
             var option3 = document.createElement('a-box');
             option3.setAttribute('position', '9 7 18');
             option3.setAttribute('width', '3'); 
@@ -135,7 +140,7 @@
                 position="-20 2 0" rotation="90 0 0" scale="2 2 2"></a-entity>
 
         <!-- Data -->      
-        <a-entity id="data" babia-queryjson="url: ./data.json;  url: ./data_pruebas.json" visualizer></a-entity>
+        <a-entity id="data" babia-queryjson="url: ./data.json" visualizer></a-entity>
         <!-- <a-entity id="data2" babia-queryjson="url: ./data_pruebas.json" visualizer></a-entity> -->
 
 
