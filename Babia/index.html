@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>BabiaXR - Tutorial</title>
+    <title>BabiaXR</title>
     
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css">
@@ -20,20 +20,7 @@
     <script src="https://unpkg.com/super-hands/dist/super-hands.min.js"></script>
 
     <script>
-      // Cambio de color al hacer click - NO SE USA
-      AFRAME.registerComponent('change-color', {
-        schema: {
-          color: {default: "blue"}
-        },
-        
-        init: function () {
-          var data = this.data;
-          var el = this.el;
-          this.el.addEventListener('click', function () {
-            el.setAttribute('color', data.color);
-          });
-        }
-      });
+    
 
       // Nombre del archivo json 
       AFRAME.registerComponent('visualizer', {
@@ -57,6 +44,34 @@
         }
       });
 
+
+      // Elegir JSON 
+      AFRAME.registerComponent('choose', {
+        schema: {},
+        
+        init: function () {
+          var el = this.el;
+
+          // Obtener elemento 'value' de text   
+          var value = el.components['text'].data.value;
+          console.log("URL del json elegido")
+          console.log(value)
+
+          // Obtener referencia de entidad por id
+          var entity = document.getElementById('data');
+          var json_url = entity.getAttribute('babia-queryjson')['url'];
+
+          console.log('URL del json por defecto')
+          console.log(json_url);
+
+          // Agregar componente a esa entidad
+          //entity.setAttribute(('babia-queryjson')['url'], value);
+          console.log('CON')
+          console.log(entity)
+        }
+      });
+
+
       // Menu al hacer click
       AFRAME.registerComponent('menu', {        
         init: function () {
@@ -72,7 +87,6 @@
             option.setAttribute('color', 'red');
             
             var text = document.createElement('a-text');
-            //text.setAttribute('id', 'url');
             text.setAttribute('position', '0 7 18.3');
             text.setAttribute('value', 'PRUEBASSS');
 
@@ -91,7 +105,10 @@
 
             var text = document.createElement('a-text');
             text.setAttribute('position', '4 7 18.3');
-            text.setAttribute('value', data.components['babia-queryjson'].data.url);
+            text.setAttribute('position', '4 7 18.3');
+            text.setAttribute('value', './data.json');
+            text.setAttribute('choose', '');
+
           
             // Añadir al conjunto de elementos
             options.appendChild(option2);
@@ -105,11 +122,11 @@
             option3.setAttribute('height', '2'); 
             option3.setAttribute('depth', '0.3');
             option3.setAttribute('color', 'pink');
-            
+
             var text = document.createElement('a-text');
             text.setAttribute('position', '8 7 18.3');
-            text.setAttribute('value', data.components['babia-queryjson'].data.url2);
-          
+            text.setAttribute('value', './data_pruebas.json');
+            text.setAttribute('choose', '');
               
             // Añadir al conjunto de elementos
             options.appendChild(option3);
@@ -118,13 +135,22 @@
         }
       });
 
+
+      
+
     </script>
 
   </head>  
   <body>
     <a-scene>
+      <!-- Assets -->
+      <a-assets>
+        <img id="sky" src="assets/360-panorama.jpg">
+        <img id="floor" src="assets/floor-texture.jpg">
+      </a-assets>
+
         <!-- Environment -->
-        <a-entity environment ></a-entity>
+        <a-entity environment></a-entity>
         <!-- Light -->
         <a-light type="point" intensity="1" position="-10 20 30"></a-light>
       
@@ -143,7 +169,7 @@
                 position="-20 2 0" rotation="90 0 0" scale="2 2 2"></a-entity>
 
         <!-- Data - Varios JSON -->      
-        <a-entity id="data" babia-queryjson="url: ./data.json; url2: ./data_pruebas.json" visualizer></a-entity>
+        <a-entity id="data" babia-queryjson="url: ./data.json" visualizer></a-entity>
 
         <!-- Filtered Data -->
         <a-entity id="filter-data" babia-filter="from: data; filter:motor=diesel"></a-entity>
@@ -168,12 +194,10 @@
 
         <a-entity babia-ui="target: graph2" ></a-entity>
         <a-entity babia-ui-link position="-20 9 0" ></a-entity>
-
-
         
         <!-- Controlador de eventos para el clic en el objeto -->
         <!-- <a-entity id="controller" raycaster="objects: [menu]"></a-entity> -->
-        <a-entity id="options"></a-entity>
+        <a-entity id="options" choose></a-entity>
 
         <!-- Camera -->
         <a-entity movement-controls="fly: true" position="0 5 20">
