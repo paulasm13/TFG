@@ -1,0 +1,317 @@
+[
+    {
+        "item": "book", 
+        "department": "clothes", 
+        "shop": "Zara", 
+        "price": "19.95", 
+        "sales": 6
+    }, 
+    {
+        "item": "cardigan", 
+        "department": "clothes", 
+        "shop": "Zara", 
+        "price": "30.95", 
+        "sales": 9
+    }, 
+    {
+        "item": "shirt", 
+        "department": "clothes", 
+        "shop": "Zara", 
+        "price": "15.99", 
+        "sales": 0
+    }, 
+    {
+        "item": "book", 
+        "department": "clothes", 
+        "shop": "Stradivarius", 
+        "price": "24.95", 
+        "sales": 0
+    }, 
+    {
+        "item": "dress", 
+        "department": "clothes", 
+        "shop": "Stradivarius", 
+        "price": "11.35", 
+        "sales": 50
+    }, 
+    {
+        "item": "boots", 
+        "department": "shoes", 
+        "shop": "Mango", 
+        "price": "135.0", 
+        "sales": 16
+    }, 
+    {
+        "item": "coat", 
+        "department": "clothes", 
+        "shop": "Stradivarius", 
+        "price": "50.99", 
+        "sales": 2
+    }, 
+    {
+        "item": "scarf", 
+        "department": "accesories", 
+        "shop": "Stradivarius", 
+        "price": "12.95", 
+        "sales": 38
+    }, 
+    {
+        "item": "rings", 
+        "department": "jewellery", 
+        "shop": "Tous", 
+        "price": "55.0", 
+        "sales": 0
+    }, 
+    {
+        "item": "necklace", 
+        "department": "jewellery", 
+        "shop": "Tous", 
+        "price": "52.0", 
+        "sales": 174
+    }, 
+    {
+        "item": "earrings", 
+        "department": "jewellery", 
+        "shop": "Parfois", 
+        "price": "16.30", 
+        "sales": 315
+    }, 
+    {
+        "item": "socks", 
+        "department": "accesories", 
+        "shop": "Parfois", 
+        "price": "7.99", 
+        "sales": 4
+    }, 
+    {
+        "item": "jacket", 
+        "department": "clothes", 
+        "shop": "Mango", 
+        "price": "45.25", 
+        "sales": 0
+    }, 
+    {
+        "item": "raincoat", 
+        "department": "clothes", 
+        "shop": "Mango", 
+        "price": "16.99", 
+        "sales": 0
+    }, 
+    {
+        "item": "dress", 
+        "department": "clothes", 
+        "shop": "Mango", 
+        "price": "15.0", 
+        "sales": 10
+    }, 
+    {
+        "item": "shirt", 
+        "department": "clothes", 
+        "shop": "Pull&Bear", 
+        "price": "5.99", 
+        "sales": 1
+    }, 
+    {
+        "item": "shirt", 
+        "department": "clothes", 
+        "shop": "Pull&Bear", 
+        "price": "16.95", 
+        "sales": 0
+    }, 
+    {
+        "item": "shirt", 
+        "department": "clothes", 
+        "shop": "Pull&Bear", 
+        "price": "12.50", 
+        "sales": 2
+    }, 
+    {
+        "item": "cardigan", 
+        "department": "clothes", 
+        "shop": "Pull&Bear", 
+        "price": "20.50", 
+        "sales": 22
+    }, 
+    {
+        "item": "gloves", 
+        "department": "accesories", 
+        "shop": "Parfois", 
+        "price": "8.99", 
+        "sales": 27
+    }, 
+    {
+        "item": "belt", 
+        "department": "accesories", 
+        "shop": "Parfois", 
+        "price": "8.0", 
+        "sales": 16
+    }, 
+    {
+        "item": "belt", 
+        "department": "accesories", 
+        "shop": "Zara", 
+        "price": "5.50", 
+        "sales": 12
+    }, 
+    {
+        "item": "boots", 
+        "department": "shoes", 
+        "shop": "Pull&Bear", 
+        "price": "135.50", 
+        "sales": 79
+    }, 
+    {
+        "item": "hat", 
+        "department": "accesories", 
+        "shop": "Parfois", 
+        "price": "5.99", 
+        "sales": 2
+    }, 
+    {
+        "item": "blouse", 
+        "department": "clothes", 
+        "shop": "Mango", 
+        "price": "70.35", 
+        "sales": 1
+    }, 
+    {
+        "item": "scarf", 
+        "department": "accesories", 
+        "shop": "Parfois", 
+        "price": "5.99", 
+        "sales": 4
+    }, 
+    {
+        "item": "hat", 
+        "department": "accesories", 
+        "shop": "Zara", 
+        "price": "12.45", 
+        "sales": 0
+    }, 
+    {
+        "item": "hat", 
+        "department": "accesories", 
+        "shop": "Mango", 
+        "price": "5.60", 
+        "sales": 3
+    }, 
+    {
+        "item": "hat", 
+        "department": "accesories", 
+        "shop": "Primark", 
+        "price": "3.95", 
+        "sales": 0
+    }, 
+    {
+        "item": "book", 
+        "department": "clothes", 
+        "shop": "Primark", 
+        "price": "20.0", 
+        "sales": 2
+    }, 
+    {
+        "item": "book", 
+        "department": "clothes", 
+        "shop": "Pull&Bear", 
+        "price": "21.30", 
+        "sales": 9
+    }, 
+    {
+        "item": "book", 
+        "department": "clothes", 
+        "shop": "Stradivarius", 
+        "price": "24.96", 
+        "sales": 135
+    }, 
+    {
+        "item": "book", 
+        "department": "clothes", 
+        "shop": "Primark", 
+        "price": "95.32", 
+        "sales": 10
+    }, 
+    {
+        "item": "skirt", 
+        "department": "clothes", 
+        "shop": "Zara", 
+        "price": "14.50", 
+        "sales": 43
+    }, 
+    {
+        "item": "skirt", 
+        "department": "clothes", 
+        "shop": "Pull&Bear", 
+        "price": "34.0", 
+        "sales": 1
+    }, 
+    {
+        "item": "wallet", 
+        "department": "accesories", 
+        "shop": "Stradivarius", 
+        "price": "12.0", 
+        "sales": 11
+    }, 
+    {
+        "item": "wallet", 
+        "department": "accesories", 
+        "shop": "Parfois", 
+        "price": "22.9", 
+        "sales": 1
+    }, 
+    {
+        "item": "suit", 
+        "department": "clothes", 
+        "shop": "Mango", 
+        "price": "70.90", 
+        "sales": 69
+    }, 
+    {
+        "item": "dress", 
+        "department": "clothes", 
+        "shop": "Zara", 
+        "price": "80.50", 
+        "sales": 1
+    }, 
+    {
+        "item": "dress", 
+        "department": "clothes", 
+        "shop": "Stradivarius", 
+        "price": "26.70", 
+        "sales": 58
+    }, 
+    {
+        "item": "trainers", 
+        "department": "shoes", 
+        "shop": "Adidas", 
+        "price": "80.90", 
+        "sales": 9
+    }, 
+    {
+        "item": "trainers", 
+        "department": "shoes", 
+        "shop": "Adidas", 
+        "price": "78.50", 
+        "sales": 20
+    }, 
+    {
+        "item": "trainers", 
+        "department": "shoes", 
+        "shop": "Nike", 
+        "price": "55.0", 
+        "sales": 14
+    }, 
+    {
+        "item": "jeans", 
+        "department": "clothes", 
+        "shop": "Mango", 
+        "price": "34.0", 
+        "sales": 4
+    }, 
+    {
+        "item": "jeans", 
+        "department": "clothes", 
+        "shop": "Pull&Bear", 
+        "price": "14.0", 
+        "sales": 2
+    }
+]

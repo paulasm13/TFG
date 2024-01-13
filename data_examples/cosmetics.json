@@ -1,0 +1,317 @@
+[
+    {
+        "item": "lipstick", 
+        "department": "face", 
+        "brand": "Primor", 
+        "price": "19.95", 
+        "sales": 6
+    }, 
+    {
+        "item": "conditioner", 
+        "department": "face", 
+        "brand": "Druni", 
+        "price": "30.95", 
+        "sales": 9
+    }, 
+    {
+        "item": "lipstick", 
+        "department": "face", 
+        "brand": "Druni", 
+        "price": "15.99", 
+        "sales": 0
+    }, 
+    {
+        "item": "shampoo", 
+        "department": "hair", 
+        "brand": "Mercadona", 
+        "price": "24.95", 
+        "sales": 0
+    }, 
+    {
+        "item": "lipstick", 
+        "department": "face", 
+        "brand": "NYX", 
+        "price": "11.35", 
+        "sales": 50
+    }, 
+    {
+        "item": "shampoo", 
+        "department": "hair", 
+        "brand": "Druni", 
+        "price": "15.0", 
+        "sales": 16
+    }, 
+    {
+        "item": "moisturizer", 
+        "department": "body", 
+        "brand": "Rituals", 
+        "price": "50.99", 
+        "sales": 2
+    }, 
+    {
+        "item": "deodorant", 
+        "department": "body", 
+        "brand": "Primor", 
+        "price": "12.95", 
+        "sales": 38
+    }, 
+    {
+        "item": "deodorant", 
+        "department": "body", 
+        "brand": "Druni", 
+        "price": "5.0", 
+        "sales": 0
+    }, 
+    {
+        "item": "deodorant", 
+        "department": "body", 
+        "brand": "Rituals", 
+        "price": "52.0", 
+        "sales": 174
+    }, 
+    {
+        "item": "deodorant", 
+        "department": "body", 
+        "brand": "Mercadona", 
+        "price": "2.30", 
+        "sales": 315
+    }, 
+    {
+        "item": "nail polish", 
+        "department": "body", 
+        "brand": "Sephora", 
+        "price": "27.99", 
+        "sales": 4
+    }, 
+    {
+        "item": "nail polish", 
+        "department": "body", 
+        "brand": "Primor", 
+        "price": "13.25", 
+        "sales": 0
+    }, 
+    {
+        "item": "blush", 
+        "department": "face", 
+        "brand": "Sephora", 
+        "price": "16.99", 
+        "sales": 0
+    }, 
+    {
+        "item": "lipstick", 
+        "department": "face", 
+        "brand": "Sephora", 
+        "price": "15.0", 
+        "sales": 10
+    }, 
+    {
+        "item": "lipstick", 
+        "department": "face", 
+        "brand": "Mercadona",
+        "price": "5.99", 
+        "sales": 1
+    }, 
+    {
+        "item": "lipstick", 
+        "department": "face", 
+        "brand": "Druni", 
+        "price": "16.95", 
+        "sales": 0
+    }, 
+    {
+        "item": "lipstick", 
+        "department": "face", 
+        "brand": "NYX", 
+        "price": "12.50", 
+        "sales": 2
+    }, 
+    {
+        "item": "conditioner", 
+        "department": "hair", 
+        "brand": "Rituals", 
+        "price": "20.50", 
+        "sales": 22
+    }, 
+    {
+        "item": "moisturizer", 
+        "department": "body", 
+        "brand": "Primor", 
+        "price": "8.99", 
+        "sales": 27
+    }, 
+    {
+        "item": "moisturizer", 
+        "department": "body", 
+        "brand": "Parfois", 
+        "price": "8.0", 
+        "sales": 16
+    }, 
+    {
+        "item": "moisturizer", 
+        "department": "body", 
+        "brand": "Zara", 
+        "price": "5.50", 
+        "sales": 12
+    }, 
+    {
+        "item": "concealer", 
+        "department": "face", 
+        "brand": "Sephora", 
+        "price": "15.50", 
+        "sales": 79
+    }, 
+    {
+        "item": "eyeshadow", 
+        "department": "face", 
+        "brand": "Primor", 
+        "price": "5.99", 
+        "sales": 2
+    }, 
+    {
+        "item": "nail polish", 
+        "department": "body", 
+        "brand": "Sephora", 
+        "price": "27.35", 
+        "sales": 1
+    }, 
+    {
+        "item": "deodorant", 
+        "department": "body", 
+        "brand": "Druni", 
+        "price": "5.99", 
+        "sales": 4
+    }, 
+    {
+        "item": "eyeshadow",
+        "department": "face", 
+        "brand": "Sephora", 
+        "price": "12.45", 
+        "sales": 0
+    }, 
+    {
+        "item": "eyeshadow", 
+        "department": "face", 
+        "brand": "Druni", 
+        "price": "5.60", 
+        "sales": 3
+    }, 
+    {
+        "item": "eyeshadow", 
+        "department": "face", 
+        "brand": "NYX", 
+        "price": "43.95", 
+        "sales": 0
+    }, 
+    {
+        "item": "shampoo", 
+        "department": "hair", 
+        "brand": "Druni", 
+        "price": "20.0", 
+        "sales": 2
+    }, 
+    {
+        "item": "shampoo", 
+        "department": "hair", 
+        "brand": "Primor",
+        "price": "21.30", 
+        "sales": 9
+    }, 
+    {
+        "item": "shampoo", 
+        "department": "hair", 
+        "brand": "Druni", 
+        "price": "24.96", 
+        "sales": 135
+    }, 
+    {
+        "item": "shampoo", 
+        "department": "hair", 
+        "brand": "Mercadona", 
+        "price": "10.32", 
+        "sales": 10
+    }, 
+    {
+        "item": "concealer", 
+        "department": "face", 
+        "brand": "Sephora", 
+        "price": "14.50", 
+        "sales": 43
+    }, 
+    {
+        "item": "concealer", 
+        "department": "face", 
+        "brand": "NYX", 
+        "price": "34.0", 
+        "sales": 1
+    }, 
+    {
+        "item": "blush", 
+        "department": "face", 
+        "brand": "Primor", 
+        "price": "12.0", 
+        "sales": 11
+    }, 
+    {
+        "item": "blush", 
+        "department": "face", 
+        "brand": "Sephora", 
+        "price": "22.9", 
+        "sales": 1
+    }, 
+    {
+        "item": "moisturizer", 
+        "department": "body", 
+        "brand": "Rituals", 
+        "price": "70.90", 
+        "sales": 69
+    }, 
+    {
+        "item": "lipstick", 
+        "department": "face", 
+        "brand": "Sephora", 
+        "price": "19.50", 
+        "sales": 1
+    }, 
+    {
+        "item": "lipstick", 
+        "department": "face", 
+        "brand": "Primor", 
+        "price": "26.70", 
+        "sales": 58
+    }, 
+    {
+        "item": "eyeliner", 
+        "department": "face", 
+        "brand": "Primor", 
+        "price": "8.90", 
+        "sales": 9
+    }, 
+    {
+        "item": "eyeliner", 
+        "department": "face", 
+        "brand": "Druni", 
+        "price": "14.50", 
+        "sales": 20
+    }, 
+    {
+        "item": "eyeliner", 
+        "department": "face", 
+        "brand": "Sephora", 
+        "price": "25.0", 
+        "sales": 14
+    }, 
+    {
+        "item": "eyeliner", 
+        "department": "face", 
+        "brand": "NYX", 
+        "price": "34.0", 
+        "sales": 4
+    }, 
+    {
+        "item": "eyeliner", 
+        "department": "face", 
+        "brand": "Mercadona", 
+        "price": "9.0", 
+        "sales": 2
+    }
+]

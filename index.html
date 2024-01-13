@@ -6,6 +6,7 @@
         <title>BabiaXR Components Gallery</title>
         <meta name="description" content="BabiaXR Components Gallery">
         </meta>
+        <!-- import the webpage's javascript file -->
         <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.2.0/dist/aframe-extras.min.js"></script>
         <script
@@ -18,7 +19,40 @@
         <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
         <script src="dist/aframe-lounge-component.min.js"></script>
         <script src="dist/aframe-babia-components.js"></script>
+
+        <!-- import the webpage's stylesheet -->
         <link rel="stylesheet" href="assets/gitlab-corner.css">
+        
+        <script>
+                // Elegir JSON 
+                AFRAME.registerComponent('choose', {
+                schema: {},
+        
+                init: function () {
+                        var el = this.el;
+                        console.log('data>>')
+                        console.log(data)
+                        console.log('EL--')
+                        console.log(el)
+
+                        // Obtener elemento 'value' de text   
+                        var value = el.components['text'].data.value;
+                        console.log("URL del json elegido");
+                        console.log(value)
+
+                        // Obtener referencia de entidad por id
+                        //var entity = document.querySelector('#data');
+
+                        // Editar componente de esa entidad
+                        //entity.setAttribute('babia-queryjson', 'url', value);
+                }
+        });
+
+
+
+        </script>
+        
+        
         <style>
                 h1 {
                         color: #AAAAAA;
@@ -46,6 +80,10 @@
                         <img id="sky" src="assets/360-panorama.jpg">
                         <img id="floor" src="assets/floor-texture.jpg">
                         <img id="metalic" src="assets/metalic-texture.jpg">
+                        <img id="clothes" src="assets/clothes.jpg">
+                        <img id="furniture" src="assets/furniture.jpg">
+                        <img id="cosmetics" src="assets/cosmetics.jpg">
+                        <img id="stationery" src="assets/stationery.jpg">
                 </a-assets>
 
                 <!-- Querier Components -->
@@ -68,19 +106,19 @@
 
                         <!-- JSONs components -->
                         <a-entity>
-                                <a-box position="19.5 0 15" rotation="0 90 0" width="4" height="4" depth="0.3" color="white"></a-box>
+                                <a-box src="#clothes" position="19.5 0 15" rotation="0 90 0" width="5" height="4" depth="0.3"></a-box>
                         </a-entity>
                         
                         <a-entity>
-                                <a-box position="19.5 0 5" rotation="0 90 0" width="4" height="4" depth="0.3" color="white"></a-box>
+                                <a-box src="#furniture" position="19.5 0 5" rotation="0 90 0" width="5" height="4" depth="0.3"></a-box>
                         </a-entity>
 
                         <a-entity>
-                                <a-box position="19.5 0 -5" rotation="0 90 0" width="4" height="4" depth="0.3" color="white"></a-box>
+                                <a-box src="#cosmetics" position="19.5 0 -5" rotation="0 90 0" width="5" height="4" depth="0.3"></a-box>
                         </a-entity>
 
                         <a-entity>
-                                <a-box position="19.5 0 -15" rotation="0 90 0" width="4" height="4" depth="0.3" color="white"></a-box>
+                                <a-box src="#stationery" position="19.5 0 -15" rotation="0 90 0" width="5" height="4" depth="0.3"></a-box>
                         </a-entity>
 
                         <!-- Simple Components -->
