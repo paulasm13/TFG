@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>BabiaXR</title>
+    
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css">
+
+    <!-- import the webpage's javascript file -->
+    <script src="/script.js" defer></script>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-babia-components/dist/aframe-babia-components.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.0.0/dist/aframe-environment-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
+    <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
+    <script src="https://unpkg.com/super-hands/dist/super-hands.min.js"></script>
+
+    <script>
+    
+
+      // Nombre del archivo json 
+      AFRAME.registerComponent('visualizer', {
+        schema: {},
+        
+        init: function () {
+          var el = this.el;
+
+          // Obtener elemento 'babia-queryjson'
+          console.log("PRUEBAS OK")          
+          var value = el.components['babia-queryjson'].data.url;
+          console.log("VALUE")
+          console.log(value)
+          console.log(data)
+
+          // Obtener referencia de entidad por id
+          var entity = document.querySelector('#url');
+
+          // Agregar componente a esa entidad
+          entity.setAttribute('value', value);
+
+        }
+      });
+
+
+      // Elegir JSON 
+      AFRAME.registerComponent('choose', {
+        schema: {},
+        
+        init: function () {
+          var el = this.el;
+          console.log('data>>')
+          console.log(data)
+          console.log('EL--')
+          console.log(el)
+
+          // Obtener elemento 'value' de text   
+          var value = el.components['text'].data.value;
+          console.log("URL del json elegido");
+          console.log(value)
+
+          // Obtener referencia de entidad por id
+          var entity = document.querySelector('#data');
+
+          // Editar componente de esa entidad
+          entity.setAttribute('babia-queryjson', 'url', value);
+        }
+      });
+
+
+      // Menu al hacer click
+      AFRAME.registerComponent('menu', {        
+        init: function () {
+          var el = this.el;
+          var options = document.getElementById('options'); 
+          el.addEventListener('click', function () {
+            console.log('data>>--')
+          console.log(data)
+            // Opción A
+            var option = document.createElement('a-box');
+            option.setAttribute('position', '1 7 18');
+            option.setAttribute('width', '3'); 
+            option.setAttribute('height', '2'); 
+            option.setAttribute('depth', '0.3');
+            option.setAttribute('color', 'red');
+            
+            var text = document.createElement('a-text');
+            text.setAttribute('position', '0 7 18.3');
+            text.setAttribute('value', 'PRUEBASSS');
+
+            // Añadir al conjunto de elementos
+            options.appendChild(option);
+            options.appendChild(text);
+
+
+            // Opción B
+            var option2 = document.createElement('a-box');
+            option2.setAttribute('position', '5 7 18');
+            option2.setAttribute('width', '3'); 
+            option2.setAttribute('height', '2'); 
+            option2.setAttribute('depth', '0.3');
+            option2.setAttribute('color', 'green');
+
+
+            var text = document.createElement('a-text');
+            text.setAttribute('position', '4 7 18.3');
+            text.setAttribute('position', '4 7 18.3');
+            text.setAttribute('value', './data.json');
+            text.setAttribute('choose', '');
+
+          
+            // Añadir al conjunto de elementos
+            options.appendChild(option2);
+            options.appendChild(text);
+
+
+            // Opción C
+            var option3 = document.createElement('a-box');
+            option3.setAttribute('position', '9 7 18');
+            option3.setAttribute('width', '3'); 
+            option3.setAttribute('height', '2'); 
+            option3.setAttribute('depth', '0.3');
+            option3.setAttribute('color', 'pink');
+
+
+            var text = document.createElement('a-text');
+            text.setAttribute('position', '8 7 18.3');
+            text.setAttribute('value', './data_pruebas.json');
+            text.setAttribute('choose', '');
+
+
+              
+            // Añadir al conjunto de elementos
+            options.appendChild(option3);
+            options.appendChild(text);
+          });
+        }
+      });
+
+
+      
+
+    </script>
+
+  </head>  
+  <body>
+    <a-scene>
+      <!-- Assets -->
+
+        <!-- Environment -->
+        <a-entity environment></a-entity>
+        <!-- Light -->
+        <a-light type="point" intensity="1" position="-10 20 30"></a-light>
+      
+        <!-- Pie -->
+        <a-entity babia-pie='key:model; size: doors; legend: true; palette: sunset;
+          data:[{"model": "leon", "motor": "electric", "color": "red", "doors": 5, "sales": 10},
+                {"model": "ibiza", "motor": "electric", "color": "white", "doors": 3, "sales": 15},
+                {"model": "cordoba", "motor": "diesel", "color": "black", "doors": 5, "sales": 3},
+                {"model": "toledo", "motor": "diesel", "color": "white", "doors": 5, "sales": 18},
+                {"model": "altea", "motor": "diesel", "color": "red", "doors": 5, "sales": 4},
+                {"model": "arosa", "motor": "electric", "color": "red", "doors": 3, "sales": 12},
+                {"model": "alhambra", "motor": "diesel", "color": "white", "doors": 5, "sales": 5},
+                {"model": "600", "motor": "gasoline", "color": "yellow", "doors": 3, "sales": 20},
+                {"model": "127", "motor": "gasoline", "color": "white", "doors": 5, "sales": 2},
+                {"model": "panda", "motor": "gasoline", "color": "black", "doors": 3, "sales": 13}]'
+                position="-20 2 0" rotation="90 0 0" scale="2 2 2"></a-entity>
+
+        <!-- Data - Varios JSON -->      
+        <a-entity id="data" babia-queryjson="url: ./data.json" visualizer></a-entity>
+
+        <!-- Filtered Data -->
+        <a-entity id="filter-data" babia-filter="from: data; filter:motor=diesel"></a-entity>
+        
+        <!-- 3DBars-->
+        <a-entity id="graph2" babia-barsmap="from: data; legend: true; palette: ubuntu;
+                  x_axis: model; z_axis: color; height: sales" 
+                  position="-20 0 0" scale="1 1 1"></a-entity>
+        
+        
+        <!-- NUEVO -->
+        <a-entity>
+          <a-box position="5 4 18" width="3" height="2" depth="0.3" color="orange" menu></a-box>
+          <a-text value="Biblioteca JSON" position="4 4 18.3"></a-text>
+        </a-entity>
+
+
+        <a-entity babia-ui="target: graph2" ></a-entity>
+        <a-entity babia-ui-link position="-20 9 0" ></a-entity>
+        
+        <!-- Controlador de eventos para el clic en el objeto -->
+        <!-- <a-entity id="controller" raycaster="objects: [menu]"></a-entity> -->
+        <a-entity id="options"></a-entity>
+
+        <!-- Camera -->
+        <a-entity movement-controls="fly: true" position="0 5 20">
+            <a-entity camera position="0 0 0" look-controls></a-entity>
+            <a-entity cursor="rayOrigin:mouse"></a-entity>
+            <a-entity laser-controls="hand: right"></a-entity>
+        </a-entity>
+    </a-scene>
+
+    <!-- include the Glitch button to show what the webpage is about and
+          to make it easier for folks to view source and remix -->
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js" defer></script>
+  </body>
+</html>
