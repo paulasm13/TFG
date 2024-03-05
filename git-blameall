@@ -22,6 +22,8 @@ import string
 import re
 import getopt
 import json
+from datetime import datetime
+
 
 VERSION = '0.2'
 
@@ -120,17 +122,24 @@ def print_so_far(ALL_LINES,revs):
     #print '(%s %s %s)(%s %s %s)'%(beg.hash[:8],beg.date,beg.author,end.hash[:8],end.date,end.author),line.text,
     #print '%s (%s %s) %s (%s %s)'%(beg.hash[:8],beg.author,beg.date,end.hash[:8],end.author,end.date),line.text,
     #print '%s (%s %s) %s (%s %s)'%(beg.hash[:8],beg.author,beg.date,end.hash[:8],end.author,end.date),line.text,
+
     if line.endrev is not None:
       print('-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
-      if line.text.startwith('def'):
-        #Guardar en archivo, y guardo siempre que no tuvo un commit que lo elimino
-        #Verifica que no se haya eliminado
-        fecha_start = beg.date #Comienzo
-        fecha_end = end.date #Final
-        save_file(line.text, 'output.json')
+      #if line.text.startwith('def'):
+      #Verifica que no se haya eliminado
+      # Convierte las cadenas en objetos datetime
+      save_file('Commit......', 'output.json')
+      save_file(line.text, 'output.json')
+      save_file('Longevidad....', 'output.json')
+      save_file(beg.date, 'output.json')
+      print('Fecha final: ', end.date)
     else:
       print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
+      save_file('Commit...', 'output.json')
       save_file(line.text, 'output.json')
+      save_file('Longevidad....', 'output.json')
+      save_file(beg.date, 'output.json')
+      print('Fecha final: ', end.date)
 
 
 UsageString="""\
