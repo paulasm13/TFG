@@ -113,34 +113,47 @@ def print_so_far(ALL_LINES,revs):
     beg = revs[line.begrev]
     end = revs[line.endrev] if line.endrev is not None else head_rev
 
-    # Lineas que no se han eliminado en un commit
+    # Lineas eliminadas ; con endDate
     if line.endrev is not None:
       print('-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
       #if line.text.startwith('def'):
-      save_file('Linea:' + ' ', 'output.json')
-      save_file(line.text, 'output.json')
-      save_file('Longevidad en dias:' + ' ', 'output.json')
+      save_file('Autor INIT - ' + ' ', 'output.json')
+      save_file(beg.author, 'output.json')
+      save_file('Fecha INIT - ' + ' ', 'output.json')
+      save_file(beg.date, 'output.json')
+      save_file(' ' + 'Autor DEL - ' + ' ', 'output.json')
+      save_file(end.author, 'output.json')
+      save_file('Fecha DEL - ' + ' ', 'output.json')
+      save_file(end.date, 'output.json')
       beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
       end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
       long = end_datetime - beg_datetime
-      save_file(str(long.days) + ' ', 'output.json')
+      save_file(' ' + 'Longevidad - ' + ' ', 'output.json')
+      save_file(str(long) + '\n', 'output.json')
+      save_file(' ' + 'Linea - ' + ' ', 'output.json')
+      save_file(line.text + '\n', 'output.json')
+      
 
-    # Lineas eliminadas en un commit
+    # Lineas que siguen en la actualidad, sin endDate
     else:
       print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
-      save_file('Linea:' + ' ', 'output.json')
-      save_file(line.text, 'output.json')
-      save_file('Longevidad en dias [DEL]:' + ' ' , 'output.json')
-      try:
-        end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
-      except:
-        end_datetime = datetime.now()
-        end_datetime = end_datetime.strftime('%Y-%m-%d')
-        end_datetime = datetime.strptime(end_datetime, '%Y-%m-%d')
-
+      save_file('Autor INIT - ' + ' ', 'output.json')
+      save_file(beg.author, 'output.json')
+      save_file('Fecha INIT - ' + ' ', 'output.json')
+      save_file(beg.date, 'output.json')
+      save_file(' ' + 'Autor DEL - ' + ' ', 'output.json')
+      save_file(end.author, 'output.json')
+      save_file('Fecha DEL - ' + ' ', 'output.json')
+      save_file(end.date, 'output.json')
+      # Fecha actual, necesaria para calcular longevidad
+      current_datetime = datetime.now()
+      # El arg debe de ser un str
       beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
-      long = end_datetime - beg_datetime
-      save_file(str(long.days) + ' ', 'output.json')
+      long = current_datetime - beg_datetime
+      save_file(' ' + 'Longevidad - ' + ' ', 'output.json')
+      save_file(str(long) + '\n', 'output.json')
+      save_file(' ' + 'Linea - ' + ' ', 'output.json')
+      save_file(line.text + '\n', 'output.json')
 
 
 UsageString="""\
