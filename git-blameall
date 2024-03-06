@@ -94,12 +94,11 @@ def find_next_alive(ALL_LINES,i):
       return i
     i+=1
     
-# PRINT OUTPUT.JSON
+# Guarda info en OUTPUT.JSON
 def save_file(total_data, name_file):
-  #Verificar si existe el archivo, name_file + fecha
+  # Crea y escibe en el archivo
   with open(name_file, 'a') as output_file:
     output_file.write(total_data)
-    #json.dump(total_data, output_file, indent=2)
 
 # Imprime informacion sobre las lineas en la lista ALL_LINES
 # utilizando informacion contenida en el diccionario "revs"
@@ -113,33 +112,35 @@ def print_so_far(ALL_LINES,revs):
   for line in ALL_LINES:
     beg = revs[line.begrev]
     end = revs[line.endrev] if line.endrev is not None else head_rev
-    #if line.endrev is None:
-    #  i+=1
-    #  print '%3d'%i,
-    #else:
-    #  print '   ',
-    #print '%s %s %s %s %s %s:'%(beg.hash[:8],end.hash[:8],beg.date,end.date,beg.author,end.author),line.text,
-    #print '(%s %s %s)(%s %s %s)'%(beg.hash[:8],beg.date,beg.author,end.hash[:8],end.date,end.author),line.text,
-    #print '%s (%s %s) %s (%s %s)'%(beg.hash[:8],beg.author,beg.date,end.hash[:8],end.author,end.date),line.text,
-    #print '%s (%s %s) %s (%s %s)'%(beg.hash[:8],beg.author,beg.date,end.hash[:8],end.author,end.date),line.text,
 
+    # Lineas que no se han eliminado en un commit
     if line.endrev is not None:
       print('-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
       #if line.text.startwith('def'):
-      #Verifica que no se haya eliminado
-      # Convierte las cadenas en objetos datetime
-      save_file('Commit......', 'output.json')
+      save_file('Linea:' + ' ', 'output.json')
       save_file(line.text, 'output.json')
-      save_file('Longevidad....', 'output.json')
-      save_file(beg.date, 'output.json')
-      print('Fecha final: ', end.date)
+      save_file('Longevidad en dias:' + ' ', 'output.json')
+      beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
+      end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
+      long = end_datetime - beg_datetime
+      save_file(str(long.days) + ' ', 'output.json')
+
+    # Lineas eliminadas en un commit
     else:
       print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
-      save_file('Commit...', 'output.json')
+      save_file('Linea:' + ' ', 'output.json')
       save_file(line.text, 'output.json')
-      save_file('Longevidad....', 'output.json')
-      save_file(beg.date, 'output.json')
-      print('Fecha final: ', end.date)
+      save_file('Longevidad en dias:' + ' ', 'output.json')
+      try:
+        end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
+      except:
+        end_datetime = datetime.now()
+        end_datetime = end_datetime.strftime('%Y-%m-%d')
+        end_datetime = datetime.strptime(end_datetime, '%Y-%m-%d')
+
+      beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
+      long = end_datetime - beg_datetime
+      save_file(str(long.days) + ' ', 'output.json')
 
 
 UsageString="""\
@@ -249,7 +250,6 @@ def main():
     
     if V:
       print_so_far(ALL_LINES,revs)
-      save_file(ALL_LINES, 'output.json')
 
     
     # process all the revisions
@@ -342,17 +342,10 @@ def main():
       if V:
         print()
         print_so_far(ALL_LINES,revs)
-        save_file(ALL_LINES, 'output.json')
     
     if not Quiet:
       sys.stderr.write('\n')
     print_so_far(ALL_LINES,revs)
-    print('--- ALL_LINES ---')
-    print(revs)
-    print('--- ---')
-    print(type(revs))
-    print('--- ---')
-    #save_file(ALL_LINES, 'output.json')
   
 if __name__=='__main__':
   main()
