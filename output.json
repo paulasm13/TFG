@@ -1,0 +1,1428 @@
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:17.826290
+ Linea -  #!/usr/bin/env python
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:17.842518
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  dan     Fecha DEL -  2011-05-30 Longevidad -  2 days, 0:00:00
+ Linea -  # Copyright 2011, Dan Gindikin <dgindikin@gmail.com>
+
+Autor INIT -  dan     Fecha INIT -  2011-05-30 Autor DEL -          Fecha DEL -             Longevidad -  4665 days, 18:01:17.846508
+ Linea -  # Copyright 2011, Dan Gindikin <dgindikin -AT- gmail.com>
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.851720
+ Linea -  #
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.853713
+ Linea -  # This program is free software; you can redistribute it and/or modify it under
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.855710
+ Linea -  # the terms of the GNU General Public License as published by the Free Software
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.857705
+ Linea -  # Foundation; either version 2 of the License, or (at your option) any later
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.859697
+ Linea -  # version.
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.862694
+ Linea -  #
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.864687
+ Linea -  # This program is distributed in the hope that it will be useful, but WITHOUT
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.866683
+ Linea -  # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.868677
+ Linea -  # FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.871669
+ Linea -  # details.
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.873664
+ Linea -  #
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.876176
+ Linea -  # You should have received a copy of the GNU General Public License along with
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.879171
+ Linea -  # this program; if not, write to the Free Software Foundation, Inc., 51
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.881811
+ Linea -  # Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.883810
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:17.885804
+ Linea -  import sys
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:17.887799
+ Linea -  import os
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:17.889793
+ Linea -  import string
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -          Fecha DEL -             Longevidad -  4684 days, 18:01:17.893824
+ Linea -  import re
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:17.895811
+ Linea -  import getopt
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:17.897805
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  dan     Fecha DEL -  2011-06-06 Longevidad -  9 days, 0:00:00
+ Linea -  VERSION = '0.1'
+
+Autor INIT -  dan     Fecha INIT -  2011-06-06 Autor DEL -          Fecha DEL -             Longevidad -  4658 days, 18:01:17.901761
+ Linea -  VERSION = '0.2'
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:17.903790
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -          Fecha DEL -             Longevidad -  4684 days, 18:01:17.906821
+ Linea -  Chunk_Header_Pat = re.compile('@@ -([0-9]+)(?:,([0-9]+))? \+([0-9]+)(?:,([0-9]+))? @@')
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -          Fecha DEL -             Longevidad -  4684 days, 18:01:17.909256
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.910309
+ Linea -  class struct:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.913064
+ Linea -    pass
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.915226
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -          Fecha DEL -             Longevidad -  4684 days, 18:01:17.916363
+ Linea -  def parse_chunk_header(s):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  8 days, 0:00:00
+ Linea -    orig_L, del_N, new_L, add_N = Chunk_Header_Pat.match(s).groups()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:17.921859
+ Linea -    origL, del_N, newL, add_N = Chunk_Header_Pat.match(s).groups()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -          Fecha DEL -             Longevidad -  4684 days, 18:01:17.924669
+ Linea -    if del_N is None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -          Fecha DEL -             Longevidad -  4684 days, 18:01:17.927022
+ Linea -      del_N = 1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -          Fecha DEL -             Longevidad -  4684 days, 18:01:17.928343
+ Linea -    if add_N is None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -          Fecha DEL -             Longevidad -  4684 days, 18:01:17.930612
+ Linea -      add_N = 1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -          Fecha DEL -             Longevidad -  4684 days, 18:01:17.933108
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  7 days, 0:00:00
+ Linea -    return orig_L, del_N, new_L, add_N
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -  dan     Fecha DEL -  2011-05-12 Longevidad -  1 day, 0:00:00
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -    return map(int,(orig_L, del_N, new_L, add_N))
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3899 days, 0:00:00
+ Linea -    return map(int,(origL, del_N, newL, add_N))
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:17.944289
+ Linea -    return list(map(int,(origL, del_N, newL, add_N)))
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.945730
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.948049
+ Linea -  def get_initial_version(first_rev,fn):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.949049
+ Linea -    lines = []
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.951759
+ Linea -    file_started_FL = False
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2013-01-04 Longevidad -  603 days, 0:00:00
+ Linea -    for line in os.popen('git-show %s %s'%(first_rev,fn)):
+
+Autor INIT -  dan     Fecha INIT -  2013-01-04 Autor DEL -          Fecha DEL -             Longevidad -  4080 days, 18:01:17.956251
+ Linea -    for line in os.popen('git show %s %s'%(first_rev,fn)):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:17.958654
+ Linea -      if line=='\ No newline at end of file\n':
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:17.959979
+ Linea -          continue
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.961999
+ Linea -      if file_started_FL:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.963994
+ Linea -        assert line[0]=='+',("don't recognize format",line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.965988
+ Linea -        lines.append(line[1:]) # take out the leading '+'
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.967983
+ Linea -      else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.969979
+ Linea -        if line.startswith('@@ -0,0 '):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.971973
+ Linea -          file_started_FL=True
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:17.974965
+ Linea -    return lines
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:17.976507
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  6 days, 0:00:00
+ Linea -  def find_index(ALL_LINES,L):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -  def find_index(ALL_LINES,L,ignore_begrev=None):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:17.982528
+ Linea -  def find_index(ALL_LINES,L,current_rev=None):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:17.984488
+ Linea -    i=0
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -    FL=0
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -    if L==81: FL=1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:17.991470
+ Linea -    while L:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -      if FL: print 'Now',i,len(ALL_LINES),L,'b',ALL_LINES[i].begrev,'e',ALL_LINES[i].endrev,repr(ALL_LINES[i].text)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:17.996457
+ Linea -      if i==len(ALL_LINES):               # appending to the end
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:17.997453
+ Linea -        return i
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  6 days, 0:00:00
+ Linea -      if ALL_LINES[i].endrev==None:       # line that has not been deleted
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.001443
+ Linea -      if ALL_LINES[i].endrev == None: # this line is still alive
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -        if ALL_LINES[i].begrev==ignore_begrev: # this line was inserted during the current revision, doesn't count
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.006430
+ Linea -        if ALL_LINES[i].begrev==current_rev: # this line was inserted during the current revision, doesn't count
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.008424
+ Linea -          pass
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.010419
+ Linea -        else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.012413
+ Linea -          L-=1 # count the line
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -      elif ALL_LINES[i].endrev == ignore_begrev: # still count the line, it was erased during the current revision
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.016403
+ Linea -      elif ALL_LINES[i].endrev == current_rev: # still count the line, it was erased during the current revision
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.019427
+ Linea -        L-=1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -      #if ALL_LINES[i].begrev<>ignore_begrev and  ALL_LINES[i].endrev==None:       # line that has not been deleted
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -      #  # ignore_begrev is used so we skip lines that have been inserted in the current revision
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -      #  L-=1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.028328
+ Linea -      i+=1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.030320
+ Linea -    # ffwd through deleted lines
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3899 days, 0:00:00
+ Linea -    while i<len(ALL_LINES) and ALL_LINES[i].endrev<>None:
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.033281
+ Linea -    while i<len(ALL_LINES) and ALL_LINES[i].endrev!=None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.036275
+ Linea -      i+=1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.038270
+ Linea -    return i
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.041260
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.043285
+ Linea -  def find_next_alive(ALL_LINES,i):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.045249
+ Linea -    while 1:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.047243
+ Linea -      if ALL_LINES[i].endrev==None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.049269
+ Linea -        return i
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.051232
+ Linea -      i+=1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.053227
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -  def print_so_far(ALL_LINES):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -    #lastbegrev = None
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.060243
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.061205
+ Linea -  def print_so_far(ALL_LINES,revs):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.064232
+ Linea -    head_rev = struct()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  5 days, 0:00:00
+ Linea -    head_rev.hash = '        '
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -    head_rev.hash = '  HEAD  '
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.070215
+ Linea -    #head_rev.hash = '  HEAD  '
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.072180
+ Linea -    head_rev.hash = '        '
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.075203
+ Linea -    head_rev.date = '          '
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.076746
+ Linea -    head_rev.author = '        '
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.078776
+ Linea -    i=0
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.080771
+ Linea -    for line in ALL_LINES:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      #if line.begrev == lastbegrev:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      #  beg = '   ^    '
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      #else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      #  beg = line.begrev[:8]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      #lastbegrev = line.begrev
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      beg = line.begrev[:8]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      end = '    ' if line.endrev is None else line.endrev[:8]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -        
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  0:00:00
+ Linea -      print '%s %8s:'%(beg,end),line.text,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      print '%8s %8s:'%(beg,end),line.text,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.102679
+ Linea -      beg = revs[line.begrev]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.105705
+ Linea -      end = revs[line.endrev] if line.endrev is not None else head_rev
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-23 Longevidad -  3 days, 0:00:00
+ Linea -      print '%s %s %s %s %s %s:'%(beg.hash[:8],end.hash[:8],beg.date,end.date,beg.author,end.author),line.text,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.109695
+ Linea -      #if line.endrev is None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.111687
+ Linea -      #  i+=1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.113682
+ Linea -      #  print '%3d'%i,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.115678
+ Linea -      #else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.116643
+ Linea -      #  print '   ',
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.119634
+ Linea -      #print '%s %s %s %s %s %s:'%(beg.hash[:8],end.hash[:8],beg.date,end.date,beg.author,end.author),line.text,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.121629
+ Linea -      #print '(%s %s %s)(%s %s %s)'%(beg.hash[:8],beg.date,beg.author,end.hash[:8],end.date,end.author),line.text,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.123624
+ Linea -      #print '%s (%s %s) %s (%s %s)'%(beg.hash[:8],beg.author,beg.date,end.hash[:8],end.author,end.date),line.text,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  2 days, 0:00:00
+ Linea -      print '%s (%s %s) %s (%s %s)'%(beg.hash[:8],beg.author,beg.date,end.hash[:8],end.author,end.date),line.text,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.127646
+ Linea -      #print '%s (%s %s) %s (%s %s)'%(beg.hash[:8],beg.author,beg.date,end.hash[:8],end.author,end.date),line.text,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.129638
+ Linea -      if line.endrev is not None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3893 days, 0:00:00
+ Linea -        print '-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text,
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.133630
+ Linea -        print('-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.135623
+ Linea -      else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3893 days, 0:00:00
+ Linea -        print ' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  7 days, 0:00:00
+ Linea -    print 
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.143602
+ Linea -        print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.145596
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.146563
+ Linea -  UsageString="""\
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.148556
+ Linea -  usage: git-blameall [options] file
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.150582
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.152579
+ Linea -      -h, --help            Show this help info and exit
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.154542
+ Linea -      -q                    Quiet, do not show progress information (Default: off)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.157568
+ Linea -      -v, --version         Show version information
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.158529
+ Linea -  """
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.161555
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.162555
+ Linea -  def usage():
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3892 days, 0:00:00
+ Linea -    print UsageString
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.166580
+ Linea -    print(UsageString)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.168574
+ Linea -    sys.exit(1)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.171534
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:18.173555
+ Linea -  def main():
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  6 days, 0:00:00
+ Linea -    V=0
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -    V=1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  1 day, 0:00:00
+ Linea -    V=0
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.182100
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.184101
+ Linea -    if len(sys.argv)==1:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.186063
+ Linea -      usage()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.189088
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  16 days, 0:00:00
+ Linea -    fn = sys.argv[1]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.193044
+ Linea -    # PROCESS COMMAND LINE ARGUMENTS
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    Flags, Args = getopt.getopt(sys.argv[1:], 'hq', ['help','debug'])
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    Flags = dict(Flags)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    #print Flags, Args
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    if '-h' in Flags or '--help' in Flags:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -      usage()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    Quiet = '-q' in Flags
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    V = '--debug' in Flags
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    assert len(Args)==1, ("Expecting only one file",Args)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    fn = Args[0]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.216132
+ Linea -    if 1:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  0:00:00
+ Linea -      Flags, Args = getopt.getopt(sys.argv[1:], 'hq', ['help','debug'])
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.220091
+ Linea -      Flags, Args = getopt.getopt(sys.argv[1:], 'hqv', ['help','debug', 'version'])
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.223114
+ Linea -      Flags = dict(Flags)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.226074
+ Linea -      #print Flags, Args
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.228106
+ Linea -      if '-h' in Flags or '--help' in Flags:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.230062
+ Linea -        usage()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.232094
+ Linea -      if '-v' in Flags or '--version' in Flags:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3890 days, 0:00:00
+ Linea -        print VERSION
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.236047
+ Linea -        print(VERSION)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.238042
+ Linea -        sys.exit()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.241033
+ Linea -      Quiet = '-q' in Flags
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.242811
+ Linea -      V = '--debug' in Flags
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.245806
+ Linea -      assert len(Args)==1, ("Expecting only one file",Args)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.247833
+ Linea -      fn = Args[0]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.249795
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  8 days, 0:00:00
+ Linea -    # get all revisions
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  10 days, 0:00:00
+ Linea -    revs = map(string.strip,os.popen('git-rev-list HEAD -- %s'%fn).readlines())
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -  dan     Fecha DEL -  2011-05-12 Longevidad -  2 days, 0:00:00
+ Linea -    #revs.append(revs[-1]+'^')
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  10 days, 0:00:00
+ Linea -    revs.insert(0,'HEAD')
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  6 days, 0:00:00
+ Linea -    hashes      = os.popen('git-rev-list HEAD -- %s'%fn).readlines() # GET ALL REVISIONS
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  6 days, 0:00:00
+ Linea -    date_author = os.popen('git-log --format="%%ad %%cn" --date=short %s'%fn).readlines() # GET REVISION INFO  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.265823
+ Linea -    # GET ALL REVISIONS
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    cmd         = 'git-rev-list HEAD -- %s'%fn
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    pipe        = os.popen(cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    hashes      = pipe.readlines()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.274765
+ Linea -    if 1:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  dan     Fecha DEL -  2013-01-04 Longevidad -  587 days, 0:00:00
+ Linea -      cmd         = 'git-rev-list HEAD -- %s'%fn
+
+Autor INIT -  dan     Fecha INIT -  2013-01-04 Autor DEL -          Fecha DEL -             Longevidad -  4080 days, 18:01:18.279247
+ Linea -      cmd         = 'git rev-list HEAD -- %s'%fn
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.282275
+ Linea -      if V:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3890 days, 0:00:00
+ Linea -        print '[cmd]',cmd
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.286232
+ Linea -        print('[cmd]',cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.289257
+ Linea -      pipe        = os.popen(cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.291220
+ Linea -      hashes      = pipe.readlines()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.294236
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    assert not pipe.close(), ('Command errored',cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    if not Quiet:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -      print '%d revisions'%(len(hashes)-1)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.304183
+ Linea -      assert not pipe.close(), ('Command errored',cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.306178
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.308179
+ Linea -      if not Quiet:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  dan     Fecha DEL -  2011-06-06 Longevidad -  9 days, 0:00:00
+ Linea -        print '%d revisions'%(len(hashes))
+
+Autor INIT -  dan     Fecha INIT -  2011-06-06 Autor DEL -          Fecha DEL -             Longevidad -  4658 days, 18:01:18.313159
+ Linea -        sys.stderr.write('%d revisions\n'%(len(hashes)))
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.315156
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.317182
+ Linea -    # GET REVISION INFO
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    cmd         = 'git-log --format="%%ad %%cn" --date=short %s'%fn
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    pipe        = os.popen(cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    date_author = pipe.readlines()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.327122
+ Linea -    if 1:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  dan     Fecha DEL -  2013-01-04 Longevidad -  587 days, 0:00:00
+ Linea -      cmd         = 'git-log --format="%%ad %%cn" --date=short %s'%fn
+
+Autor INIT -  dan     Fecha INIT -  2013-01-04 Autor DEL -          Fecha DEL -             Longevidad -  4080 days, 18:01:18.332142
+ Linea -      cmd         = 'git log --format="%%ad %%cn" --date=short %s'%fn
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.334136
+ Linea -      if V:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3890 days, 0:00:00
+ Linea -        print '[cmd]',cmd
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.338094
+ Linea -        print('[cmd]',cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.341087
+ Linea -      pipe        = os.popen(cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.343111
+ Linea -      date_author = pipe.readlines()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.345107
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -    assert not pipe.close(), ('Command errored',cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.349064
+ Linea -      assert not pipe.close(), ('Command errored',cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.352056
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  8 days, 0:00:00
+ Linea -    assert len(hashes)==len(date_author), ('mismatch between output of git-rev-list and git-log', hashes, date_author)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  dan     Fecha DEL -  2013-01-04 Longevidad -  587 days, 0:00:00
+ Linea -      assert len(hashes)==len(date_author), ('mismatch between output of git-rev-list and git-log', hashes, date_author)
+
+Autor INIT -  dan     Fecha INIT -  2013-01-04 Autor DEL -          Fecha DEL -             Longevidad -  4080 days, 18:01:18.359070
+ Linea -      assert len(hashes)==len(date_author), ('mismatch between output of "git rev-list" and "git log"', hashes, date_author)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.361031
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.363061
+ Linea -    revs = []
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.366084
+ Linea -    for hash, date_au in zip(hashes,date_author):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.368046
+ Linea -      x = struct()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.370042
+ Linea -      x.hash = hash.strip()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-23 Longevidad -  3 days, 0:00:00
+ Linea -      x.date, x.author = date_au.split()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.375027
+ Linea -      x.date, x.author = date_au.split(' ',1)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.376065
+ Linea -      x.author = x.author.strip()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.379635
+ Linea -      revs.append(x)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  6 days, 0:00:00
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  6 days, 0:00:00
+ Linea -    #max_author_len = max([len(x.author) for x in revs])
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  6 days, 0:00:00
+ Linea -    #forced_author_len = min(8,max_author_len)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.388578
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.390573
+ Linea -    if not Quiet:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-06-06 Longevidad -  11 days, 0:00:00
+ Linea -      print '%s --- %s'%(revs[-1].date,revs[0].date)
+
+Autor INIT -  dan     Fecha INIT -  2011-06-06 Autor DEL -          Fecha DEL -             Longevidad -  4658 days, 18:01:18.395559
+ Linea -      sys.stderr.write('%s --- %s\n'%(revs[-1].date,revs[0].date))
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.397553
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.399582
+ Linea -    forced_author_len = 8
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.401577
+ Linea -    for x in revs:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.404536
+ Linea -      if len(x.author) > forced_author_len:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.406840
+ Linea -        x.author = x.author[:forced_author_len-1]+'.'
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.408838
+ Linea -      else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-23 Longevidad -  3 days, 0:00:00
+ Linea -        x.author = x.author.center(forced_author_len)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.414817
+ Linea -        #x.author = x.author.center(forced_author_len)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.417779
+ Linea -        x.author = x.author.ljust(forced_author_len)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:18.419811
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  8 days, 0:00:00
+ Linea -    # initial version
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-12 Longevidad -  0:00:00
+ Linea -    print get_initial_version(revs[-1],fn)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-12 Longevidad -  0:00:00
+ Linea -    sys.exit()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -    LINES=[]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  8 days, 0:00:00
+ Linea -    ALL_LINES=[]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  6 days, 0:00:00
+ Linea -    for line in get_initial_version(revs[-1],fn)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  2 days, 0:00:00
+ Linea -    for line in get_initial_version(revs[-1],fn):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.438723
+ Linea -    ALL_LINES=[]                        # INITIAL VERSION
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.440751
+ Linea -    for line in get_initial_version(revs[-1].hash,fn):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.442744
+ Linea -      x = struct()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.445705
+ Linea -      x.text    = line
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -      x.rev_beg = revs[-1]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -      LINES.append(x)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      x.begrev  = revs[-1]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.457703
+ Linea -      x.begrev  = len(revs)-1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.459701
+ Linea -      x.endrev  = None
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.461663
+ Linea -      ALL_LINES.append(x)  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.463689
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.465684
+ Linea -    if V:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      print_so_far(ALL_LINES)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.472666
+ Linea -      print_so_far(ALL_LINES,revs)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.474692
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.476687
+ Linea -    # process all the revisions
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -    orig_L, del_N, new_L, add_N = 0,0,0,0
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  9 days, 0:00:00
+ Linea -    for i in range(len(revs)-1):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -  dan     Fecha DEL -  2011-05-11 Longevidad -  1 day, 0:00:00
+ Linea -      os.system('git-diff %s %s %s'%(revs[i+1],revs[i],fn))
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -  dan     Fecha DEL -  2011-05-11 Longevidad -  1 day, 0:00:00
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -  dan     Fecha DEL -  2011-05-11 Longevidad -  1 day, 0:00:00
+ Linea -    print revs
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -  dan     Fecha DEL -  2011-05-12 Longevidad -  1 day, 0:00:00
+ Linea -      print revs[i+1], revs[i]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  7 days, 0:00:00
+ Linea -      for line in os.popen('git-diff -U0 %s %s %s'%(revs[i+1],revs[i],fn)):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -  dan     Fecha DEL -  2011-05-12 Longevidad -  1 day, 0:00:00
+ Linea -        print line,
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -      cmd = 'git-diff -U0 %s %s %s'%(revs[i+1],revs[i],fn)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -      print '[cmd]',cmd
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.501058
+ Linea -    origL, del_N, newL, add_N = 0,0,0,0
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.504051
+ Linea -    for r in range(len(revs)-1,0,-1):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  0:00:00
+ Linea -      sys.stdout.write('\r')
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  0:00:00
+ Linea -      sys.stdout.flush()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  0:00:00
+ Linea -      print 'Processing revisions: (%d/%d) %s' % (len(revs)-r,len(revs)-1,revs[r-1].date),
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.514057
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.516018
+ Linea -      if not Quiet:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-06-06 Longevidad -  11 days, 0:00:00
+ Linea -        sys.stdout.write('\r')
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-06-06 Longevidad -  11 days, 0:00:00
+ Linea -        sys.stdout.flush()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -        print 'Processing revision: (%d/%d) %s' % (len(revs)-r,len(revs)-1,revs[r-1].date),
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  dan     Fecha DEL -  2011-06-06 Longevidad -  9 days, 0:00:00
+ Linea -        print 'Processing revision: (%d/%d) %s' % (len(revs)-r+1,len(revs),revs[r-1].date),
+
+Autor INIT -  dan     Fecha INIT -  2011-06-06 Autor DEL -          Fecha DEL -             Longevidad -  4658 days, 18:01:18.590533
+ Linea -        sys.stderr.write('\r')
+
+Autor INIT -  dan     Fecha INIT -  2011-06-06 Autor DEL -          Fecha DEL -             Longevidad -  4658 days, 18:01:18.592699
+ Linea -        sys.stderr.write('Processing revision: (%d/%d) %s' % (len(revs)-r+1,len(revs),revs[r-1].date))
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.595459
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -      cmd = 'git-diff -U0 %s %s %s'%(revs[r],revs[r-1],fn)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  6 days, 0:00:00
+ Linea -      cmd = 'git-diff -U0 %s %s %s'%(revs[r].hash,revs[r-1].hash,fn)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2013-01-04 Longevidad -  589 days, 0:00:00
+ Linea -      cmd  = 'git-diff -U0 %s %s %s'%(revs[r].hash,revs[r-1].hash,fn)
+
+Autor INIT -  dan     Fecha INIT -  2013-01-04 Autor DEL -          Fecha DEL -             Longevidad -  4080 days, 18:01:18.606078
+ Linea -      cmd  = 'git diff -U0 %s %s %s'%(revs[r].hash,revs[r-1].hash,fn)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.608543
+ Linea -      pipe = os.popen(cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.610540
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.613564
+ Linea -      if V:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3899 days, 0:00:00
+ Linea -        print '[cmd]',cmd
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3899 days, 0:00:00
+ Linea -        print
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  7 days, 0:00:00
+ Linea -      
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.624502
+ Linea -        print('[cmd]',cmd)
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.626529
+ Linea -        print()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.628491
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.630697
+ Linea -      in_header_FL = True
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  8 days, 0:00:00
+ Linea -      for line_no,line in enumerate(os.popen(cmd)):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -        if line_no<4:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -          # skip over the header
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -          continue
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -        print 'line',repr(line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  8 days, 0:00:00
+ Linea -        if line.startswith('@@'):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -  dan     Fecha DEL -  2011-05-12 Longevidad -  1 day, 0:00:00
+ Linea -          print parse_chunk_header(line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -          orig_L, del_N, new_L, add_N = parse_chunk_header(line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -          print 'chunk',orig_L,del_N,new_L,add_N
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -          deleted_line = None # this keeps track of last deleted line in chunk
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  6 days, 0:00:00
+ Linea -          all_lines_ins_point = None
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -          all_lines_ins_pt = None
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -        else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -          # PROCESS DELETED LINES
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -          if del_N:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  7 days, 0:00:00
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  7 days, 0:00:00
+ Linea -          if line_no<4:                 # SKIP OVER HEADER
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  7 days, 0:00:00
+ Linea -            continue
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  7 days, 0:00:00
+ Linea -           
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  0:00:00
+ Linea -          #if line_no<4:                 # SKIP OVER HEADER
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  0:00:00
+ Linea -          #  continue
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.683353
+ Linea -      for line in pipe:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.686312
+ Linea -  
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.689337
+ Linea -          if in_header_FL:              # SKIP OVER HEADER
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.691332
+ Linea -              if line.startswith('@@'): # we hit our first chunk
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.693326
+ Linea -                  in_header_FL = False
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.695287
+ Linea -              else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.697314
+ Linea -                  continue
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.699311
+ Linea -              
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.702269
+ Linea -          if line=='\ No newline at end of file\n':
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.705263
+ Linea -              continue
+
+Autor INIT -  dan     Fecha INIT -  2011-05-23 Autor DEL -          Fecha DEL -             Longevidad -  4672 days, 18:01:18.707289
+ Linea -              
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.709252
+ Linea -          if V: 
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  9 days, 0:00:00
+ Linea -            print '[line]',repr(line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3890 days, 0:00:00
+ Linea -            print '[line]',repr(line),'add_N=%d del_N=%d'%(add_N,del_N)
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.716266
+ Linea -            print('[line]',repr(line),'add_N=%d del_N=%d'%(add_N,del_N))
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.718227
+ Linea -          
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.721219
+ Linea -          if line.startswith('@@'):     # RECEIVED A NEW CHUNK!
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.723213
+ Linea -          
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.725209
+ Linea -            origL, del_N, newL, add_N = parse_chunk_header(line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.728235
+ Linea -            all_index = None
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.730227
+ Linea -            if V:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3899 days, 0:00:00
+ Linea -              print 'chunk',origL,del_N,newL,add_N
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.734184
+ Linea -              print('chunk',origL,del_N,newL,add_N)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.737176
+ Linea -            
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.739205
+ Linea -          elif del_N:                   # PROCESSING DELETED LINES
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.742196
+ Linea -          
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.744158
+ Linea -            assert line.startswith('-'),line
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -            deleted_line = LINES[new_L-1]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -            deleted_line.rev_end = revs[i]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -            del LINES[new_L-1]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.754132
+ Linea -            
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.756126
+ Linea -            if all_index is None:       # find index in ALL_LINES for origL
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  6 days, 0:00:00
+ Linea -              all_index = find_index(ALL_LINES, origL-1)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -              all_index = find_index(ALL_LINES, origL-1, ignore_begrev=r-1)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.763109
+ Linea -              all_index = find_index(ALL_LINES, origL-1, current_rev=r-1)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.765144
+ Linea -            else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.767131
+ Linea -              all_index = find_next_alive(ALL_LINES, all_index)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.770092
+ Linea -             
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.772119
+ Linea -            #if V: 
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.774079
+ Linea -            #  print 'DEL origL=%d del_N=%d all_index=%d text=%r'%(origL,del_N,all_index,ALL_LINES[all_index].text)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.776074
+ Linea -                
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -            ALL_LINES[all_index].endrev = revs[r-1]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -            #assert ALL_LINES[all_index].text == line[1:], \
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -  dan     Fecha DEL -  2011-05-25 Longevidad -  0:00:00
+ Linea -            #  ("diff processing screwed up, marking the wrong deletion line",ALL_LINES[all_index].text,line,all_index)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.784596
+ Linea -            assert ALL_LINES[all_index].text == line[1:], \
+
+Autor INIT -  dan     Fecha INIT -  2011-05-25 Autor DEL -          Fecha DEL -             Longevidad -  4670 days, 18:01:18.787587
+ Linea -              ("diff processing screwed up, marking the wrong deletion line",ALL_LINES[all_index].text,line,all_index)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.789612
+ Linea -            ALL_LINES[all_index].endrev = r-1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.791608
+ Linea -            
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.793603
+ Linea -            del_N -= 1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -          # PROCESS ADDED LINES
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -          else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -            assert del_N == 0, (del_N,"expecting to see all deleted line in diff chunk before any added lines")
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -            assert line.startswith('+'), ("can't parse this diff chunk, expecting added line, instead got this",line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  6 days, 0:00:00
+ Linea -            if all_lines_ins_point == None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -            if all_lines_ins_pt == None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -              # figure out where in ALL_LINES we insert new lines
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -              if new_L == 0: # inserting in beginning file
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  6 days, 0:00:00
+ Linea -                all_lines_ins_point = 0
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -                all_lines_ins_pt = 0
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -              else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -                if deleted_line == None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -                  # this chunk did not have any deleted lines, find the previous line
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -                  # so that we know where to add the new lines in ALL_LINES
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -                  deleted_line = LINES[new_L-2]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  6 days, 0:00:00
+ Linea -                all_lines_ins_point = ALL_LINES.index(deleted_line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -                all_lines_ins_pt = ALL_LINES.index(deleted_line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.833462
+ Linea -            if del_N == 0:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.835459
+ Linea -              all_index = None
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.838452
+ Linea -            
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.840476
+ Linea -          elif add_N:                   # PROCESSING ADDED LINES
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.842440
+ Linea -          
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.844468
+ Linea -            assert line.startswith('+'),line
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.846428
+ Linea -            if all_index is None:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.848423
+ Linea -              all_index = find_index(ALL_LINES, newL-1)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.850418
+ Linea -            else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.852413
+ Linea -              all_index += 1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.855440
+ Linea -                        
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.857433
+ Linea -            x = struct()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  6 days, 0:00:00
+ Linea -            x.text = line
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -          Fecha DEL -             Longevidad -  4677 days, 18:01:18.861421
+ Linea -            x.text = line[1:]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -            x.rev_beg = revs[i]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  7 days, 0:00:00
+ Linea -            LINES.insert(new_L-1,x)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  6 days, 0:00:00
+ Linea -            ALL_LINES.insert(all_lines_ins_point,x)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -            ALL_LINES.insert(all_lines_ins_pt,x)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -            x.begrev = revs[r-1]
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.875420
+ Linea -            x.begrev = r-1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.876387
+ Linea -            x.endrev = None
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.878921
+ Linea -            
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.880948
+ Linea -            ALL_LINES.insert(all_index, x)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.882947
+ Linea -            
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.884903
+ Linea -            add_N -= 1
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -  dan     Fecha DEL -  2011-05-18 Longevidad -  6 days, 0:00:00
+ Linea -              
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.889889
+ Linea -            if add_N == 0:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.891884
+ Linea -              all_index = None
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.893878
+ Linea -            
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.896871
+ Linea -          else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  7 days, 0:00:00
+ Linea -            assert 0, "shouldn't reach here unless misparsed diff output"
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -            assert 0, ("shouldn't reach here unless misparsed diff output",line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.905848
+ Linea -            if line.startswith('diff'):
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.908838
+ Linea -              # This file was deleted, and then recreated, in this situation
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.910833
+ Linea -              # we may get several "diff" blocks out of a single git-diff command
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.913825
+ Linea -              # start processing the new block
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.915820
+ Linea -              in_header_FL = True
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.918813
+ Linea -            else:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.921804
+ Linea -              assert 0, ("shouldn't reach here unless misparsed diff output",line)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-12 Autor DEL -          Fecha DEL -             Longevidad -  4683 days, 18:01:18.923831
+ Linea -          
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -      print    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -      for line in ALL_LINES:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-18 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  1 day, 0:00:00
+ Linea -        print ':',repr(line.text)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-11 Autor DEL -  dan     Fecha DEL -  2011-05-19 Longevidad -  8 days, 0:00:00
+ Linea -      print 
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.933807
+ Linea -      assert not pipe.close(), ('Command errored',cmd)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -          Fecha DEL -             Longevidad -  4669 days, 18:01:18.936776
+ Linea -      
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -          Fecha DEL -             Longevidad -  4676 days, 18:01:18.939757
+ Linea -      if V:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  Karoly .Fecha DEL -  2022-01-20 Longevidad -  3899 days, 0:00:00
+ Linea -        print
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -        print_so_far(ALL_LINES)
+
+Autor INIT -  Karoly .Fecha INIT -  2022-01-20 Autor DEL -          Fecha DEL -             Longevidad -  777 days, 18:01:18.948732
+ Linea -        print()
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.950728
+ Linea -        print_so_far(ALL_LINES,revs)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  7 days, 0:00:00
+ Linea -        
+
+Autor INIT -  dan     Fecha INIT -  2011-05-19 Autor DEL -  dan     Fecha DEL -  2011-05-20 Longevidad -  1 day, 0:00:00
+ Linea -    print_so_far(ALL_LINES)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  0:00:00
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-26 Longevidad -  0:00:00
+ Linea -    print 
+
+Autor INIT -  dan     Fecha INIT -  2011-05-26 Autor DEL -  dan     Fecha DEL -  2011-05-28 Longevidad -  2 days, 0:00:00
+ Linea -        
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.966687
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -          Fecha DEL -             Longevidad -  4667 days, 18:01:18.969682
+ Linea -    if not Quiet:
+
+Autor INIT -  dan     Fecha INIT -  2011-05-28 Autor DEL -  dan     Fecha DEL -  2011-06-06 Longevidad -  9 days, 0:00:00
+ Linea -      print
+
+Autor INIT -  dan     Fecha INIT -  2011-06-06 Autor DEL -          Fecha DEL -             Longevidad -  4658 days, 18:01:18.974665
+ Linea -      sys.stderr.write('\n')
+
+Autor INIT -  dan     Fecha INIT -  2011-05-20 Autor DEL -          Fecha DEL -             Longevidad -  4675 days, 18:01:18.976660
+ Linea -    print_so_far(ALL_LINES,revs)
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:18.979167
+ Linea -    
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:18.982158
+ Linea -  if __name__=='__main__':
+
+Autor INIT -  dan     Fecha INIT -  2011-05-10 Autor DEL -          Fecha DEL -             Longevidad -  4685 days, 18:01:18.986151
+ Linea -    main()
+
