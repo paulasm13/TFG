@@ -58,12 +58,9 @@ def run_url(protocol, type_git, user, repo):
     command_line = "git clone " + repo_url
     print('Run url...')
     print(command_line)
-    # List everything and separate
-    #args = shlex.split(command_line)
-    #print(args)
     # Run in the shell the command_line
     subprocess.call(command_line)
-    #get_directory(url)
+    get_directory(repo_url)
 
 
 def run_user():
@@ -93,10 +90,10 @@ def run_user():
         check_lenguage(url, 'https', 'github.com', option, repository["name"])
 
 
-def get_directory(url):
+def get_directory(repo_url):
     """ Get the name of the downloaded repository directory. """
     # Get values from the url
-    values = url.split('/')
+    values = repo_url.split('/')
     # Last item in the list
     name_directory = values[-1]
     # Remove extension .git
