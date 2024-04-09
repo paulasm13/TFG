@@ -3,13 +3,16 @@
 
 ARCHIVO PARA ANALIZAR UN DIRECTORIO
 
+- Clona un repositorio 
+- Analiza su contenido
+- Lista los ficheros en una BBDD
+
 
 """
 
 import os
 import sys
 import requests
-import shlex
 import subprocess
 
 
@@ -18,7 +21,7 @@ def menu():
     if type_option == 'repo-url':
         request_url()        
     else:
-        sys.exit('Incorrect Option. [python3 init.py repo <name_urlclone>]')
+        sys.exit('Usage: python3 init.py 'repo-url' <name_urlclone>]')
 
 
 def request_url():
@@ -149,7 +152,6 @@ if __name__ == "__main__":
         type_option = sys.argv[1]
         option = sys.argv[2]
     except:
-        sys.exit("Usage: python3 file.py type-option('directory', " +
-                 "'repo-url', 'user') option(directory, url, user)")
+        sys.exit("Usage: python3 init.py 'repo-url' url")
         
 menu()
