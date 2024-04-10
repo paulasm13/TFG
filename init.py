@@ -91,6 +91,7 @@ def get_path(name_directory):
     if fichero.endswith('.'):
         absFilePath = absFilePath.replace("\\" + fichero, "")
     print("This script absolute path is ", absFilePath)
+    get_bd()
     read_Directory(absFilePath, name_directory)
 
 
@@ -121,7 +122,6 @@ def read_Directory(absFilePath, repo):
                     print(f"No se pudo determinar el lenguaje para {name_file}.")
                     language = None
                 id += 1
-                add_file(id, name_file, pos, language)
             # Subdirectory...
             elif '.' not in directory[i]:
                 print('\nOpening another directory...\n')
@@ -134,23 +134,35 @@ def read_Directory(absFilePath, repo):
         print(os.listdir(path))
         pass
 
-
-def add_file(id, name_file, pos, language):
-    # Connection to SERVER
+def get_bd():
+    # Connection to SERVER - Cursor Server
     SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
+    # La base de datos maestra es necesaria para crear nuevas bbdd
     DATABASE = 'master'
 
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
 
     try:
-        connection_server = pyodbc.connect(connectionString)
+        conn = pyodbc.connect(connectionString, autocommit=True)
+        # Desactivo transacciones, cada consulta se ejecutará como 
+        # transacción independiente y se confirmará automaticamente
         print("Conexión exitosa con el servidor")
     except Exception as ex:
-        print(f"No se pudo conectar con el servidor de la base de datos: {str(SERVER)}")
+        print(f"No se pudo conectar con el servidor de la base de datos: {str(ex)}")
 
-    # Create/Connection BBDD
-   
-    connection_server.close()
+    # Crear una nueva base de datos
+    new_database_name = 'Analysis_Github_Repository'
+    cursor = conn.cursor()
+    try:
+        cursor.execute(f'CREATE DATABASE {new_database_name}')
+        print(f'Se ha creado la base de datos "{new_database_name}" exitosamente.')
+    except Exception as ex:
+        print(f"No se pudo crear la base de datos: {str(ex)}")
+    #conn.commit()
+
+    # Cerrar la conexión
+    conn.close()
+
 
 if __name__ == "__main__":
     try:
