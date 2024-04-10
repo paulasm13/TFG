@@ -5,7 +5,8 @@ ARCHIVO PARA ANALIZAR UN DIRECTORIO
 
 - Clona un repositorio 
 - Analiza su contenido
-- Lista los ficheros en una BBDD
+- Lista los ficheros, y los guarda en una BBDD
+- Descarta el archivo .git que se crea al clonar el repositorio (xq se crea?)
 
 
 """
@@ -14,6 +15,9 @@ import os
 import sys
 import requests
 import subprocess
+import pyodbc
+from pygments.lexers import guess_lexer_for_filename
+from pygments.util import ClassNotFound
 
 
 def menu():
@@ -21,7 +25,7 @@ def menu():
     if type_option == 'repo-url':
         request_url()        
     else:
-        sys.exit('Usage: python3 init.py 'repo-url' <name_urlclone>]')
+        sys.exit("Usage: python3 init.py repo-url <name_urlclone>")
 
 
 def request_url():
@@ -66,33 +70,6 @@ def run_url(protocol, type_git, user, repo):
     get_directory(repo_url)
 
 
-def run_user():
-    """ Run user. """
-    # Create the url of the api
-    user_url = ("https://api.github.com/users/" + option)
-    print(user_url)
-    print("Analyzing user...\n")
-    try:
-        # Extract headers
-        headers = requests.get(user_url)
-        # Decode JSON response into a Python dict:
-        content = headers.json()
-        # Get repository url
-        repo_url = content["repos_url"]
-    except KeyError:
-        sys.exit('An unavailable user has been entered')
-    print("Analyzing repositories...\n")
-    # Extract repository names
-    names = requests.get(repo_url)
-    # Decode JSON response into a Python dict:
-    content = names.json()
-    # Show repository names
-    for repository in content:
-        print('\nRepository: ' + str(repository["name"]))
-        url = ("https://github.com/" + option + "/" + repository["name"])
-        check_lenguage(url, 'https', 'github.com', option, repository["name"])
-
-
 def get_directory(repo_url):
     """ Get the name of the downloaded repository directory. """
     # Get values from the url
@@ -112,32 +89,43 @@ def get_path(name_directory):
     # Check if the last element is a file
     fichero = absFilePath.split('/')[-1]
     if fichero.endswith('.'):
-        absFilePath = absFilePath.replace("/" + fichero, "")
+        absFilePath = absFilePath.replace("\\" + fichero, "")
     print("This script absolute path is ", absFilePath)
     read_Directory(absFilePath, name_directory)
 
 
-
 def read_Directory(absFilePath, repo):
     """ Extract the files from the directory. """
-    #pos = ''
+    id = 0
+    pos = ''
     print('Directory: ')
     path = absFilePath
     print(path)
     try:
         # I get a list of the files and subdirectories in the given directory
         directory = os.listdir(path)
-        print(directory)
         # File...
         for i in range(0, len(directory)):
-            if directory[i].endswith('.'):
+            if '.' in directory[i] and not directory[i].startswith('.'):
                 print('Python File: ' + str(directory[i]))
-                pos = path + "/" + directory[i]
-                #read_File(pos, repo)
+                name_file = str(directory[i])
+                pos = path + "\\" + directory[i]   
+                try:
+                    with open(pos, 'rb') as file:
+                        lexer = guess_lexer_for_filename(name_file, file.read())
+                        language = lexer.name
+                        print(f"El archivo {name_file} está en {language}.")
+                except FileNotFoundError:
+                    print(f"No se pudo abrir el archivo {name_file}.")
+                except ClassNotFound:
+                    print(f"No se pudo determinar el lenguaje para {name_file}.")
+                    language = None
+                id += 1
+                add_file(id, name_file, pos, language)
             # Subdirectory...
             elif '.' not in directory[i]:
                 print('\nOpening another directory...\n')
-                path2 = absFilePath + '/' + directory[i]
+                path2 = absFilePath + '\\' + directory[i]
                 try:
                     read_Directory(path2, directory[i])
                 except NotADirectoryError:
@@ -146,6 +134,23 @@ def read_Directory(absFilePath, repo):
         print(os.listdir(path))
         pass
 
+
+def add_file(id, name_file, pos, language):
+    # Connection to SERVER
+    SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
+    DATABASE = 'master'
+
+    connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
+
+    try:
+        connection_server = pyodbc.connect(connectionString)
+        print("Conexión exitosa con el servidor")
+    except Exception as ex:
+        print(f"No se pudo conectar con el servidor de la base de datos: {str(SERVER)}")
+
+    # Create/Connection BBDD
+   
+    connection_server.close()
 
 if __name__ == "__main__":
     try:
