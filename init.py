@@ -7,6 +7,7 @@ ARCHIVO PARA ANALIZAR UN DIRECTORIO
 - Analiza su contenido
 - Lista los ficheros, y los guarda en una BBDD
 - Descarta el archivo .git que se crea al clonar el repositorio (xq se crea?)
+- Crea una BBDD 'Analysis_Github_Repository'
 
 
 """
