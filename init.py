@@ -195,8 +195,8 @@ def insert_data(name_file, pos, language):
 
     cursor_bd = conn.cursor()
     
+     # ID PRIMARY KEY
     try:
-        # ID PRIMARY KEY
         cursor_bd.execute(f"SELECT MAX(ID) FROM {NEW_TABLE}")
         last_id = cursor_bd.fetchone()[0]
 
