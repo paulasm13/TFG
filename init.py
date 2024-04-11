@@ -19,10 +19,16 @@ from pygments.lexers import guess_lexer_for_filename
 from pygments.util import ClassNotFound
 
 
+# Variables globales
+SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
+DATABASE = 'master'
+NEW_DATABASE = 'Analysis_Github_Repository'
+NEW_TABLE = 'Files'
+
 def menu():
     """ Choose option. """
     if type_option == 'repo-url':
-        request_url()        
+        request_url()   
     else:
         sys.exit("Usage: python3 init.py repo-url <name_urlclone>")
 
@@ -87,13 +93,12 @@ def get_path(name_directory):
     if fichero.endswith('.'):
         absFilePath = absFilePath.replace("\\" + fichero, "")
     print("This script absolute path is ", absFilePath)
-    get_bd()
     read_directory(absFilePath, name_directory)
+    
 
 
 def read_directory(absFilePath, name_directory):
     """ Extract the files from the directory. """
-    id = 0
     pos = ''
     print('Directory: ')
     path = absFilePath
@@ -101,6 +106,7 @@ def read_directory(absFilePath, name_directory):
     try:
         # Get a list of files and subdirectories in the specified directory
         directory = os.listdir(path)
+        print(directory)
         # File...
         for i in range(0, len(directory)):
             if '.' in directory[i] and not directory[i].startswith('.'):
@@ -117,7 +123,7 @@ def read_directory(absFilePath, name_directory):
                 except ClassNotFound:
                     print(f"No se pudo determinar el lenguaje para {name_file}.")
                     language = None
-                id += 1
+                insert_data(name_file, pos, language)
             # Subdirectory...
             elif '.' not in directory[i]:
                 print('\nOpening another directory...\n')
@@ -133,29 +139,83 @@ def read_directory(absFilePath, name_directory):
 
 def get_bd():
     # Connection to MASTER DATABASE 
-    SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
-    DATABASE = 'master'
-
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
 
     try:
-        conn = pyodbc.connect(connectionString, autocommit=True)
+        connection = pyodbc.connect(connectionString, autocommit=True)
         print("Conexión exitosa con la BBDD MASTER")
     except Exception as ex:
         print(f"No se pudo conectar a la BBDD MASTER: {str(ex)}")
 
     # New database
-    new_database_name = 'Analysis_Github_Repository'
-    cursor = conn.cursor()
+    cursor = connection.cursor()
     try:
-        cursor.execute(f'CREATE DATABASE {new_database_name}')
-        print(f'Se ha creado la base de datos "{new_database_name}" exitosamente.')
+        cursor.execute(f'CREATE DATABASE {NEW_DATABASE}')
+        print(f'Se ha creado la base de datos "{NEW_DATABASE}" exitosamente.')
     except Exception as ex:
         print(f"No se pudo crear la base de datos: {str(ex)}")
 
     # Close connection MASTER DATABASE
+    connection.close()
+
+    # Connection to 'Analysis_Github_Repository' DATABASE 
+    connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
+
+    try:
+        conn = pyodbc.connect(connectionString)
+        print("Conexión exitosa con la BBDD 'Analysis_Github_Repository'")
+    except Exception as ex:
+        print(f"No se pudo conectar a la BBDD 'Analysis_Github_Repository': {str(ex)}")
+
+    cursor_bd = conn.cursor()
+
+    # Definir la consulta SQL para crear la tabla
+    create_table_query = f'''
+    CREATE TABLE {NEW_TABLE} (
+        ID INT PRIMARY KEY,
+        Name VARCHAR(MAX) NOT NULL,
+        Path VARCHAR(MAX) NOT NULL,
+        Language VARCHAR(50),
+    )
+    '''
+    cursor_bd.execute(create_table_query)
+    conn.commit()
     conn.close()
 
+
+def insert_data(name_file, pos, language):
+    # Connection to 'Analysis_Github_Repository' DATABASE 
+    connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
+
+    try:
+        conn = pyodbc.connect(connectionString)
+        print("Conexión exitosa con la BBDD 'Analysis_Github_Repository'")
+    except Exception as ex:
+        print(f"No se pudo conectar a la BBDD 'Analysis_Github_Repository': {str(ex)}")
+
+    cursor_bd = conn.cursor()
+    
+    try:
+        # ID PRIMARY KEY
+        cursor_bd.execute(f"SELECT MAX(ID) FROM {NEW_TABLE}")
+        last_id = cursor_bd.fetchone()[0]
+
+        if last_id is None:
+            last_id = 0
+
+        new_id = last_id + 1
+
+    except Exception as e:
+        print("Error al incrementar el ID:", e)
+        return None
+
+    insert_query = f"INSERT INTO {NEW_TABLE} (ID, Name, Path, Language) VALUES (?, ?, ?, ?)"
+    data_to_insert = (new_id, name_file, pos, language)
+    cursor_bd.execute(insert_query, data_to_insert)
+    conn.commit()
+    conn.close()
+
+    
 
 if __name__ == "__main__":
     try:
@@ -163,5 +223,7 @@ if __name__ == "__main__":
         option = sys.argv[2]
     except:
         sys.exit("Usage: python3 init.py 'repo-url' url")
-        
+
+
+get_bd()        
 menu()

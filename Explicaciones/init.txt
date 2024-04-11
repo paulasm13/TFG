@@ -21,3 +21,6 @@ ARCHIVO PARA ANALIZAR UN REPOSITORIO
 - get_bd(). Se conecta a una BBDD MASTER, y desde ahi, se crea una BBDD.
 La base de datos MASTER es necesaria para poder crear nuevas bases de datos, por lo que una vez que realizamos la conexión a esta base de datos, creamos la BBDD llamada "Analysis_Github_Repository".
 	* Con el atributo "autocommit=True" desactivo las transacciones y así soluciono un error debido a realizar los commits de uno en uno. De manera que, cada consulta se ejecutará como transacción independiente y se confirmará automaticamente
+Una vez que he creado la base de datos, creo la tabla "Files" con varias columnas [ID, Name, Path, Language].
+
+- insert_data(). Se conecta a la BBDD "Analysis_Github_Repository" e introduce los datos [ID, Name, Path, Language] en la tabla "Files".
