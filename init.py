@@ -1,16 +1,14 @@
 """
 
-
-ARCHIVO PARA ANALIZAR UN DIRECTORIO
+ARCHIVO PARA ANALIZAR UN REPOSITORIO
 
 - Clona un repositorio 
 - Analiza su contenido
-- Lista los ficheros, y los guarda en una BBDD
-- Descarta el archivo .git que se crea al clonar el repositorio (xq se crea?)
+- Lista el contenido del repositorio
 - Crea una BBDD 'Analysis_Github_Repository'
 
-
 """
+
 
 import os
 import sys
@@ -57,15 +55,12 @@ def run_url(protocol, type_git, user, repo):
     # Create the url of the api
     repo_url = (protocol + "://" + type_git + "/" + user + "/" +
                 repo + ".git")
-    print("Analyzing repository languages...\n")
-    print(repo_url)
+    print("Analyzing repository...\n")
     # Get content
     r = requests.get(repo_url)
-    print(r)
     """ Run url. """
     command_line = "git clone " + repo_url
     print('Run url...')
-    print(command_line)
     # Run in the shell the command_line
     subprocess.call(command_line)
     get_directory(repo_url)
@@ -93,10 +88,10 @@ def get_path(name_directory):
         absFilePath = absFilePath.replace("\\" + fichero, "")
     print("This script absolute path is ", absFilePath)
     get_bd()
-    read_Directory(absFilePath, name_directory)
+    read_directory(absFilePath, name_directory)
 
 
-def read_Directory(absFilePath, repo):
+def read_directory(absFilePath, name_directory):
     """ Extract the files from the directory. """
     id = 0
     pos = ''
@@ -104,7 +99,7 @@ def read_Directory(absFilePath, repo):
     path = absFilePath
     print(path)
     try:
-        # I get a list of the files and subdirectories in the given directory
+        # Get a list of files and subdirectories in the specified directory
         directory = os.listdir(path)
         # File...
         for i in range(0, len(directory)):
@@ -128,30 +123,28 @@ def read_Directory(absFilePath, repo):
                 print('\nOpening another directory...\n')
                 path2 = absFilePath + '\\' + directory[i]
                 try:
-                    read_Directory(path2, directory[i])
+                    read_directory(path2, directory[i])
                 except NotADirectoryError:
                     pass
     except FileNotFoundError:
         print(os.listdir(path))
         pass
 
+
 def get_bd():
-    # Connection to SERVER - Cursor Server
+    # Connection to MASTER DATABASE 
     SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
-    # La base de datos maestra es necesaria para crear nuevas bbdd
     DATABASE = 'master'
 
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
 
     try:
         conn = pyodbc.connect(connectionString, autocommit=True)
-        # Desactivo transacciones, cada consulta se ejecutará como 
-        # transacción independiente y se confirmará automaticamente
-        print("Conexión exitosa con el servidor")
+        print("Conexión exitosa con la BBDD MASTER")
     except Exception as ex:
-        print(f"No se pudo conectar con el servidor de la base de datos: {str(ex)}")
+        print(f"No se pudo conectar a la BBDD MASTER: {str(ex)}")
 
-    # Crear una nueva base de datos
+    # New database
     new_database_name = 'Analysis_Github_Repository'
     cursor = conn.cursor()
     try:
@@ -159,9 +152,8 @@ def get_bd():
         print(f'Se ha creado la base de datos "{new_database_name}" exitosamente.')
     except Exception as ex:
         print(f"No se pudo crear la base de datos: {str(ex)}")
-    #conn.commit()
 
-    # Cerrar la conexión
+    # Close connection MASTER DATABASE
     conn.close()
 
 

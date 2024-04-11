@@ -1,0 +1,23 @@
+* init.py *
+
+ARCHIVO PARA ANALIZAR UN REPOSITORIO
+
+- menu(). Inicia el programa con la orden "python3 init.py repo-url <name_urlclone>".
+
+- request_url(). Extrae los valores de la URL correspondiente.
+
+- check_url(). Verifica que se use el protocolo correcto.
+
+- run_url(). Crea la URL del repositorio, y mediante la libreria 'requests' obtiene acceso al repositorio correspondiente. Clona el repositorio, para ello ejecuta en el terminal la línea de comandos correspondiente mediante el uso de la libreria 'subprocess'.
+
+- get_directory(). Obtiene el nombre del directorio del repositorio descargado y elimina el ".git" (se crea al clonar el repositorio y da error, se confunde con un archivo?¿). 
+
+- get_path(). Obtiene la ruta del directorio usando la libreria 'os'.
+
+- read_directory(). Extrae los archivos del directorio, creando una lista de ficheros y subdirectorios. 
+	- Si el archivo tiene un '.' se considera un fichero, en tal caso, se obtiene su nombre, ruta, y se determina el lenguaje de dicho fichero mediante la libreria 'pygments.lexers'.
+	- Si el archivo no tiene un '.' se considera un subdirectorio.
+
+- get_bd(). Se conecta a una BBDD MASTER, y desde ahi, se crea una BBDD.
+La base de datos MASTER es necesaria para poder crear nuevas bases de datos, por lo que una vez que realizamos la conexión a esta base de datos, creamos la BBDD llamada "Analysis_Github_Repository".
+	* Con el atributo "autocommit=True" desactivo las transacciones y así soluciono un error debido a realizar los commits de uno en uno. De manera que, cada consulta se ejecutará como transacción independiente y se confirmará automaticamente
