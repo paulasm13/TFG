@@ -9,7 +9,6 @@ ARCHIVO PARA ANALIZAR UN REPOSITORIO
 
 """
 
-
 import os
 import sys
 import requests
@@ -94,7 +93,6 @@ def get_path(name_directory):
         absFilePath = absFilePath.replace("\\" + fichero, "")
     print("This script absolute path is ", absFilePath)
     read_directory(absFilePath, name_directory)
-    
 
 
 def read_directory(absFilePath, name_directory):
@@ -155,7 +153,7 @@ def get_bd():
     except Exception as ex:
         print(f"No se pudo crear la base de datos: {str(ex)}")
 
-    # Close connection MASTER DATABASE
+    # Close connection to MASTER DATABASE
     connection.close()
 
     # Connection to 'Analysis_Github_Repository' DATABASE 
@@ -169,7 +167,6 @@ def get_bd():
 
     cursor_bd = conn.cursor()
 
-    # Definir la consulta SQL para crear la tabla
     create_table_query = f'''
     CREATE TABLE {NEW_TABLE} (
         ID INT PRIMARY KEY,
@@ -214,7 +211,6 @@ def insert_data(name_file, pos, language):
     cursor_bd.execute(insert_query, data_to_insert)
     conn.commit()
     conn.close()
-
     
 
 if __name__ == "__main__":
