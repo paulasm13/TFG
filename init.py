@@ -14,11 +14,13 @@ import sys
 import requests
 import subprocess
 import pyodbc
+# git-blameall.py
+import git_blameall
 from pygments.lexers import guess_lexer_for_filename
 from pygments.util import ClassNotFound
 
 
-# Variables globales
+# Global variables
 SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
 DATABASE = 'master'
 NEW_DATABASE = 'Analysis_Github_Repository'
@@ -107,21 +109,33 @@ def read_directory(absFilePath, name_directory):
         print(directory)
         # File...
         for i in range(0, len(directory)):
-            if '.' in directory[i] and not directory[i].startswith('.'):
+            if '.' in directory[i] and not directory[i].startswith('.'):   
                 print('Python File: ' + str(directory[i]))
                 name_file = str(directory[i])
-                pos = path + "\\" + directory[i]   
+                pos = path + "\\" + directory[i]
+                # GET ALL REVISIONS
+                os.chdir(path)
+                cmd = f'git log --follow -- {name_file}'
+                result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+                revisions = result.stdout.split('\n')
+                commits_list = [atributo for atributo in revisions if 'commit' in atributo]
+                commits = int(len(commits_list))
+                if commits != 0:
+                    git_blameall.main(name_file)
                 try:
                     with open(pos, 'rb') as file:
                         lexer = guess_lexer_for_filename(name_file, file.read())
                         language = lexer.name
                         print(f"El archivo {name_file} está en {language}.")
+                        print(directory[i])
+                        print(f"El archivo {name_file} situado en en {pos}.")
+                        print(f"El archivo {name_file} tiene como path {path}.")
                 except FileNotFoundError:
                     print(f"No se pudo abrir el archivo {name_file}.")
                 except ClassNotFound:
                     print(f"No se pudo determinar el lenguaje para {name_file}.")
                     language = None
-                insert_data(name_file, pos, language)
+                insert_data(name_file, pos, language, commits)
             # Subdirectory...
             elif '.' not in directory[i]:
                 print('\nOpening another directory...\n')
@@ -173,14 +187,16 @@ def get_bd():
         Name VARCHAR(MAX) NOT NULL,
         Path VARCHAR(MAX) NOT NULL,
         Language VARCHAR(50),
+        Commits INT,
     )
     '''
+
     cursor_bd.execute(create_table_query)
     conn.commit()
     conn.close()
 
 
-def insert_data(name_file, pos, language):
+def insert_data(name_file, pos, language, commits):
     # Connection to 'Analysis_Github_Repository' DATABASE 
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
 
@@ -206,8 +222,8 @@ def insert_data(name_file, pos, language):
         print("Error al incrementar el ID:", e)
         return None
 
-    insert_query = f"INSERT INTO {NEW_TABLE} (ID, Name, Path, Language) VALUES (?, ?, ?, ?)"
-    data_to_insert = (new_id, name_file, pos, language)
+    insert_query = f"INSERT INTO {NEW_TABLE} (ID, Name, Path, Language, Commits) VALUES (?, ?, ?, ?, ?)"
+    data_to_insert = (new_id, name_file, pos, language, commits)
     cursor_bd.execute(insert_query, data_to_insert)
     conn.commit()
     conn.close()

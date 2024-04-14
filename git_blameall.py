@@ -1,35 +1,28 @@
-#!/usr/bin/env python
+"""
 
-# Copyright 2011, Dan Gindikin <dgindikin -AT- gmail.com>
-#
-# This program is free software; you can redistribute it and/or modify it under
-# the terms of the GNU General Public License as published by the Free Software
-# Foundation; either version 2 of the License, or (at your option) any later
-# version.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-# details.
-#
-# You should have received a copy of the GNU General Public License along with
-# this program; if not, write to the Free Software Foundation, Inc., 51
-# Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ARCHIVO PARA ANALIZAR UN FICHERO 
+
+"""
+
 
 import sys
 import os
-import string
 import re
-import getopt
+import pyodbc
+from datetime import datetime
 
-VERSION = '0.2'
 
-Chunk_Header_Pat = re.compile('@@ -([0-9]+)(?:,([0-9]+))? \+([0-9]+)(?:,([0-9]+))? @@')
+SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
+DATABASE = 'Analysis_Github_Repository'
+TABLE = 'Code'
+
 
 class struct:
   pass
-  
+
+
 def parse_chunk_header(s):
+  Chunk_Header_Pat = re.compile('@@ -([0-9]+)(?:,([0-9]+))? \+([0-9]+)(?:,([0-9]+))? @@') 
   origL, del_N, newL, add_N = Chunk_Header_Pat.match(s).groups()
   if del_N is None:
     del_N = 1
@@ -37,6 +30,7 @@ def parse_chunk_header(s):
     add_N = 1
     
   return list(map(int,(origL, del_N, newL, add_N)))
+
 
 def get_initial_version(first_rev,fn):
   lines = []
@@ -51,7 +45,8 @@ def get_initial_version(first_rev,fn):
       if line.startswith('@@ -0,0 '):
         file_started_FL=True
   return lines
-  
+
+
 def find_index(ALL_LINES,L,current_rev=None):
   i=0
   while L:
@@ -69,17 +64,50 @@ def find_index(ALL_LINES,L,current_rev=None):
   while i<len(ALL_LINES) and ALL_LINES[i].endrev!=None:
     i+=1
   return i
-  
+
+
 def find_next_alive(ALL_LINES,i):
   while 1:
     if ALL_LINES[i].endrev==None:
       return i
     i+=1
-    
 
-def print_so_far(ALL_LINES,revs):
+
+def print_so_far(ALL_LINES,revs): 
+  # BBDD connection
+  connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
+
+  try:
+    conn = pyodbc.connect(connectionString)
+    print("Conexión exitosa")
+  except Exception as ex:
+    print(f"No se pudo conectar a la base de datos: {str(ex)}")
+
+  cursor = conn.cursor()
+
+  # CREATE TABLE OR NOT
+  select_table_query = f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '{TABLE}'"
+  cursor.execute(select_table_query)
+  result = cursor.fetchone()
+
+  if result[0] > 0:
+    print(f"La tabla '{TABLE}' existe en la base de datos.")
+  else:
+    print(f"La tabla '{TABLE}' no existe en la base de datos.")
+    create_table_query = f'''
+    CREATE TABLE {TABLE} (
+        ID INT PRIMARY KEY,
+        Author_beg VARCHAR(50),
+        Date_beg DATE NOT NULL,
+        Author_end VARCHAR(50),
+        Date_end DATE,
+        Longevity INT,
+        Code VARCHAR(MAX) NOT NULL,
+    )
+    '''
+    cursor.execute(create_table_query)
+
   head_rev = struct()
-  #head_rev.hash = '  HEAD  '
   head_rev.hash = '        '
   head_rev.date = '          '
   head_rev.author = '        '
@@ -87,77 +115,74 @@ def print_so_far(ALL_LINES,revs):
   for line in ALL_LINES:
     beg = revs[line.begrev]
     end = revs[line.endrev] if line.endrev is not None else head_rev
-    #if line.endrev is None:
-    #  i+=1
-    #  print '%3d'%i,
-    #else:
-    #  print '   ',
-    #print '%s %s %s %s %s %s:'%(beg.hash[:8],end.hash[:8],beg.date,end.date,beg.author,end.author),line.text,
-    #print '(%s %s %s)(%s %s %s)'%(beg.hash[:8],beg.date,beg.author,end.hash[:8],end.date,end.author),line.text,
-    #print '%s (%s %s) %s (%s %s)'%(beg.hash[:8],beg.author,beg.date,end.hash[:8],end.author,end.date),line.text,
-    #print '%s (%s %s) %s (%s %s)'%(beg.hash[:8],beg.author,beg.date,end.hash[:8],end.author,end.date),line.text,
+
+    # ID PRIMARY KEY
+    try:
+      cursor.execute(f"SELECT MAX(ID) FROM {TABLE}")
+      last_id = cursor.fetchone()[0]
+
+      if last_id is None:
+        last_id = 0
+
+      id = last_id + 1
+
+    except Exception as e:
+        print("Error al incrementar el ID:", e)
+        return None
+
+    # Deleted lines
     if line.endrev is not None:
       print('-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
+      beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
+      end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
+      long = end_datetime - beg_datetime
+    
+      insert_query = f"INSERT INTO {TABLE} (Author_end, Author_beg, Date_beg, Date_end, Code, ID, Longevity) VALUES (?, ?, ?, ?, ?, ?, ?)"
+      data_to_insert = (end.author, beg.author, beg.date, end.date, line.text, id, int(long.days))
+      cursor.execute(insert_query, data_to_insert)
+      conn.commit() 
+      
+    # Current lines
     else:
       print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
-  
-UsageString="""\
-usage: git-blameall [options] file
+      current_datetime = datetime.now()
+      beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
+      long = current_datetime - beg_datetime
+     
+      insert_query = f"INSERT INTO {TABLE} (Author_end, Author_beg, Date_beg, Date_end, Code, ID, Longevity) VALUES (?, ?, ?, ?, ?, ?, ?)"
+      data_to_insert = (end.author, beg.author, beg.date, end.date, line.text, id, int(long.days))
+      cursor.execute(insert_query, data_to_insert)
+      conn.commit() 
 
-    -h, --help            Show this help info and exit
-    -q                    Quiet, do not show progress information (Default: off)
-    -v, --version         Show version information
-"""
+  cursor.close()
+  conn.close()
 
-def usage():
-  print(UsageString)
-  sys.exit(1)
-    
-def main():
 
-  if len(sys.argv)==1:
-    usage()
-  
-  # PROCESS COMMAND LINE ARGUMENTS
-  if 1:
-    Flags, Args = getopt.getopt(sys.argv[1:], 'hqv', ['help','debug', 'version'])
-    Flags = dict(Flags)
-    #print Flags, Args
-    if '-h' in Flags or '--help' in Flags:
-      usage()
-    if '-v' in Flags or '--version' in Flags:
-      print(VERSION)
-      sys.exit()
-    Quiet = '-q' in Flags
-    V = '--debug' in Flags
-    assert len(Args)==1, ("Expecting only one file",Args)
-    fn = Args[0]
-  
+def main(fn):
+  Quiet = False
+
   # GET ALL REVISIONS
-  if 1:
-    cmd         = 'git rev-list HEAD -- %s'%fn
-    if V:
-      print('[cmd]',cmd)
-    pipe        = os.popen(cmd)
-    hashes      = pipe.readlines()
+  cmd = 'git rev-list HEAD -- %s' % fn
+  print('[cmd]',cmd)
+  pipe        = os.popen(cmd)
+  hashes      = pipe.readlines()
 
-    assert not pipe.close(), ('Command errored',cmd)
-    
-    if not Quiet:
-      sys.stderr.write('%d revisions\n'%(len(hashes)))
-    
+  assert not pipe.close(), ('Command errored',cmd)
+        
+  if not Quiet:
+    sys.stderr.write('%d revisions\n'%(len(hashes)))
+
+        
   # GET REVISION INFO
-  if 1:
-    cmd         = 'git log --format="%%ad %%cn" --date=short %s'%fn
-    if V:
-      print('[cmd]',cmd)
-    pipe        = os.popen(cmd)
-    date_author = pipe.readlines()
+  cmd         = 'git log --format="%%ad %%cn" --date=short %s'%fn
+  print('[cmd]',cmd)
+  pipe        = os.popen(cmd)
+  date_author = pipe.readlines()
 
-    assert not pipe.close(), ('Command errored',cmd)
+  assert not pipe.close(), ('Command errored',cmd)
 
-    assert len(hashes)==len(date_author), ('mismatch between output of "git rev-list" and "git log"', hashes, date_author)
-  
+  assert len(hashes)==len(date_author), ('mismatch between output of "git rev-list" and "git log"', hashes, date_author)
+      
   revs = []
   for hash, date_au in zip(hashes,date_author):
     x = struct()
@@ -165,43 +190,42 @@ def main():
     x.date, x.author = date_au.split(' ',1)
     x.author = x.author.strip()
     revs.append(x)
-  
+      
   if not Quiet:
     sys.stderr.write('%s --- %s\n'%(revs[-1].date,revs[0].date))
-    
+        
   forced_author_len = 8
   for x in revs:
     if len(x.author) > forced_author_len:
       x.author = x.author[:forced_author_len-1]+'.'
     else:
-      #x.author = x.author.center(forced_author_len)
       x.author = x.author.ljust(forced_author_len)
-  
-  ALL_LINES=[]                        # INITIAL VERSION
+      
+  # INITIAL VERSION
+  ALL_LINES=[]                        
   for line in get_initial_version(revs[-1].hash,fn):
     x = struct()
     x.text    = line
     x.begrev  = len(revs)-1
     x.endrev  = None
     ALL_LINES.append(x)  
-  
-  if V:
-    print_so_far(ALL_LINES,revs)
-  
+      
+  print_so_far(ALL_LINES,revs)
+
+      
   # process all the revisions
   origL, del_N, newL, add_N = 0,0,0,0
   for r in range(len(revs)-1,0,-1):
-  
+      
     if not Quiet:
       sys.stderr.write('\r')
       sys.stderr.write('Processing revision: (%d/%d) %s' % (len(revs)-r+1,len(revs),revs[r-1].date))
-    
+        
     cmd  = 'git diff -U0 %s %s %s'%(revs[r].hash,revs[r-1].hash,fn)
     pipe = os.popen(cmd)
-    
-    if V:
-      print('[cmd]',cmd)
-      print()
+        
+    print('[cmd]',cmd)
+    print()
 
     in_header_FL = True
     for line in pipe:
@@ -211,77 +235,66 @@ def main():
                 in_header_FL = False
             else:
                 continue
-            
+                
         if line=='\ No newline at end of file\n':
             continue
+                
+        print('[line]',repr(line),'add_N=%d del_N=%d'%(add_N,del_N))
             
-        if V: 
-          print('[line]',repr(line),'add_N=%d del_N=%d'%(add_N,del_N))
-        
         if line.startswith('@@'):     # RECEIVED A NEW CHUNK!
-        
           origL, del_N, newL, add_N = parse_chunk_header(line)
           all_index = None
-          if V:
-            print('chunk',origL,del_N,newL,add_N)
-          
+          print('chunk',origL,del_N,newL,add_N)
+              
         elif del_N:                   # PROCESSING DELETED LINES
-        
           assert line.startswith('-'),line
-          
           if all_index is None:       # find index in ALL_LINES for origL
             all_index = find_index(ALL_LINES, origL-1, current_rev=r-1)
           else:
             all_index = find_next_alive(ALL_LINES, all_index)
-           
-          #if V: 
-          #  print 'DEL origL=%d del_N=%d all_index=%d text=%r'%(origL,del_N,all_index,ALL_LINES[all_index].text)
               
-          assert ALL_LINES[all_index].text == line[1:], \
-            ("diff processing screwed up, marking the wrong deletion line",ALL_LINES[all_index].text,line,all_index)
+          assert ALL_LINES[all_index].text == line[1:], (
+            "diff processing screwed up, marking the wrong deletion line",ALL_LINES[all_index].text,line,all_index)
           ALL_LINES[all_index].endrev = r-1
-          
+              
           del_N -= 1
           if del_N == 0:
             all_index = None
-          
+              
         elif add_N:                   # PROCESSING ADDED LINES
-        
           assert line.startswith('+'),line
           if all_index is None:
             all_index = find_index(ALL_LINES, newL-1)
           else:
             all_index += 1
-                      
+                          
           x = struct()
           x.text = line[1:]
           x.begrev = r-1
           x.endrev = None
-          
+              
           ALL_LINES.insert(all_index, x)
-          
+              
           add_N -= 1
           if add_N == 0:
             all_index = None
-          
+              
         else:
           if line.startswith('diff'):
-            # This file was deleted, and then recreated, in this situation
-            # we may get several "diff" blocks out of a single git-diff command
-            # start processing the new block
             in_header_FL = True
           else:
             assert 0, ("shouldn't reach here unless misparsed diff output",line)
-        
+            
     assert not pipe.close(), ('Command errored',cmd)
-    
-    if V:
-      print()
-      print_so_far(ALL_LINES,revs)
-  
+        
+    print()
+    print_so_far(ALL_LINES,revs)
+      
   if not Quiet:
     sys.stderr.write('\n')
   print_so_far(ALL_LINES,revs)
-  
+
+
 if __name__=='__main__':
-  main()
+    main(fn)
+

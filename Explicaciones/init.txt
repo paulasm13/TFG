@@ -2,7 +2,7 @@
 
 ARCHIVO PARA ANALIZAR UN REPOSITORIO
 
-- menu(). Inicia el programa con la orden "python3 init.py repo-url <name_urlclone>".
+- menu(). Inicia el programa con la orden [python3 init.py repo-url <name_urlclone>].
 
 - request_url(). Extrae los valores de la URL correspondiente.
 
@@ -15,12 +15,12 @@ ARCHIVO PARA ANALIZAR UN REPOSITORIO
 - get_path(). Obtiene la ruta del directorio usando la libreria 'os'.
 
 - read_directory(). Extrae los archivos del directorio, creando una lista de ficheros y subdirectorios. 
-	- Si el archivo tiene un '.' se considera un fichero, en tal caso, se obtiene su nombre, ruta, y se determina el lenguaje de dicho fichero mediante la libreria 'pygments.lexers'.
+	- Si el archivo tiene un '.' se considera un fichero, en tal caso, se obtiene su nombre, ruta, commist, y se determina el lenguaje de dicho fichero mediante la libreria 'pygments.lexers'. Cuando el número de commits es distinto a 0 se ejecuta el programa git_blameall.main(archivo).
 	- Si el archivo no tiene un '.' se considera un subdirectorio.
 
 - get_bd(). Se conecta a una BBDD MASTER, y desde ahi, se crea una BBDD.
 La base de datos MASTER es necesaria para poder crear nuevas bases de datos, por lo que una vez que realizamos la conexión a esta base de datos, creamos la BBDD llamada "Analysis_Github_Repository".
 	* Con el atributo "autocommit=True" desactivo las transacciones y así soluciono un error debido a realizar los commits de uno en uno. De manera que, cada consulta se ejecutará como transacción independiente y se confirmará automaticamente
-Una vez que he creado la base de datos, creo la tabla "Files" con varias columnas [ID, Name, Path, Language].
+Una vez que he creado la base de datos, creo la tabla "Files" con varias columnas [ID, Name, Path, Language, Commits].
 
-- insert_data(). Se conecta a la BBDD "Analysis_Github_Repository" e introduce los datos [ID, Name, Path, Language] en la tabla "Files".
+- insert_data(). Se conecta a la BBDD "Analysis_Github_Repository" e introduce los datos [ID, Name, Path, Language, Commits] en la tabla "Files".
