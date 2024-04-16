@@ -73,7 +73,7 @@ def find_next_alive(ALL_LINES,i):
     i+=1
 
 
-def print_so_far(ALL_LINES,revs): 
+def print_so_far(fn, ALL_LINES,revs): 
   # BBDD connection
   connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
 
@@ -97,10 +97,11 @@ def print_so_far(ALL_LINES,revs):
     create_table_query = f'''
     CREATE TABLE {TABLE} (
         ID INT PRIMARY KEY,
+        File_Name VARCHAR(50) NOT NULL,
         Author_beg VARCHAR(50),
         Date_beg DATE NOT NULL,
         Author_end VARCHAR(50),
-        Date_end DATE,
+        Date_end VARCHAR(50),
         Longevity INT,
         Code VARCHAR(MAX) NOT NULL,
     )
@@ -113,46 +114,51 @@ def print_so_far(ALL_LINES,revs):
   head_rev.author = '        '
   i=0
   for line in ALL_LINES:
+    code = line.text
     beg = revs[line.begrev]
     end = revs[line.endrev] if line.endrev is not None else head_rev
-
-    # ID PRIMARY KEY
-    try:
-      cursor.execute(f"SELECT MAX(ID) FROM {TABLE}")
-      last_id = cursor.fetchone()[0]
-
-      if last_id is None:
-        last_id = 0
-
-      id = last_id + 1
-
-    except Exception as e:
-        print("Error al incrementar el ID:", e)
-        return None
-
-    # Deleted lines
-    if line.endrev is not None:
-      print('-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
-      beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
-      end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
-      long = end_datetime - beg_datetime
     
-      insert_query = f"INSERT INTO {TABLE} (Author_end, Author_beg, Date_beg, Date_end, Code, ID, Longevity) VALUES (?, ?, ?, ?, ?, ?, ?)"
-      data_to_insert = (end.author, beg.author, beg.date, end.date, line.text, id, int(long.days))
-      cursor.execute(insert_query, data_to_insert)
-      conn.commit() 
+    # Blank lines or comments
+    if not (code.strip().startswith('#') or len(code.strip()) == 0 or code.strip().startswith('//')):
+      # ID PRIMARY KEY
+      try:
+        cursor.execute(f"SELECT MAX(ID) FROM {TABLE}")
+        last_id = cursor.fetchone()[0]
+
+        if last_id is None:
+          last_id = 0
+
+        id = last_id + 1
+
+      except Exception as e:
+          print("Error al incrementar el ID:", e)
+          return None
+
+      # Deleted lines
+      if line.endrev is not None:
+        print('-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
+        beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
+        end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
+        long = end_datetime - beg_datetime
       
-    # Current lines
+        insert_query = f"INSERT INTO {TABLE} (File_Name, Author_end, Author_beg, Date_beg, Date_end, Code, ID, Longevity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        data_to_insert = (fn, end.author, beg.author, beg.date, str(end.date), line.text, id, int(long.days))
+        cursor.execute(insert_query, data_to_insert)
+        conn.commit() 
+        
+      # Current lines
+      else:
+        print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
+        current_datetime = datetime.now()
+        beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
+        long = current_datetime - beg_datetime
+      
+        insert_query = f"INSERT INTO {TABLE} (File_Name, Author_end, Author_beg, Date_beg, Date_end, Code, ID, Longevity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        data_to_insert = (fn, 'NULL', beg.author, beg.date, 'NULL', line.text, id, int(long.days))
+        cursor.execute(insert_query, data_to_insert)
+        conn.commit()
     else:
-      print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
-      current_datetime = datetime.now()
-      beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
-      long = current_datetime - beg_datetime
-     
-      insert_query = f"INSERT INTO {TABLE} (Author_end, Author_beg, Date_beg, Date_end, Code, ID, Longevity) VALUES (?, ?, ?, ?, ?, ?, ?)"
-      data_to_insert = (end.author, beg.author, beg.date, end.date, line.text, id, int(long.days))
-      cursor.execute(insert_query, data_to_insert)
-      conn.commit() 
+      pass 
 
   cursor.close()
   conn.close()
@@ -210,7 +216,7 @@ def main(fn):
     x.endrev  = None
     ALL_LINES.append(x)  
       
-  print_so_far(ALL_LINES,revs)
+  print_so_far(fn, ALL_LINES,revs)
 
       
   # process all the revisions
@@ -288,11 +294,11 @@ def main(fn):
     assert not pipe.close(), ('Command errored',cmd)
         
     print()
-    print_so_far(ALL_LINES,revs)
+    print_so_far(fn, ALL_LINES,revs)
       
   if not Quiet:
     sys.stderr.write('\n')
-  print_so_far(ALL_LINES,revs)
+  print_so_far(fn, ALL_LINES,revs)
 
 
 if __name__=='__main__':
