@@ -32,7 +32,6 @@ for atribute in languages:
     percentage_atr = (count_atr / len(languages)) * 100
     percentages.append(percentage_atr)
 
-
 # LANGUAGE GRAPH
 plt.figure(figsize=(10, 6))
 plt.bar(languages, percentages, color='skyblue')
@@ -46,22 +45,20 @@ plt.show()
 # SELECT COMMITS
 cursor.execute(f'SELECT Name, Commits FROM {TABLE}')
 
-# (Name, Commits)
 tuples = cursor.fetchall()
-
-# Cerrar el cursor y la conexión
-cursor.close()
-conn.close()
 
 # COMMITS GRAPH
 plt.figure(figsize=(10, 6))
 for atribute in tuples:
     plt.bar(str(atribute[0]), str(atribute[1]), color='skyblue')
 plt.title('Número de commits por archivo')
-plt.xlabel('Archivos del repositorio')
-plt.ylabel('Commits realizados')
+plt.xlabel('Archivos')
+plt.ylabel('Commits')
 plt.grid(axis='y', linestyle='--')
 plt.xticks(rotation=45)
 plt.tight_layout()
 #plt.savefig('Commits_graph.png')
 plt.show()
+
+cursor.close()
+conn.close()
