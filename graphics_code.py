@@ -20,6 +20,7 @@ cursor = conn.cursor()
 
 # SELECT LONGEVITY
 
+"""
 dead_code = []
 updated_code = []
 
@@ -68,3 +69,5 @@ plt.grid(axis='y', linestyle='--')
 
 # Mostrar la gráfica
 plt.show()
+
+"""
