@@ -134,7 +134,7 @@ def read_directory(absFilePath, name_directory):
                     print(f"No se pudo abrir el archivo {name_file}.")
                 except ClassNotFound:
                     print(f"No se pudo determinar el lenguaje para {name_file}.")
-                    language = None
+                    language = 'Archivo de datos'
                 insert_data(name_file, pos, language, commits)
             # Subdirectory...
             elif '.' not in directory[i]:
