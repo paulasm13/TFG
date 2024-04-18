@@ -79,9 +79,9 @@ def print_so_far(fn, ALL_LINES,revs):
 
   try:
     conn = pyodbc.connect(connectionString)
-    print("Conexión exitosa")
+    print(f"Successful connection to database {DATABASE}")
   except Exception as ex:
-    print(f"No se pudo conectar a la base de datos: {str(ex)}")
+    print(f"Failed connection to database {DATABASE}: {str(ex)}")
 
   cursor = conn.cursor()
 
@@ -91,9 +91,9 @@ def print_so_far(fn, ALL_LINES,revs):
   result = cursor.fetchone()
 
   if result[0] > 0:
-    print(f"La tabla '{TABLE}' existe en la base de datos.")
+    print(f"The table '{TABLE}' exists in the database.")
   else:
-    print(f"La tabla '{TABLE}' no existe en la base de datos.")
+    print(f"The table '{TABLE}' does not exist in the database.")
     create_table_query = f'''
     CREATE TABLE {TABLE} (
         ID INT PRIMARY KEY,
@@ -300,7 +300,4 @@ def main(fn):
     sys.stderr.write('\n')
   print_so_far(fn, ALL_LINES,revs)
 
-
-if __name__=='__main__':
-    main(fn)
 

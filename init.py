@@ -14,7 +14,6 @@ import sys
 import requests
 import subprocess
 import pyodbc
-# git-blameall.py
 import git_blameall
 from pygments.lexers import guess_lexer_for_filename
 from pygments.util import ClassNotFound
@@ -27,9 +26,8 @@ NEW_DATABASE = 'Analysis_Github_Repository'
 NEW_TABLE = 'Files'
 
 def menu():
-    """ Choose option. """
     if type_option == 'repo-url':
-        request_url()   
+        request_url()
     else:
         sys.exit("Usage: python3 init.py repo-url <name_urlclone>")
 
@@ -125,15 +123,11 @@ def read_directory(absFilePath, name_directory):
                 try:
                     with open(pos, 'rb') as file:
                         lexer = guess_lexer_for_filename(name_file, file.read())
-                        language = lexer.name
-                        print(f"El archivo {name_file} está en {language}.")
-                        print(directory[i])
-                        print(f"El archivo {name_file} situado en en {pos}.")
-                        print(f"El archivo {name_file} tiene como path {path}.")
+                        language = lexer.name                
                 except FileNotFoundError:
-                    print(f"No se pudo abrir el archivo {name_file}.")
+                    print(f"File {name_file} could not be opened.")
                 except ClassNotFound:
-                    print(f"No se pudo determinar el lenguaje para {name_file}.")
+                    print(f"The language for {name_file} could not be determined. Maybe it is a binary or data file.")
                     language = 'Archivo de datos'
                 insert_data(name_file, pos, language, commits)
             # Subdirectory...
@@ -147,7 +141,7 @@ def read_directory(absFilePath, name_directory):
     except FileNotFoundError:
         print(os.listdir(path))
         pass
-
+    
 
 def get_bd():
     # Connection to MASTER DATABASE 
@@ -155,17 +149,17 @@ def get_bd():
 
     try:
         connection = pyodbc.connect(connectionString, autocommit=True)
-        print("Conexión exitosa con la BBDD MASTER")
+        print("Successful connection to database MASTER")
     except Exception as ex:
-        print(f"No se pudo conectar a la BBDD MASTER: {str(ex)}")
+        print(f"Failed connection to database MASTER: {str(ex)}")
 
     # New database
     cursor = connection.cursor()
     try:
         cursor.execute(f'CREATE DATABASE {NEW_DATABASE}')
-        print(f'Se ha creado la base de datos "{NEW_DATABASE}" exitosamente.')
+        print(f"The {NEW_DATABASE} database has been successfully created.")
     except Exception as ex:
-        print(f"No se pudo crear la base de datos: {str(ex)}")
+        print(f"Failed to create database {NEW_DATABASE}: {str(ex)}")
 
     # Close connection to MASTER DATABASE
     connection.close()
@@ -175,9 +169,9 @@ def get_bd():
 
     try:
         conn = pyodbc.connect(connectionString)
-        print("Conexión exitosa con la BBDD 'Analysis_Github_Repository'")
+        print(f"Successful connection to database {NEW_DATABASE}")
     except Exception as ex:
-        print(f"No se pudo conectar a la BBDD 'Analysis_Github_Repository': {str(ex)}")
+        print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
 
     cursor_bd = conn.cursor()
 
@@ -202,9 +196,9 @@ def insert_data(name_file, pos, language, commits):
 
     try:
         conn = pyodbc.connect(connectionString)
-        print("Conexión exitosa con la BBDD 'Analysis_Github_Repository'")
+        print(f"Successful connection to database {NEW_DATABASE}")
     except Exception as ex:
-        print(f"No se pudo conectar a la BBDD 'Analysis_Github_Repository': {str(ex)}")
+        print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
 
     cursor_bd = conn.cursor()
     
@@ -219,7 +213,7 @@ def insert_data(name_file, pos, language, commits):
         new_id = last_id + 1
 
     except Exception as e:
-        print("Error al incrementar el ID:", e)
+        print("Error when incrementing the ID:", e)
         return None
 
     insert_query = f"INSERT INTO {NEW_TABLE} (ID, Name, Path, Language, Commits) VALUES (?, ?, ?, ?, ?)"
@@ -233,9 +227,7 @@ if __name__ == "__main__":
     try:
         type_option = sys.argv[1]
         option = sys.argv[2]
+        get_bd()
+        menu()
     except:
-        sys.exit("Usage: python3 init.py 'repo-url' url")
-
-
-get_bd()        
-menu()
+        sys.exit("Usage: python3 init.py 'repo-url' <url_repo>")
