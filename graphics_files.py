@@ -1,5 +1,6 @@
 import pyodbc
 import matplotlib.pyplot as plt
+from collections import Counter
 
 
 SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
@@ -32,23 +33,27 @@ def language_graph(cursor):
     cursor.execute(f'SELECT Language FROM {TABLE}')
 
     languages = []
-    percentages = []
+    tuples_counter = []
     for row in cursor:
         languages.append(row.Language)
 
-    for atribute in languages:
-        count_atr = languages.count(atribute)
-        percentage_atr = (count_atr / len(languages)) * 100
-        percentages.append(percentage_atr)
+    conteo = Counter(languages)
+    tuples_counter = tuple(conteo.items())
+
+    label = [item[0] for item in tuples_counter]
+    value = [item[1] for item in tuples_counter]
+
 
     plt.figure(figsize=(10, 6))
-    plt.bar(languages, percentages, color='skyblue')
-    plt.title('Lenguajes utilizados en el repositorio [%]')
-    plt.xlabel('Lenguajes')
-    plt.ylabel('%')
-    plt.grid(axis='y', linestyle='--')
-    plt.xticks(rotation=45)
-    plt.tight_layout()
+    pie_result = plt.pie(value, labels=label, autopct="%0.1f %%", shadow = True)
+
+    for item in pie_result[1]:
+        item.set_fontsize(12)
+
+    for percentage in pie_result[2]:
+        percentage.set_fontsize(12)
+
+    plt.axis('equal') 
     plt.savefig('Language_graph.png')
 
 
@@ -57,12 +62,12 @@ def commits_graph(cursor):
 
     tuples = cursor.fetchall()
 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(11, 5))
     for atribute in tuples:
         plt.bar(str(atribute[0]), str(atribute[1]), color='skyblue')
-    plt.title('Número de commits por archivo')
-    plt.xlabel('Archivos')
-    plt.ylabel('Commits')
+    #plt.title('Cantidad de commits por archivo')
+    plt.xlabel('Archivo')
+    plt.ylabel('Número de commits')
     plt.grid(axis='y', linestyle='--')
     plt.xticks(rotation=45)
     plt.tight_layout()
