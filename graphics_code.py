@@ -1,5 +1,7 @@
 import pyodbc
 import matplotlib.pyplot as plt
+from collections import Counter
+
 
 
 SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
@@ -28,22 +30,41 @@ def get_graphs():
 
 
 def author_graph(cursor):
-    cursor.execute(f'SELECT Author_beg FROM {TABLE}')
+    cursor.execute(f"SELECT author_start, code FROM {TABLE} WHERE longevity='NULL'")
 
     author = []
-    code = []
-    for row in cursor:
-        author.append(row.Author_beg)
-    
-    author = set(author)
+    tuples = cursor.fetchall()
 
-    #cursor.execute(f'SELECT Code FROM {TABLE} WHERE {Author_beg} = (author[0])", )
-    #for row in cursor:
-    #    code.append(row.Code)
+    for atribute in tuples:
+        author.append(atribute[0])
 
-    #print(len(code))
+    conteo = Counter(author)
+    tuples_counter = tuple(conteo.items())
+
+    # Lista de autores [ana, greg, github]
+    author_list = [item[0] for item in tuples_counter]
+
+    len_lines = {value: 0 for value in author_list}
 
 
+    plt.figure(figsize=(11, 5))
+    for atribute in tuples:
+        if atribute[0] in author_list:
+            len_lines[atribute[0]] += 1
+
+    print(len_lines)
+
+    for item, value  in len_lines.items():
+        # Fallo GitHub duda!
+        if item != 'GitHub  ':
+            plt.bar(item, value, color='skyblue')
+    plt.xlabel('Autor')
+    plt.ylabel('Líneas que permanecen en la actualidad')
+    plt.grid(axis='y', linestyle='--')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig('CurrentLines_graph.png')
+    plt.show()  
 
 if __name__ == "__main__":
     get_graphs()
