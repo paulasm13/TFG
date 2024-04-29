@@ -97,13 +97,15 @@ def print_so_far(fn, ALL_LINES,revs):
     create_table_query = f'''
     CREATE TABLE {TABLE} (
         ID INT PRIMARY KEY,
-        File_Name VARCHAR(50) NOT NULL,
-        Author_beg VARCHAR(50),
-        Date_beg DATE NOT NULL,
-        Author_end VARCHAR(50),
-        Date_end VARCHAR(50),
-        Longevity INT,
-        Code VARCHAR(MAX) NOT NULL,
+        file_name VARCHAR(50) NOT NULL,
+        author_start VARCHAR(50),
+        date_start DATE NOT NULL,
+        author_end VARCHAR(50),
+        date_end VARCHAR(50),
+        code VARCHAR(MAX) NOT NULL,
+        longevity VARCHAR(50),
+        comment_boolean INT NOT NULL,
+        words_count INT NOT NULL,
     )
     '''
     cursor.execute(create_table_query)
@@ -118,8 +120,8 @@ def print_so_far(fn, ALL_LINES,revs):
     beg = revs[line.begrev]
     end = revs[line.endrev] if line.endrev is not None else head_rev
     
-    # Blank lines or comments
-    if not (code.strip().startswith('#') or len(code.strip()) == 0 or code.strip().startswith('//')):
+    # If not blank lines...
+    if not (len(line.text.strip()) == 0):
       # ID PRIMARY KEY
       try:
         cursor.execute(f"SELECT MAX(ID) FROM {TABLE}")
@@ -131,8 +133,17 @@ def print_so_far(fn, ALL_LINES,revs):
         id = last_id + 1
 
       except Exception as e:
-          print("Error al incrementar el ID:", e)
+          print("ID error:", e)
           return None
+      
+      # Comments
+      if (line.text.strip().startswith('#') or line.text.strip().startswith('//')):
+        comment_boolean = 1
+      else:
+        comment_boolean = 0
+
+      # Words count
+      words_count = len(line.text.split())
 
       # Deleted lines
       if line.endrev is not None:
@@ -141,20 +152,17 @@ def print_so_far(fn, ALL_LINES,revs):
         end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
         long = end_datetime - beg_datetime
       
-        insert_query = f"INSERT INTO {TABLE} (File_Name, Author_end, Author_beg, Date_beg, Date_end, Code, ID, Longevity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        data_to_insert = (fn, end.author, beg.author, beg.date, str(end.date), line.text, id, int(long.days))
+        insert_query = f"INSERT INTO {TABLE} (ID, file_name, author_start, date_start, author_end, date_end, code, longevity, comment_boolean, words_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        data_to_insert = (id, fn, beg.author, beg.date, end.author, str(end.date), line.text, long.days, comment_boolean, words_count)
         cursor.execute(insert_query, data_to_insert)
         conn.commit() 
         
       # Current lines
       else:
         print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
-        current_datetime = datetime.now()
-        beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
-        long = current_datetime - beg_datetime
       
-        insert_query = f"INSERT INTO {TABLE} (File_Name, Author_end, Author_beg, Date_beg, Date_end, Code, ID, Longevity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        data_to_insert = (fn, 'NULL', beg.author, beg.date, 'NULL', line.text, id, int(long.days))
+        insert_query = f"INSERT INTO {TABLE} (ID, file_name, author_start, date_start, author_end, date_end, code, longevity, comment_boolean, words_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        data_to_insert = (id, fn, beg.author, beg.date, 'NULL', 'NULL', line.text, 'NULL', comment_boolean, words_count)
         cursor.execute(insert_query, data_to_insert)
         conn.commit()
     else:
@@ -299,5 +307,4 @@ def main(fn):
   if not Quiet:
     sys.stderr.write('\n')
   print_so_far(fn, ALL_LINES,revs)
-
 

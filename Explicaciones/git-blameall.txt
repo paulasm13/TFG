@@ -14,7 +14,8 @@ El análisis se realiza en un contexto relacionado con commits.
 - print_so_far(). Imprime información de las líneas del diccionario 'ALL_LINES' utilizando información contenida en el diccionario 'revs'.
 	> # Se conecta a la BBDD "Analysis_Github_Repository".
 	> # Comprueba que la tabla 'Code' de la BBDD no exista, y en tal caso, la crea. En caso contrario, rellena la tabla existente.
-	> Inserta en la tabla de datos las líneas eliminadas (con EndDate) y las líneas que siguen en la actualidad (sin End Date).
+	> Inserta en la tabla de datos las líneas eliminadas (con EndDate) y las líneas que siguen en la actualidad (sin End Date). Rellena la tabla con los valores  [ID, File_Name, Author_beg, Date_beg, Author_end, Date_end, Longevity, Code, Comment_boolean, Words_count].
+	* No existe el tipo de dato boolean, pero sí el tipo de dato bit. Y un bit, como todos sabemos, puede ser un 1 o un 0. Por lo tanto, el equivalente a un dato booleano en SQL Server es el tipo bit.
 
 - main().
 	> # GET ALL REVISIONS. Con el comando 'cmd' obtiene todos los commits del archivo y los almacena en 'hashes'.

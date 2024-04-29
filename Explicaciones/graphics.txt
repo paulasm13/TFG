@@ -1,27 +1,26 @@
-* init.py *
+* graphics_file.py *
 
-ARCHIVO PARA ANALIZAR UN REPOSITORIO
+ARCHIVO PARA CREAR GRÁFICOS
 
-- menu(). Inicia el programa con la orden [python3 init.py repo-url <name_urlclone>].
+- # SELECT LANGUAGE. Se crea una gráfica con el porcentaje de cada lenguaje utilizado en el repositorio. Los archivos que no se han creado en un lenguaje concreto se denominan 'Archivo de datos o binario'.
 
-- request_url(). Extrae los valores de la URL correspondiente.
+- # SELECT COMMITS. Número de commits por archivo.
 
-- check_url(). Verifica que se use el protocolo correcto.
 
-- run_url(). Crea la URL del repositorio, y mediante la libreria 'requests' obtiene acceso al repositorio correspondiente. Clona el repositorio, para ello ejecuta en el terminal la línea de comandos correspondiente mediante el uso de la libreria 'subprocess'.
 
-- get_directory(). Obtiene el nombre del directorio del repositorio descargado y elimina el ".git" (se crea al clonar el repositorio y da error, se confunde con un archivo?¿). 
 
-- get_path(). Obtiene la ruta del directorio usando la libreria 'os'.
 
-- read_directory(). Extrae los archivos del directorio, creando una lista de ficheros y subdirectorios. 
-	- Si el archivo tiene un '.' se considera un fichero, en tal caso, se obtiene su nombre, ruta, commist, y se determina el lenguaje de dicho fichero mediante la libreria 'pygments.lexers', cuando no se puede determinar el lenguaje
-		el archivo se denomina 'Archivo binario o de datos'. Cuando el número de commits es distinto a 0 se ejecuta el programa git_blameall.main(archivo).
-	- Si el archivo no tiene un '.' se considera un subdirectorio.
+* graphics_code.py *
 
-- get_bd(). Se conecta a una BBDD MASTER, y desde ahi, se crea una BBDD.
-La base de datos MASTER es necesaria para poder crear nuevas bases de datos, por lo que una vez que realizamos la conexión a esta base de datos, creamos la BBDD llamada "Analysis_Github_Repository".
-	* Con el atributo "autocommit=True" desactivo las transacciones y así soluciono un error debido a realizar los commits de uno en uno. De manera que, cada consulta se ejecutará como transacción independiente y se confirmará automaticamente
-Una vez que he creado la base de datos, creo la tabla "Files" con varias columnas [ID, Name, Path, Language, Commits].
+- # SELECT AUTHOR. Se crea una gráfica con el porcentaje de participación de cada persona en el repositorio. Para calcular la participación de cada autor, obtenemos el número de líneas que siguen vivas en la actualidad que pertenecen a cada autor, y sacamos su porcentaje frente al número total de líneas que siguen vivas en la actualidad.
 
-- insert_data(). Se conecta a la BBDD "Analysis_Github_Repository" e introduce los datos [ID, Name, Path, Language, Commits] en la tabla "Files".
+- # ?¿?¿SELECT LINES. Se crea una gráfica con el número de líneas existentes en la actualidad, frente a las eliminadas.
+
+- # SELECT LONGEVIDAD. 
+	> Se guarda en tuplas {longevidad, línea de código} las líneas de código y su longevidad.
+	> Se calcula la longevidad máxima (current_date - beg_date), y las tuplas que la contengan se corresponden con las líneas que nunca se han modificado, es decir, código muerto. Se guardan en una lista.
+	> Se guarda en una lista el código actualizado, es decir, el código que se ha creado en el último año (longevidad = 365).
+
+
+
+
