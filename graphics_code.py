@@ -23,6 +23,7 @@ def get_graphs():
     cursor = conn.cursor()
 
     author_graph(cursor)
+    author2_graph(cursor)
     churn_graph(cursor)
     analysis_graph(cursor)
 
@@ -48,7 +49,6 @@ def author_graph(cursor):
 
     len_lines = {value: 0 for value in author_list}
 
-
     plt.figure(figsize=(11, 5))
     for atribute in tuples:
         if atribute[0] in author_list:
@@ -56,13 +56,41 @@ def author_graph(cursor):
 
     for item, value  in len_lines.items():
         if item != 'GitHub  ':
-            plt.bar(item, value, color='pink')
+            plt.bar(item, value, color='green')
+
+    plt.grid(axis='y', linestyle='--')
     plt.xlabel('Autor')
     plt.ylabel('Líneas que permanecen en la actualidad')
-    plt.grid(axis='y', linestyle='--')
-    plt.xticks(rotation=45)
-    plt.tight_layout()
     plt.savefig('CurrentLines_graph.png')
+
+def author2_graph(cursor):
+    cursor.execute(f"SELECT author_start, code FROM {TABLE}")
+
+    author_total = []
+    tuples_total = cursor.fetchall()
+
+    for atribute in tuples_total:
+        author_total.append(atribute[0])
+
+    conteo = Counter(author_total)
+    tuples_counter = tuple(conteo.items())
+
+    author_total_list = [item[0] for item in tuples_counter]
+
+    len_lines_total = {value: 0 for value in author_total_list}
+
+    for atribute in tuples_total:
+        if atribute[0] in author_total_list:
+            len_lines_total[atribute[0]] += 1
+    
+    for item, value  in len_lines_total.items():
+        if item != 'GitHub  ':
+            plt.bar(item, value, color='purple')
+
+    plt.grid(axis='y', linestyle='--')
+    plt.xlabel('Autor')
+    plt.ylabel('Líneas totales contribuidas')
+    plt.savefig('CurrentLines2_graph.png')
 
 
 def churn_graph(cursor):
