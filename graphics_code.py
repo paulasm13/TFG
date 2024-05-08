@@ -1,7 +1,8 @@
 import pyodbc
 import matplotlib.pyplot as plt
 from collections import Counter
-
+from datetime import datetime
+from collections import defaultdict
 
 
 SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
@@ -23,6 +24,7 @@ def get_graphs():
 
     author_graph(cursor)
     churn_graph(cursor)
+    analysis_graph(cursor)
 
     print("Graphics created in '.png' files.")
 
@@ -30,7 +32,6 @@ def get_graphs():
     conn.close()
 
 
-# Grafica de lineas por autor
 def author_graph(cursor):
     cursor.execute(f"SELECT author_start, code FROM {TABLE} WHERE longevity='NULL'")
 
@@ -43,7 +44,6 @@ def author_graph(cursor):
     conteo = Counter(author)
     tuples_counter = tuple(conteo.items())
 
-    # Lista de autores [ana, greg, github]
     author_list = [item[0] for item in tuples_counter]
 
     len_lines = {value: 0 for value in author_list}
@@ -55,9 +55,8 @@ def author_graph(cursor):
             len_lines[atribute[0]] += 1
 
     for item, value  in len_lines.items():
-        # Fallo GitHub duda!
         if item != 'GitHub  ':
-            plt.bar(item, value, color='skyblue')
+            plt.bar(item, value, color='pink')
     plt.xlabel('Autor')
     plt.ylabel('Líneas que permanecen en la actualidad')
     plt.grid(axis='y', linestyle='--')
@@ -65,7 +64,7 @@ def author_graph(cursor):
     plt.tight_layout()
     plt.savefig('CurrentLines_graph.png')
 
-# Churn rate graph
+
 def churn_graph(cursor):
     cursor.execute(f"SELECT file_name, code FROM {TABLE} WHERE longevity='NULL'")
 
@@ -78,7 +77,6 @@ def churn_graph(cursor):
     conteo = Counter(files)
     tuples_counter = tuple(conteo.items())
 
-    # Lista de archivos
     files_list = [item[0] for item in tuples_counter]
 
     len_del_lines = {value: 0 for value in files_list}
@@ -105,7 +103,6 @@ def churn_graph(cursor):
 
     plt.figure(figsize=(11, 5))
     for item, value  in churn_rate.items():
-        # Fallo GitHub duda!
         if item != 'GitHub  ':
             plt.stem(item, value, linefmt='green')
     plt.xlabel('Archivos')
@@ -114,7 +111,61 @@ def churn_graph(cursor):
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig('ChurnRate_graph.png')
- 
+
+
+def analysis_graph(cursor):
+    cursor.execute(f"SELECT date_start, author_start FROM {TABLE}")
+    
+    date = []
+    authors = []
+
+    for row in cursor:
+        date.append(row.date_start)
+        authors.append(row.author_start)
+    
+    authors = set(authors)
+    authors.remove('GitHub  ')
+
+    date.sort(key=lambda x: datetime.strptime(x, '%Y-%m-%d'))
+
+    # Year of creation of the project
+    year = datetime.strptime(date[0], '%Y-%m-%d').year
+    
+    lines_per_author_per_year = defaultdict(lambda: defaultdict(int))
+
+    # Initialise dictionary with values at 0
+    for y in range(year, year + 5):
+        for author in authors: 
+            lines_per_author_per_year[y][author] = 0
+
+    for y in range(year, year + 5):
+        cursor.execute(f"SELECT author_start, code FROM {TABLE} WHERE YEAR(date_start) = {y}")
+        for row in cursor:
+            author_start, code = row
+            code_lines = code.strip().split('\n')
+            lines_per_author_per_year[y][author_start] += len(code_lines)
+
+    plt.figure(figsize=(14, 8))
+    for year, inner_dict in lines_per_author_per_year.items():
+        years = list(lines_per_author_per_year.keys())
+        #print(f"YEARS_LIST: {years}")
+        for author, lines_per_year in inner_dict.items():
+            authors = list(inner_dict.keys())
+            #print(f"AUTHORS_LIST: {authors}")
+            #print(f"Year: {year}")
+            #print(f"Author: {author}")
+            authors = list(inner_dict.keys())
+            #print(f"Number of lines: {lines_per_year}")
+            plt.bar(year, lines_per_year, label=author)  
+
+    plt.xlabel('Año')
+    plt.ylabel('Número de líneas contribuidas')
+    plt.legend(title='Autores')  
+    plt.grid(axis='y', linestyle='--')
+    plt.tight_layout()
+    plt.xticks(rotation=45)
+    plt.savefig('First5YearsEvolution_graph.png')
+
 
 if __name__ == "__main__":
     get_graphs()

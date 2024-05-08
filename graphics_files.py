@@ -65,14 +65,12 @@ def commits_graph(cursor):
     plt.figure(figsize=(11, 5))
     for atribute in tuples:
         plt.bar(str(atribute[0]), str(atribute[1]), color='skyblue')
-    #plt.title('Cantidad de commits por archivo')
     plt.xlabel('Archivo')
     plt.ylabel('Número de commits')
     plt.grid(axis='y', linestyle='--')
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig('Commits_graph.png')
-    #plt.show()    
 
 
 if __name__ == "__main__":

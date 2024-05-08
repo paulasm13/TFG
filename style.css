@@ -1,13 +1,13 @@
 body {      /* Tipo y color de la fuente para toda la web. */
     background-color: rgb(246, 245, 206);
-    font-family: 'Gill Sans MT';
+    font-family: 'monospace';
     color: black;
 }
 
 h1 {        /* Título principal */
     font-weight: bolder;
     text-align: center;
-    background-color: rgb(185, 240, 249);
+    background-color: rgb(250, 243, 243);
     border: 3px solid black;
     border-radius: 10px;
     padding: 20px;      
@@ -32,8 +32,8 @@ b {     /* Aumento la fuente de los títulos de la lista */
 
 .graphs {        /* Clase imagenes. */
     margin-top: 13px;
-    width: 650px;
-    height: 430px;
+    width: 670px;
+    height: 470px;
     border: 2px solid black;
     border-radius: 5px;
 }
