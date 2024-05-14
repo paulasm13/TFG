@@ -6,6 +6,8 @@ ARCHIVO PARA ANALIZAR UN REPOSITORIO
 - Analiza su contenido
 - Lista el contenido del repositorio
 - Crea una BBDD 'Analysis_Github_Repository'
+- Crea la tabla 'Repositories' con los repositorios analizados
+- Crea la tabla 'Files' con los ficheros de cada repositorio
 
 """
 
@@ -23,7 +25,9 @@ from pygments.util import ClassNotFound
 SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
 DATABASE = 'master'
 NEW_DATABASE = 'Analysis_Github_Repository'
-NEW_TABLE = 'Files'
+TABLE_1 = 'Repositories'
+TABLE_2 = 'Files'
+
 
 def menu():
     if type_option == 'repo-url':
@@ -81,6 +85,8 @@ def get_directory(repo_url):
     if '.git' in str(name_directory):
         name_directory = name_directory[0:-4]
     print("The directory is: " + name_directory)
+    insert_repo_data(name_directory)
+    get_bd2()
     get_path(name_directory)
 
 
@@ -129,7 +135,7 @@ def read_directory(absFilePath, name_directory):
                 except ClassNotFound:
                     print(f"The language for {name_file} could not be determined. Maybe it is a binary or data file.")
                     language = 'Archivo de datos'
-                insert_data(name_file, pos, language, commits)
+                insert_files_data(name_file, pos, language, commits)
             # Subdirectory...
             elif '.' not in directory[i]:
                 print('\nOpening another directory...\n')
@@ -143,7 +149,7 @@ def read_directory(absFilePath, name_directory):
         pass
     
 
-def get_bd():
+def get_bd1():
     # Connection to MASTER DATABASE 
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
 
@@ -175,22 +181,50 @@ def get_bd():
 
     cursor_bd = conn.cursor()
 
-    create_table_query = f'''
-    CREATE TABLE {NEW_TABLE} (
+    create_repo_table_query = f'''
+    CREATE TABLE {TABLE_1} (
         ID INT PRIMARY KEY,
-        Name VARCHAR(MAX) NOT NULL,
-        Path VARCHAR(MAX) NOT NULL,
-        Language VARCHAR(50),
-        Commits INT,
+        Repo_Name VARCHAR(MAX) NOT NULL,
     )
     '''
 
-    cursor_bd.execute(create_table_query)
+    cursor_bd.execute(create_repo_table_query)
     conn.commit()
     conn.close()
 
 
-def insert_data(name_file, pos, language, commits):
+def get_bd2():
+    # Connection to 'Analysis_Github_Repository' DATABASE 
+    connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
+
+    try:
+        conn = pyodbc.connect(connectionString)
+        print(f"Successful connection to database {NEW_DATABASE}")
+    except Exception as ex:
+        print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
+
+    cursor_bd = conn.cursor()
+
+    create_files_table_query = f'''
+    CREATE TABLE {TABLE_2} (
+        File_ID INT PRIMARY KEY,
+        Repo_ID INT,
+        File_Name VARCHAR(MAX) NOT NULL,
+        File_Path VARCHAR(MAX) NOT NULL,
+        File_Language VARCHAR(50),
+        Commits INT,
+        FOREIGN KEY (Repo_ID) REFERENCES {TABLE_1}(ID),
+    )
+    '''
+    try:
+        cursor_bd.execute(create_files_table_query)
+    except Exception as ex:
+        print(f"Failed : {str(ex)}")
+    conn.commit()
+    conn.close()
+
+
+def insert_repo_data(name_directory):
     # Connection to 'Analysis_Github_Repository' DATABASE 
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
 
@@ -204,7 +238,7 @@ def insert_data(name_file, pos, language, commits):
     
      # ID PRIMARY KEY
     try:
-        cursor_bd.execute(f"SELECT MAX(ID) FROM {NEW_TABLE}")
+        cursor_bd.execute(f"SELECT MAX(ID) FROM {TABLE_1}")
         last_id = cursor_bd.fetchone()[0]
 
         if last_id is None:
@@ -216,8 +250,50 @@ def insert_data(name_file, pos, language, commits):
         print("Error when incrementing the ID:", e)
         return None
 
-    insert_query = f"INSERT INTO {NEW_TABLE} (ID, Name, Path, Language, Commits) VALUES (?, ?, ?, ?, ?)"
-    data_to_insert = (new_id, name_file, pos, language, commits)
+    insert_query = f"INSERT INTO {TABLE_1} (ID, Repo_Name) VALUES (?, ?)"
+    data_to_insert = (new_id, name_directory)
+    cursor_bd.execute(insert_query, data_to_insert)
+    conn.commit()
+    conn.close()
+
+
+def insert_files_data(name_file, pos, language, commits):
+    # Connection to 'Analysis_Github_Repository' DATABASE 
+    connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
+
+    try:
+        conn = pyodbc.connect(connectionString)
+        print(f"Successful connection to database {NEW_DATABASE}")
+    except Exception as ex:
+        print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
+
+    cursor_bd = conn.cursor()
+    
+     # ID PRIMARY KEY
+    try:
+        cursor_bd.execute(f"SELECT MAX(File_ID) FROM {TABLE_2}")
+        last_id = cursor_bd.fetchone()[0]
+
+        if last_id is None:
+            last_id = 0
+
+        new_id = last_id + 1
+
+    except Exception as e:
+        print("Error when incrementing the ID:", e)
+        return None
+    
+    # ID FOREIGN KEY
+    cursor_bd.execute(f"SELECT MAX(ID) FROM {TABLE_1}")
+    repo_id = cursor_bd.fetchone()[0]
+    print(f"repo_id.... {repo_id}")
+
+    if repo_id is None:
+        repo_id = 0
+
+
+    insert_query = f"INSERT INTO {TABLE_2} (File_ID, Repo_ID, File_Name, File_Path, File_Language, Commits) VALUES (?, ?, ?, ?, ?, ?)"
+    data_to_insert = (new_id, repo_id, name_file, pos, language, commits)
     cursor_bd.execute(insert_query, data_to_insert)
     conn.commit()
     conn.close()
@@ -227,7 +303,7 @@ if __name__ == "__main__":
     try:
         type_option = sys.argv[1]
         option = sys.argv[2]
-        get_bd()
+        get_bd1()
         menu()
     except:
         sys.exit("Usage: python3 init.py 'repo-url' <url_repo>")
