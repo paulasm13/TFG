@@ -124,7 +124,10 @@ def read_directory(absFilePath, name_directory):
                 revisions = result.stdout.split('\n')
                 commits_list = [atributo for atributo in revisions if 'commit' in atributo]
                 commits = int(len(commits_list))
-                if commits != 0:
+                print('insert_files_data!!!!')
+                insert_files_data(name_file, pos, commits)
+                if commits != 0: 
+                    print('BLAMEALL------')
                     git_blameall.main(name_file)
                 try:
                     with open(pos, 'rb') as file:
@@ -135,7 +138,8 @@ def read_directory(absFilePath, name_directory):
                 except ClassNotFound:
                     print(f"The language for {name_file} could not be determined. Maybe it is a binary or data file.")
                     language = 'Archivo de datos'
-                insert_files_data(name_file, pos, language, commits)
+                insert_files_language(language)
+                print('INSERT_FILES_LANGUAGE......')
             # Subdirectory...
             elif '.' not in directory[i]:
                 print('\nOpening another directory...\n')
@@ -216,6 +220,8 @@ def get_bd2():
         FOREIGN KEY (Repo_ID) REFERENCES {TABLE_1}(ID),
     )
     '''
+
+    print ("FILES_DATABASE CREADAAAAA")
     try:
         cursor_bd.execute(create_files_table_query)
     except Exception as ex:
@@ -257,7 +263,7 @@ def insert_repo_data(name_directory):
     conn.close()
 
 
-def insert_files_data(name_file, pos, language, commits):
+def insert_files_data(name_file, pos, commits):
     # Connection to 'Analysis_Github_Repository' DATABASE 
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
 
@@ -292,8 +298,26 @@ def insert_files_data(name_file, pos, language, commits):
         repo_id = 0
 
 
-    insert_query = f"INSERT INTO {TABLE_2} (File_ID, Repo_ID, File_Name, File_Path, File_Language, Commits) VALUES (?, ?, ?, ?, ?, ?)"
-    data_to_insert = (new_id, repo_id, name_file, pos, language, commits)
+    insert_query = f"INSERT INTO {TABLE_2} (File_ID, Repo_ID, File_Name, File_Path, Commits) VALUES (?, ?, ?, ?, ?)"
+    data_to_insert = (new_id, repo_id, name_file, pos, commits)
+    cursor_bd.execute(insert_query, data_to_insert)
+    conn.commit()
+    conn.close()
+
+def insert_files_language(language):
+    # Connection to 'Analysis_Github_Repository' DATABASE 
+    connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
+
+    try:
+        conn = pyodbc.connect(connectionString)
+        print(f"Successful connection to database {NEW_DATABASE}")
+    except Exception as ex:
+        print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
+
+    cursor_bd = conn.cursor()
+
+    insert_query = f"INSERT INTO {TABLE_2} (File_Language) VALUES (?)"
+    data_to_insert = (language)
     cursor_bd.execute(insert_query, data_to_insert)
     conn.commit()
     conn.close()

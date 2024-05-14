@@ -15,6 +15,7 @@ from datetime import datetime
 SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
 DATABASE = 'Analysis_Github_Repository'
 TABLE = 'Code'
+TABLE_FOREIGN = 'Files'
 
 
 class struct:
@@ -96,16 +97,18 @@ def print_so_far(fn, ALL_LINES,revs):
     print(f"The table '{TABLE}' does not exist in the database.")
     create_table_query = f'''
     CREATE TABLE {TABLE} (
-        ID INT PRIMARY KEY,
-        file_name VARCHAR(50) NOT NULL,
-        author_start VARCHAR(50),
-        date_start DATE NOT NULL,
-        author_end VARCHAR(50),
-        date_end VARCHAR(50),
-        code VARCHAR(MAX) NOT NULL,
-        longevity VARCHAR(50),
-        comment_boolean INT NOT NULL,
-        words_count INT NOT NULL,
+        Code_ID INT PRIMARY KEY,
+        File_ID INT,
+        File_Name VARCHAR(50) NOT NULL,
+        Author_Start VARCHAR(50),
+        Date_Start DATE NOT NULL,
+        Author_End VARCHAR(50),
+        Date_End VARCHAR(50),
+        Longevity VARCHAR(50),
+        Comment_Boolean INT NOT NULL,
+        Words_Count INT NOT NULL,
+        Code VARCHAR(MAX) NOT NULL,
+        FOREIGN KEY (File_ID) REFERENCES {TABLE_FOREIGN}(File_ID),
     )
     '''
     cursor.execute(create_table_query)
@@ -124,7 +127,7 @@ def print_so_far(fn, ALL_LINES,revs):
     if not (len(line.text.strip()) == 0):
       # ID PRIMARY KEY
       try:
-        cursor.execute(f"SELECT MAX(ID) FROM {TABLE}")
+        cursor.execute(f"SELECT MAX(Code_ID) FROM {TABLE}")
         last_id = cursor.fetchone()[0]
 
         if last_id is None:
@@ -135,6 +138,13 @@ def print_so_far(fn, ALL_LINES,revs):
       except Exception as e:
           print("ID error:", e)
           return None
+      
+      # ID FOREIGN KEY
+      cursor.execute(f"SELECT MAX(File_ID) FROM {TABLE_FOREIGN}")
+      file_id = cursor.fetchone()[0]
+
+      if file_id is None:
+          file_id = 0
       
       # Comments
       if (line.text.strip().startswith('#') or line.text.strip().startswith('//')):
@@ -152,8 +162,8 @@ def print_so_far(fn, ALL_LINES,revs):
         end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
         long = end_datetime - beg_datetime
       
-        insert_query = f"INSERT INTO {TABLE} (ID, file_name, author_start, date_start, author_end, date_end, code, longevity, comment_boolean, words_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        data_to_insert = (id, fn, beg.author, beg.date, end.author, str(end.date), line.text, long.days, comment_boolean, words_count)
+        insert_query = f"INSERT INTO {TABLE} (Code_ID, File_ID, File_Name, Author_Start, Date_Start, Author_End, Date_End, Longevity, Comment_Boolean, Words_Count, Code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        data_to_insert = (id, file_id, fn, beg.author, beg.date, end.author, str(end.date), long.days, comment_boolean, words_count, line.text)
         cursor.execute(insert_query, data_to_insert)
         conn.commit() 
         
@@ -161,8 +171,8 @@ def print_so_far(fn, ALL_LINES,revs):
       else:
         print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
       
-        insert_query = f"INSERT INTO {TABLE} (ID, file_name, author_start, date_start, author_end, date_end, code, longevity, comment_boolean, words_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        data_to_insert = (id, fn, beg.author, beg.date, 'NULL', 'NULL', line.text, 'NULL', comment_boolean, words_count)
+        insert_query = f"INSERT INTO {TABLE} (Code_ID, File_ID, File_Name, Author_Start, Date_Start, Author_End, Date_End, Longevity, Comment_Boolean, Words_Count, Code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        data_to_insert = (id, file_id, fn, beg.author, beg.date, 'NULL', 'NULL', 'NULL', comment_boolean, words_count, line.text)
         cursor.execute(insert_query, data_to_insert)
         conn.commit()
     else:
