@@ -1,19 +1,5 @@
-"""
-
-ARCHIVO PARA ANALIZAR UN REPOSITORIO
-
-- Clona un repositorio 
-- Analiza su contenido
-- Lista el contenido del repositorio
-- Crea una BBDD 'Analysis_Github_Repository'
-- Crea la tabla 'Repositories' con los repositorios analizados
-- Crea la tabla 'Files' con los ficheros de cada repositorio
-
-"""
-
 import os
 import sys
-import requests
 import subprocess
 import pyodbc
 import git_blameall
@@ -22,7 +8,7 @@ from pygments.util import ClassNotFound
 
 
 # Global variables
-SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
+SERVER = 'LAPTOP-E26LIVT1\\SQLEXPRESS'
 DATABASE = 'master'
 NEW_DATABASE = 'Analysis_Github_Repository'
 TABLE_1 = 'Repositories'
@@ -30,13 +16,13 @@ TABLE_2 = 'Files'
 
 
 def menu():
-    if type_option == 'repo-url':
-        request_url()
-    else:
+    if len(sys.argv) != 3 or sys.argv[1] != 'repo-url':
         sys.exit("Usage: python3 init.py repo-url <name_urlclone>")
+    option = sys.argv[2]
+    request_url(option)
 
 
-def request_url():
+def request_url(option):
     """ Request url by shell. """
     values = option.split("/")
     try:
@@ -53,22 +39,19 @@ def request_url():
 
 
 def check_url(protocol, type_git):
-    """ Check url sintax. """
+    """ Check url syntax. """
     if protocol != 'https':
         sys.exit('Usage: https protocol')
     elif type_git != 'github.com':
         sys.exit('Usage: github.com')
 
-    
+
 def run_url(protocol, type_git, user, repo):
     # Create the url of the api
-    repo_url = (protocol + "://" + type_git + "/" + user + "/" +
-                repo + ".git")
+    repo_url = f"{protocol}://{type_git}/{user}/{repo}.git"
     print("Analyzing repository...\n")
-    # Get content
-    r = requests.get(repo_url)
-    """ Run url. """
-    command_line = "git clone " + repo_url
+    # Clone the repository
+    command_line = f"git clone {repo_url}"
     print('Run url...')
     # Run in the shell the command_line
     subprocess.call(command_line)
@@ -93,17 +76,12 @@ def get_directory(repo_url):
 def get_path(name_directory):
     """ Get the path to the directory. """
     absFilePath = os.path.abspath(name_directory)
-    # Check if the last element is a file
-    fichero = absFilePath.split('/')[-1]
-    if fichero.endswith('.'):
-        absFilePath = absFilePath.replace("\\" + fichero, "")
     print("This script absolute path is ", absFilePath)
     read_directory(absFilePath, name_directory)
 
 
 def read_directory(absFilePath, name_directory):
     """ Extract the files from the directory. """
-    pos = ''
     print('Directory: ')
     path = absFilePath
     print(path)
@@ -112,11 +90,11 @@ def read_directory(absFilePath, name_directory):
         directory = os.listdir(path)
         print(directory)
         # File...
-        for i in range(0, len(directory)):
-            if '.' in directory[i] and not directory[i].startswith('.'):   
+        for i in range(len(directory)):
+            if '.' in directory[i] and not directory[i].startswith('.'):
                 print('Python File: ' + str(directory[i]))
                 name_file = str(directory[i])
-                pos = path + "\\" + directory[i]
+                pos = os.path.join(path, directory[i])
                 # GET ALL REVISIONS
                 os.chdir(path)
                 cmd = f'git log --follow -- {name_file}'
@@ -124,26 +102,24 @@ def read_directory(absFilePath, name_directory):
                 revisions = result.stdout.split('\n')
                 commits_list = [atributo for atributo in revisions if 'commit' in atributo]
                 commits = int(len(commits_list))
-                print('insert_files_data!!!!')
                 insert_files_data(name_file, pos, commits)
-                if commits != 0: 
+                if commits != 0:
                     print('BLAMEALL------')
                     git_blameall.main(name_file)
                 try:
                     with open(pos, 'rb') as file:
                         lexer = guess_lexer_for_filename(name_file, file.read())
-                        language = lexer.name                
+                        language = lexer.name
                 except FileNotFoundError:
                     print(f"File {name_file} could not be opened.")
                 except ClassNotFound:
                     print(f"The language for {name_file} could not be determined. Maybe it is a binary or data file.")
                     language = 'Archivo de datos'
-                insert_files_language(language)
-                print('INSERT_FILES_LANGUAGE......')
+                insert_files_language(name_file, language)
             # Subdirectory...
             elif '.' not in directory[i]:
                 print('\nOpening another directory...\n')
-                path2 = absFilePath + '\\' + directory[i]
+                path2 = os.path.join(absFilePath, directory[i])
                 try:
                     read_directory(path2, directory[i])
                 except NotADirectoryError:
@@ -151,10 +127,10 @@ def read_directory(absFilePath, name_directory):
     except FileNotFoundError:
         print(os.listdir(path))
         pass
-    
+
 
 def get_bd1():
-    # Connection to MASTER DATABASE 
+    # Connection to MASTER DATABASE
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
 
     try:
@@ -174,7 +150,7 @@ def get_bd1():
     # Close connection to MASTER DATABASE
     connection.close()
 
-    # Connection to 'Analysis_Github_Repository' DATABASE 
+    # Connection to 'Analysis_Github_Repository' DATABASE
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
 
     try:
@@ -187,8 +163,8 @@ def get_bd1():
 
     create_repo_table_query = f'''
     CREATE TABLE {TABLE_1} (
-        ID INT PRIMARY KEY,
-        Repo_Name VARCHAR(MAX) NOT NULL,
+        ID INT PRIMARY KEY IDENTITY(1,1),
+        Repo_Name VARCHAR(MAX) NOT NULL
     )
     '''
 
@@ -198,7 +174,7 @@ def get_bd1():
 
 
 def get_bd2():
-    # Connection to 'Analysis_Github_Repository' DATABASE 
+    # Connection to 'Analysis_Github_Repository' DATABASE
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
 
     try:
@@ -211,27 +187,27 @@ def get_bd2():
 
     create_files_table_query = f'''
     CREATE TABLE {TABLE_2} (
-        File_ID INT PRIMARY KEY,
+        File_ID INT PRIMARY KEY IDENTITY(1,1),
         Repo_ID INT,
         File_Name VARCHAR(MAX) NOT NULL,
         File_Path VARCHAR(MAX) NOT NULL,
         File_Language VARCHAR(50),
         Commits INT,
-        FOREIGN KEY (Repo_ID) REFERENCES {TABLE_1}(ID),
+        FOREIGN KEY (Repo_ID) REFERENCES {TABLE_1}(ID)
     )
     '''
 
-    print ("FILES_DATABASE CREADAAAAA")
     try:
         cursor_bd.execute(create_files_table_query)
+        print("Files table created successfully")
     except Exception as ex:
-        print(f"Failed : {str(ex)}")
+        print(f"Failed to create files table: {str(ex)}")
     conn.commit()
     conn.close()
 
 
 def insert_repo_data(name_directory):
-    # Connection to 'Analysis_Github_Repository' DATABASE 
+    # Connection to 'Analysis_Github_Repository' DATABASE
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
 
     try:
@@ -241,30 +217,15 @@ def insert_repo_data(name_directory):
         print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
 
     cursor_bd = conn.cursor()
-    
-     # ID PRIMARY KEY
-    try:
-        cursor_bd.execute(f"SELECT MAX(ID) FROM {TABLE_1}")
-        last_id = cursor_bd.fetchone()[0]
 
-        if last_id is None:
-            last_id = 0
-
-        new_id = last_id + 1
-
-    except Exception as e:
-        print("Error when incrementing the ID:", e)
-        return None
-
-    insert_query = f"INSERT INTO {TABLE_1} (ID, Repo_Name) VALUES (?, ?)"
-    data_to_insert = (new_id, name_directory)
-    cursor_bd.execute(insert_query, data_to_insert)
+    insert_query = f"INSERT INTO {TABLE_1} (Repo_Name) VALUES (?)"
+    cursor_bd.execute(insert_query, name_directory)
     conn.commit()
     conn.close()
 
 
 def insert_files_data(name_file, pos, commits):
-    # Connection to 'Analysis_Github_Repository' DATABASE 
+    # Connection to 'Analysis_Github_Repository' DATABASE
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
 
     try:
@@ -274,38 +235,19 @@ def insert_files_data(name_file, pos, commits):
         print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
 
     cursor_bd = conn.cursor()
-    
-     # ID PRIMARY KEY
-    try:
-        cursor_bd.execute(f"SELECT MAX(File_ID) FROM {TABLE_2}")
-        last_id = cursor_bd.fetchone()[0]
 
-        if last_id is None:
-            last_id = 0
-
-        new_id = last_id + 1
-
-    except Exception as e:
-        print("Error when incrementing the ID:", e)
-        return None
-    
-    # ID FOREIGN KEY
     cursor_bd.execute(f"SELECT MAX(ID) FROM {TABLE_1}")
     repo_id = cursor_bd.fetchone()[0]
-    print(f"repo_id.... {repo_id}")
 
-    if repo_id is None:
-        repo_id = 0
-
-
-    insert_query = f"INSERT INTO {TABLE_2} (File_ID, Repo_ID, File_Name, File_Path, Commits) VALUES (?, ?, ?, ?, ?)"
-    data_to_insert = (new_id, repo_id, name_file, pos, commits)
+    insert_query = f"INSERT INTO {TABLE_2} (Repo_ID, File_Name, File_Path, Commits) VALUES (?, ?, ?, ?)"
+    data_to_insert = (repo_id, name_file, pos, commits)
     cursor_bd.execute(insert_query, data_to_insert)
     conn.commit()
     conn.close()
 
-def insert_files_language(language):
-    # Connection to 'Analysis_Github_Repository' DATABASE 
+
+def insert_files_language(name_file, language):
+    # Connection to 'Analysis_Github_Repository' DATABASE
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
 
     try:
@@ -316,18 +258,13 @@ def insert_files_language(language):
 
     cursor_bd = conn.cursor()
 
-    insert_query = f"INSERT INTO {TABLE_2} (File_Language) VALUES (?)"
-    data_to_insert = (language)
-    cursor_bd.execute(insert_query, data_to_insert)
+    update_query = f"UPDATE {TABLE_2} SET File_Language = ? WHERE File_Name = ?"
+    data_to_update = (language, name_file)
+    cursor_bd.execute(update_query, data_to_update)
     conn.commit()
     conn.close()
-    
+
 
 if __name__ == "__main__":
-    try:
-        type_option = sys.argv[1]
-        option = sys.argv[2]
-        get_bd1()
-        menu()
-    except:
-        sys.exit("Usage: python3 init.py 'repo-url' <url_repo>")
+    get_bd1()
+    menu()
