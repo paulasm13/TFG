@@ -20,8 +20,8 @@ def get_graphs():
 
     cursor = conn.cursor()
 
-    language_graph(cursor)
-    commits_graph(cursor)
+    #language_graph(cursor)
+    commits2_graph(cursor)
 
     print("Graphics created in '.png' files.")
 
@@ -29,6 +29,37 @@ def get_graphs():
     conn.close()
 
 
+def commits2_graph(cursor):
+
+    cursor.execute(f'SELECT Repo_ID, SUM(Commits) AS total_commits FROM {TABLE} GROUP BY Repo_ID')
+    total_commits = cursor.fetchall()
+    print(total_commits)
+
+    plt.figure(figsize=(11, 5))
+    for atribute in tuples:
+        plt.bar(str(atribute[0]), str(atribute[1]), color='skyblue')
+    plt.xlabel('Repositorio')
+    plt.ylabel('Número de commits')
+    plt.grid(axis='y', linestyle='--')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig('Commits_graph.png')
+
+    
+"""
+    
+
+    plt.figure(figsize=(11, 5))
+    for atribute in tuples:
+        plt.bar(str(atribute[0]), str(atribute[1]), color='skyblue')
+    plt.xlabel('Repositorio')
+    plt.ylabel('Número de commits')
+    plt.grid(axis='y', linestyle='--')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig('Commits_graph.png')
+
+    
 def language_graph(cursor):
     cursor.execute(f'SELECT Language FROM {TABLE}')
 
@@ -72,6 +103,7 @@ def commits_graph(cursor):
     plt.tight_layout()
     plt.savefig('Commits_graph.png')
 
+"""
 
 if __name__ == "__main__":
     get_graphs()

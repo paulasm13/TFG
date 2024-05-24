@@ -3,6 +3,7 @@ import sys
 import subprocess
 import pyodbc
 import git_blameall
+import chardet
 from pygments.lexers import guess_lexer_for_filename
 from pygments.util import ClassNotFound
 
@@ -13,6 +14,30 @@ DATABASE = 'master'
 NEW_DATABASE = 'Analysis_Github_Repository'
 TABLE_1 = 'Repositories'
 TABLE_2 = 'Files'
+
+
+def detect_encoding(name_file):
+    """ Detects the encoding of a given file."""
+    with open(name_file, 'rb') as f:
+        raw_data = f.read()
+    result = chardet.detect(raw_data)
+    return result['encoding']
+
+def convert_to_utf8(name_file, original_encoding):
+    """Converts a file to UTF-8 encoding."""
+    temp_file_path = name_file + '.tmp'
+
+    try:
+        with open(name_file, 'r', encoding=original_encoding, errors='replace') as f:
+            content = f.read()
+    except Exception as e:
+        print(f"Error reading file {name_file}: {e}")
+        return
+    
+    with open(temp_file_path, 'w', encoding='utf-8') as f:
+        f.write(content)
+    
+    os.replace(temp_file_path, name_file)
 
 
 def menu():
@@ -30,7 +55,7 @@ def request_url(option):
         type_git = values[2]
         user = values[3]
         repo = values[4][0:-4]
-    except:
+    except IndexError:
         sys.exit('ERROR --> Usage: http://TYPEGIT/USER/NAMEREPO.git')
     # Check url
     check_url(protocol, type_git)
@@ -82,15 +107,17 @@ def get_path(name_directory):
 
 def read_directory(absFilePath, name_directory):
     """ Extract the files from the directory. """
-    print('Directory: ')
     path = absFilePath
-    print(path)
+    print(f"Directory: {path}")
     try:
         # Get a list of files and subdirectories in the specified directory
         directory = os.listdir(path)
-        print(directory)
+        print(f"List of files and subdirectories: {path}")
         # File...
         for i in range(len(directory)):
+            # Discard '.tar.gz' files
+            if directory[i].endswith('.tar.gz') or directory[i].endswith('.zip'):
+                continue
             if '.' in directory[i] and not directory[i].startswith('.'):
                 print('Python File: ' + str(directory[i]))
                 name_file = str(directory[i])
@@ -99,21 +126,24 @@ def read_directory(absFilePath, name_directory):
                 os.chdir(path)
                 cmd = f'git log --follow -- {name_file}'
                 result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-                revisions = result.stdout.split('\n')
-                commits_list = [atributo for atributo in revisions if 'commit' in atributo]
-                commits = int(len(commits_list))
+                if result.stdout:
+                    revisions = result.stdout.split('\n')
+                    commits_list = [atributo for atributo in revisions if 'commit' in atributo]
+                    commits = int(len(commits_list))
+                else:
+                    commits = 0
                 insert_files_data(name_file, pos, commits)
                 if commits != 0:
-                    print('BLAMEALL------')
+                    #original_encoding = detect_encoding(name_file)                    
+                    #convert_to_utf8(name_file, original_encoding)
                     git_blameall.main(name_file)
                 try:
                     with open(pos, 'rb') as file:
-                        lexer = guess_lexer_for_filename(name_file, file.read())
+                        lexer = guess_lexer_for_filename(name_file, file.read().decode('utf-8'))
                         language = lexer.name
                 except FileNotFoundError:
                     print(f"File {name_file} could not be opened.")
                 except ClassNotFound:
-                    print(f"The language for {name_file} could not be determined. Maybe it is a binary or data file.")
                     language = 'Archivo de datos'
                 insert_files_language(name_file, language)
             # Subdirectory...
@@ -130,46 +160,56 @@ def read_directory(absFilePath, name_directory):
 
 
 def get_bd1():
-    # Connection to MASTER DATABASE
-    connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
-
+    # Check if DB exits
     try:
-        connection = pyodbc.connect(connectionString, autocommit=True)
-        print("Successful connection to database MASTER")
-    except Exception as ex:
-        print(f"Failed connection to database MASTER: {str(ex)}")
-
-    # New database
-    cursor = connection.cursor()
-    try:
-        cursor.execute(f'CREATE DATABASE {NEW_DATABASE}')
-        print(f"The {NEW_DATABASE} database has been successfully created.")
-    except Exception as ex:
-        print(f"Failed to create database {NEW_DATABASE}: {str(ex)}")
-
-    # Close connection to MASTER DATABASE
-    connection.close()
-
-    # Connection to 'Analysis_Github_Repository' DATABASE
-    connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
-
-    try:
+        # Connection to 'Analysis_Github_Repository' DATABASE
+        connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
         conn = pyodbc.connect(connectionString)
         print(f"Successful connection to database {NEW_DATABASE}")
-    except Exception as ex:
-        print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
+    except pyodbc.Error as err:
+        print(f"Failed connection to database {NEW_DATABASE}: {str(err)}")
+        # Connection to MASTER DATABASE
+        connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
+        try:
+            connection = pyodbc.connect(connectionString, autocommit=True)
+            print("Successful connection to database MASTER")
+        except Exception as ex:
+            print(f"Failed connection to database MASTER: {str(ex)}")
+        cursor = connection.cursor()
+        try:
+            cursor.execute(f'CREATE DATABASE {NEW_DATABASE}')
+            print(f"The {NEW_DATABASE} database has been successfully created.")
+        except Exception as ex:
+            print(f"Failed to create database, maybe {NEW_DATABASE} already exists, : {str(ex)}")
+        # Close connection to MASTER DATABASE
+        connection.close()
+        # Connection to 'Analysis_Github_Repository' DATABASE
+        connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
+        conn = pyodbc.connect(connectionString)
+        print(f"Successful connection to database {NEW_DATABASE}")
+        
 
+
+    # CREATE TABLE OR NOT
     cursor_bd = conn.cursor()
+    select_table_query = f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '{TABLE_1}'"
+    cursor_bd.execute(select_table_query)
+    result = cursor_bd.fetchone()
 
-    create_repo_table_query = f'''
-    CREATE TABLE {TABLE_1} (
-        ID INT PRIMARY KEY IDENTITY(1,1),
-        Repo_Name VARCHAR(MAX) NOT NULL
-    )
-    '''
+    if result[0] > 0:
+        print(f"The table '{TABLE_1}' exists in the database.")
+    else:
+        print(f"The table '{TABLE_1}' does not exist in the database.")
+        create_repo_table_query = f'''
+        CREATE TABLE {TABLE_1} (
+            ID INT PRIMARY KEY IDENTITY(1,1),
+            Repo_Name VARCHAR(MAX) NOT NULL
+        )
+        '''
+        cursor_bd.execute(create_repo_table_query)
+        conn.commit()
+        print(f"{TABLE_1} table created successfully")
 
-    cursor_bd.execute(create_repo_table_query)
-    conn.commit()
     conn.close()
 
 
@@ -183,26 +223,31 @@ def get_bd2():
     except Exception as ex:
         print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
 
+    # CREATE TABLE OR NOT
     cursor_bd = conn.cursor()
+    select_table_query = f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '{TABLE_2}'"
+    cursor_bd.execute(select_table_query)
+    result = cursor_bd.fetchone()
 
-    create_files_table_query = f'''
-    CREATE TABLE {TABLE_2} (
-        File_ID INT PRIMARY KEY IDENTITY(1,1),
-        Repo_ID INT,
-        File_Name VARCHAR(MAX) NOT NULL,
-        File_Path VARCHAR(MAX) NOT NULL,
-        File_Language VARCHAR(50),
-        Commits INT,
-        FOREIGN KEY (Repo_ID) REFERENCES {TABLE_1}(ID)
-    )
-    '''
-
-    try:
+    if result[0] > 0:
+        print(f"The table '{TABLE_2}' exists in the database.")
+    else:
+        print(f"The table '{TABLE_2}' does not exist in the database.")
+        create_files_table_query = f'''
+        CREATE TABLE {TABLE_2} (
+            File_ID INT PRIMARY KEY IDENTITY(1,1),
+            Repo_ID INT,
+            File_Name VARCHAR(MAX) NOT NULL,
+            File_Path VARCHAR(MAX) NOT NULL,
+            File_Language VARCHAR(50),
+            Commits INT,
+            FOREIGN KEY (Repo_ID) REFERENCES {TABLE_1}(ID)
+        )
+        '''
         cursor_bd.execute(create_files_table_query)
-        print("Files table created successfully")
-    except Exception as ex:
-        print(f"Failed to create files table: {str(ex)}")
-    conn.commit()
+        conn.commit()
+        print(f"{TABLE_2} table created successfully")
+        
     conn.close()
 
 

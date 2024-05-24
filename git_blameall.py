@@ -6,9 +6,10 @@ ARCHIVO PARA ANALIZAR UN FICHERO
 
 
 import sys
-import os
+import subprocess
 import re
 import pyodbc
+import chardet
 from datetime import datetime
 
 
@@ -32,20 +33,34 @@ def parse_chunk_header(s):
     
   return list(map(int,(origL, del_N, newL, add_N)))
 
+def detect_encoding(data):
+    result = chardet.detect(data)
+    return result['encoding']
 
-def get_initial_version(first_rev,fn):
-  lines = []
-  file_started_FL = False
-  for line in os.popen('git show %s %s'%(first_rev,fn)):
-    if line=='\ No newline at end of file\n':
-        continue
-    if file_started_FL:
-      assert line[0]=='+',("don't recognize format",line)
-      lines.append(line[1:]) # take out the leading '+'
-    else:
-      if line.startswith('@@ -0,0 '):
-        file_started_FL=True
-  return lines
+def get_initial_version(first_rev, fn):
+    lines = []
+    file_started_FL = False
+    cmd = ['git', 'show', '%s' % first_rev, fn]
+    try:
+      result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+      result.check_returncode()  # Raise CalledProcessError if the command returned an error
+      encoding = detect_encoding(result.stdout)
+      output = result.stdout.decode(encoding, errors='replace')
+    except subprocess.CalledProcessError as e:
+      print(f"Error executing command: {e}")
+      return lines
+    for line in output.splitlines():
+        if line == '\ No newline at end of file':
+            continue
+        if file_started_FL:
+          if not line.startswith('+'):
+            print(f"Unexpected line format after file start: {repr(line)}")
+            continue
+          lines.append(line[1:])  # take out the leading '+'
+        else:
+            if line.startswith('@@ -0,0 '):
+                file_started_FL = True
+    return lines
 
 
 def find_index(ALL_LINES,L,current_rev=None):
@@ -119,7 +134,6 @@ def print_so_far(fn, ALL_LINES,revs):
   head_rev.author = '        '
   i=0
   for line in ALL_LINES:
-    code = line.text
     beg = revs[line.begrev]
     end = revs[line.endrev] if line.endrev is not None else head_rev
     
@@ -157,7 +171,7 @@ def print_so_far(fn, ALL_LINES,revs):
 
       # Deleted lines
       if line.endrev is not None:
-        print('-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
+        #print('-%s (%s %s) +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
         beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
         end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
         long = end_datetime - beg_datetime
@@ -169,8 +183,7 @@ def print_so_far(fn, ALL_LINES,revs):
         
       # Current lines
       else:
-        print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
-      
+        #print(' %s  %s %s  +%s (%s %s)'%(end.hash[:8],end.author,end.date,beg.hash[:8],beg.author,beg.date),line.text, end=' ')
         insert_query = f"INSERT INTO {TABLE} (Code_ID, File_ID, File_Name, Author_Start, Date_Start, Author_End, Date_End, Longevity, Comment_Boolean, Words_Count, Code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         data_to_insert = (id, file_id, fn, beg.author, beg.date, 'NULL', 'NULL', 'NULL', comment_boolean, words_count, line.text)
         cursor.execute(insert_query, data_to_insert)
@@ -183,138 +196,148 @@ def print_so_far(fn, ALL_LINES,revs):
 
 
 def main(fn):
-  Quiet = False
+    Quiet = False
 
-  # GET ALL REVISIONS
-  cmd = 'git rev-list HEAD -- %s' % fn
-  print('[cmd]',cmd)
-  pipe        = os.popen(cmd)
-  hashes      = pipe.readlines()
+    # GET ALL REVISIONS
+    cmd = ['git', 'rev-list', 'HEAD', '--', fn]
+    pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if pipe.returncode != 0:
+        print(f"Command errored: {' '.join(cmd)}")
+        return
 
-  assert not pipe.close(), ('Command errored',cmd)
-        
-  if not Quiet:
-    sys.stderr.write('%d revisions\n'%(len(hashes)))
+    encoding = detect_encoding(pipe.stdout)
+    hashes = pipe.stdout.decode(encoding, errors='replace').splitlines()
 
-        
-  # GET REVISION INFO
-  cmd         = 'git log --format="%%ad %%cn" --date=short %s'%fn
-  print('[cmd]',cmd)
-  pipe        = os.popen(cmd)
-  date_author = pipe.readlines()
-
-  assert not pipe.close(), ('Command errored',cmd)
-
-  assert len(hashes)==len(date_author), ('mismatch between output of "git rev-list" and "git log"', hashes, date_author)
-      
-  revs = []
-  for hash, date_au in zip(hashes,date_author):
-    x = struct()
-    x.hash = hash.strip()
-    x.date, x.author = date_au.split(' ',1)
-    x.author = x.author.strip()
-    revs.append(x)
-      
-  if not Quiet:
-    sys.stderr.write('%s --- %s\n'%(revs[-1].date,revs[0].date))
-        
-  forced_author_len = 8
-  for x in revs:
-    if len(x.author) > forced_author_len:
-      x.author = x.author[:forced_author_len-1]+'.'
-    else:
-      x.author = x.author.ljust(forced_author_len)
-      
-  # INITIAL VERSION
-  ALL_LINES=[]                        
-  for line in get_initial_version(revs[-1].hash,fn):
-    x = struct()
-    x.text    = line
-    x.begrev  = len(revs)-1
-    x.endrev  = None
-    ALL_LINES.append(x)  
-      
-  print_so_far(fn, ALL_LINES,revs)
-
-      
-  # process all the revisions
-  origL, del_N, newL, add_N = 0,0,0,0
-  for r in range(len(revs)-1,0,-1):
-      
     if not Quiet:
-      sys.stderr.write('\r')
-      sys.stderr.write('Processing revision: (%d/%d) %s' % (len(revs)-r+1,len(revs),revs[r-1].date))
-        
-    cmd  = 'git diff -U0 %s %s %s'%(revs[r].hash,revs[r-1].hash,fn)
-    pipe = os.popen(cmd)
-        
-    print('[cmd]',cmd)
-    print()
+        sys.stderr.write('%d revisions\n' % len(hashes))
 
-    in_header_FL = True
-    for line in pipe:
+    # GET REVISION INFO
+    cmd = ['git', 'log', '--format=%ad %cn', '--date=short', fn]
+    #print('[cmd]', ' '.join(cmd))
+    pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if pipe.returncode != 0:
+        print(f"Command errored: {' '.join(cmd)}")
+        return
 
-        if in_header_FL:              # SKIP OVER HEADER
-            if line.startswith('@@'): # we hit our first chunk
-                in_header_FL = False
-            else:
-                continue
-                
-        if line=='\ No newline at end of file\n':
-            continue
-                
-        print('[line]',repr(line),'add_N=%d del_N=%d'%(add_N,del_N))
-            
-        if line.startswith('@@'):     # RECEIVED A NEW CHUNK!
-          origL, del_N, newL, add_N = parse_chunk_header(line)
-          all_index = None
-          print('chunk',origL,del_N,newL,add_N)
-              
-        elif del_N:                   # PROCESSING DELETED LINES
-          assert line.startswith('-'),line
-          if all_index is None:       # find index in ALL_LINES for origL
-            all_index = find_index(ALL_LINES, origL-1, current_rev=r-1)
-          else:
-            all_index = find_next_alive(ALL_LINES, all_index)
-              
-          assert ALL_LINES[all_index].text == line[1:], (
-            "diff processing screwed up, marking the wrong deletion line",ALL_LINES[all_index].text,line,all_index)
-          ALL_LINES[all_index].endrev = r-1
-              
-          del_N -= 1
-          if del_N == 0:
-            all_index = None
-              
-        elif add_N:                   # PROCESSING ADDED LINES
-          assert line.startswith('+'),line
-          if all_index is None:
-            all_index = find_index(ALL_LINES, newL-1)
-          else:
-            all_index += 1
-                          
-          x = struct()
-          x.text = line[1:]
-          x.begrev = r-1
-          x.endrev = None
-              
-          ALL_LINES.insert(all_index, x)
-              
-          add_N -= 1
-          if add_N == 0:
-            all_index = None
-              
+    encoding = detect_encoding(pipe.stdout)
+    date_author = pipe.stdout.decode(encoding, errors='replace').splitlines()
+
+    assert len(hashes) == len(date_author), ('mismatch between output of "git rev-list" and "git log"', hashes, date_author)
+
+    revs = []
+    for hash, date_au in zip(hashes, date_author):
+        x = struct()
+        x.hash = hash.strip()
+        x.date, x.author = date_au.split(' ', 1)
+        x.author = x.author.strip()
+        revs.append(x)
+
+    if not Quiet:
+        sys.stderr.write('%s --- %s\n' % (revs[-1].date, revs[0].date))
+
+    forced_author_len = 8
+    for x in revs:
+        if len(x.author) > forced_author_len:
+            x.author = x.author[:forced_author_len - 1] + '.'
         else:
-          if line.startswith('diff'):
-            in_header_FL = True
-          else:
-            assert 0, ("shouldn't reach here unless misparsed diff output",line)
-            
-    assert not pipe.close(), ('Command errored',cmd)
-        
-    print()
-    print_so_far(fn, ALL_LINES,revs)
-      
-  if not Quiet:
-    sys.stderr.write('\n')
-  print_so_far(fn, ALL_LINES,revs)
+            x.author = x.author.ljust(forced_author_len)
 
+    # INITIAL VERSION
+    ALL_LINES = []
+    for line in get_initial_version(revs[-1].hash, fn):
+        x = struct()
+        x.text = line
+        x.begrev = len(revs) - 1
+        x.endrev = None
+        ALL_LINES.append(x)
+
+    print_so_far(fn, ALL_LINES, revs)
+
+    # process all the revisions
+    origL, del_N, newL, add_N = 0, 0, 0, 0
+    for r in range(len(revs) - 1, 0, -1):
+
+        if not Quiet:
+            sys.stderr.write('\r')
+            sys.stderr.write('Processing revision: (%d/%d) %s' % (len(revs) - r + 1, len(revs), revs[r - 1].date))
+
+        cmd = ['git', 'diff', '-U0', revs[r].hash, revs[r - 1].hash, fn]
+        pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        if pipe.returncode != 0:
+            print(f"Command errored: {' '.join(cmd)}")
+            continue
+
+        encoding = detect_encoding(pipe.stdout)
+        diff_output = pipe.stdout.decode(encoding, errors='replace')
+
+        print('[cmd]', ' '.join(cmd))
+        print()
+
+        in_header_FL = True
+        for line in diff_output.splitlines():
+            if in_header_FL:  # SKIP OVER HEADER
+                if line.startswith('@@'):  # we hit our first chunk
+                    in_header_FL = False
+                else:
+                    continue
+
+            if line == '\ No newline at end of file':
+                continue
+
+            #print('[line]', repr(line), 'add_N=%d del_N=%d' % (add_N, del_N))
+
+            if line.startswith('@@'):  # RECEIVED A NEW CHUNK!
+                origL, del_N, newL, add_N = parse_chunk_header(line)
+                all_index = None
+                #print('chunk', origL, del_N, newL, add_N)
+
+            elif del_N:  # PROCESSING DELETED LINES
+                assert line.startswith('-'), line
+                if all_index is None:  # find index in ALL_LINES for origL
+                    all_index = find_index(ALL_LINES, origL - 1, current_rev=r - 1)
+                else:
+                    all_index = find_next_alive(ALL_LINES, all_index)
+
+                assert ALL_LINES[all_index].text == line[1:], (
+                    "diff processing screwed up, marking the wrong deletion line", ALL_LINES[all_index].text, line,
+                    all_index)
+                ALL_LINES[all_index].endrev = r - 1
+
+                del_N -= 1
+                if del_N == 0:
+                    all_index = None
+
+            elif add_N:  # PROCESSING ADDED LINES
+                assert line.startswith('+'), line
+                if all_index is None:
+                    all_index = find_index(ALL_LINES, newL - 1)
+                else:
+                    all_index += 1
+
+                x = struct()
+                x.text = line[1:]
+                x.begrev = r - 1
+                x.endrev = None
+
+                ALL_LINES.insert(all_index, x)
+
+                add_N -= 1
+                if add_N == 0:
+                    all_index = None
+
+            else:
+                if line.startswith('diff'):
+                    in_header_FL = True
+                else:
+                    assert 0, ("shouldn't reach here unless misparsed diff output", line)
+
+        print()
+        print_so_far(fn, ALL_LINES, revs)
+
+    if not Quiet:
+        sys.stderr.write('\n')
+    print_so_far(fn, ALL_LINES, revs)
+
+if __name__=='__main__':
+  main()
