@@ -9,7 +9,6 @@ import sys
 import subprocess
 import re
 import pyodbc
-import chardet
 from datetime import datetime
 
 
@@ -33,34 +32,29 @@ def parse_chunk_header(s):
     
   return list(map(int,(origL, del_N, newL, add_N)))
 
-def detect_encoding(data):
-    result = chardet.detect(data)
-    return result['encoding']
 
 def get_initial_version(first_rev, fn):
-    lines = []
-    file_started_FL = False
-    cmd = ['git', 'show', '%s' % first_rev, fn]
-    try:
-      result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      result.check_returncode()  # Raise CalledProcessError if the command returned an error
-      encoding = detect_encoding(result.stdout)
-      output = result.stdout.decode(encoding, errors='replace')
-    except subprocess.CalledProcessError as e:
-      print(f"Error executing command: {e}")
-      return lines
-    for line in output.splitlines():
-        if line == '\ No newline at end of file':
-            continue
-        if file_started_FL:
-          if not line.startswith('+'):
-            print(f"Unexpected line format after file start: {repr(line)}")
-            continue
-          lines.append(line[1:])  # take out the leading '+'
-        else:
-            if line.startswith('@@ -0,0 '):
-                file_started_FL = True
+  lines = []
+  file_started_FL = False
+  cmd = ['git', 'show', '%s' % first_rev, fn]
+  try:
+    result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8', errors='ignore')
+    result.check_returncode()  # Raise CalledProcessError if the command returned an error
+  except subprocess.CalledProcessError as e:
+    print(f"Error executing command: {e}")
     return lines
+  for line in result.stdout.splitlines():
+    if line == '\ No newline at end of file':
+      continue
+    if file_started_FL:
+      if not line.startswith('+'):
+        print(f"Unexpected line format after file start: {repr(line)}")
+        continue
+      lines.append(line[1:]) # take out the leading '+'
+    else:
+        if line.startswith('@@ -0,0 '):
+          file_started_FL = True
+  return lines
 
 
 def find_index(ALL_LINES,L,current_rev=None):
@@ -200,13 +194,11 @@ def main(fn):
 
     # GET ALL REVISIONS
     cmd = ['git', 'rev-list', 'HEAD', '--', fn]
-    pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8', errors='ignore')
+    hashes = pipe.stdout.splitlines()
     if pipe.returncode != 0:
-        print(f"Command errored: {' '.join(cmd)}")
-        return
-
-    encoding = detect_encoding(pipe.stdout)
-    hashes = pipe.stdout.decode(encoding, errors='replace').splitlines()
+      print(f"Command errored: {' '.join(cmd)}")
+      return
 
     if not Quiet:
         sys.stderr.write('%d revisions\n' % len(hashes))
@@ -214,13 +206,11 @@ def main(fn):
     # GET REVISION INFO
     cmd = ['git', 'log', '--format=%ad %cn', '--date=short', fn]
     #print('[cmd]', ' '.join(cmd))
-    pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8', errors='ignore')
+    date_author = pipe.stdout.splitlines()
     if pipe.returncode != 0:
         print(f"Command errored: {' '.join(cmd)}")
         return
-
-    encoding = detect_encoding(pipe.stdout)
-    date_author = pipe.stdout.decode(encoding, errors='replace').splitlines()
 
     assert len(hashes) == len(date_author), ('mismatch between output of "git rev-list" and "git log"', hashes, date_author)
 
@@ -262,75 +252,74 @@ def main(fn):
             sys.stderr.write('Processing revision: (%d/%d) %s' % (len(revs) - r + 1, len(revs), revs[r - 1].date))
 
         cmd = ['git', 'diff', '-U0', revs[r].hash, revs[r - 1].hash, fn]
-        pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+        pipe = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8', errors='ignore')
         if pipe.returncode != 0:
             print(f"Command errored: {' '.join(cmd)}")
             continue
-
-        encoding = detect_encoding(pipe.stdout)
-        diff_output = pipe.stdout.decode(encoding, errors='replace')
 
         print('[cmd]', ' '.join(cmd))
         print()
 
         in_header_FL = True
-        for line in diff_output.splitlines():
-            if in_header_FL:  # SKIP OVER HEADER
-                if line.startswith('@@'):  # we hit our first chunk
-                    in_header_FL = False
-                else:
-                    continue
+        for line in pipe.stdout.splitlines():
+          if in_header_FL:  # SKIP OVER HEADER
+              if line.startswith('@@'):  # we hit our first chunk
+                  in_header_FL = False
+              else:
+                  continue
 
-            if line == '\ No newline at end of file':
-                continue
+          if line == '\ No newline at end of file':
+              continue
 
-            #print('[line]', repr(line), 'add_N=%d del_N=%d' % (add_N, del_N))
+          #print('[line]', repr(line), 'add_N=%d del_N=%d' % (add_N, del_N))
 
-            if line.startswith('@@'):  # RECEIVED A NEW CHUNK!
-                origL, del_N, newL, add_N = parse_chunk_header(line)
-                all_index = None
-                #print('chunk', origL, del_N, newL, add_N)
+          if line.startswith('@@'):  # RECEIVED A NEW CHUNK!
+              origL, del_N, newL, add_N = parse_chunk_header(line)
+              all_index = None
+              #print('chunk', origL, del_N, newL, add_N)
 
-            elif del_N:  # PROCESSING DELETED LINES
-                assert line.startswith('-'), line
-                if all_index is None:  # find index in ALL_LINES for origL
-                    all_index = find_index(ALL_LINES, origL - 1, current_rev=r - 1)
-                else:
-                    all_index = find_next_alive(ALL_LINES, all_index)
+          elif del_N:  # PROCESSING DELETED LINES
+              assert line.startswith('-'), line
+              if all_index is None:  # find index in ALL_LINES for origL
+                  all_index = find_index(ALL_LINES, origL - 1, current_rev=r - 1)
+              else:
+                  all_index = find_next_alive(ALL_LINES, all_index)
 
-                assert ALL_LINES[all_index].text == line[1:], (
-                    "diff processing screwed up, marking the wrong deletion line", ALL_LINES[all_index].text, line,
-                    all_index)
-                ALL_LINES[all_index].endrev = r - 1
+              print("Expected line:", repr(line[1:]))
+              print("Actual line:", repr(ALL_LINES[all_index].text))
 
-                del_N -= 1
-                if del_N == 0:
-                    all_index = None
+              assert ALL_LINES[all_index].text == line[1:], (
+                "diff processing screwed up, marking the wrong deletion line", ALL_LINES[all_index].text, line,
+                all_index)
+              ALL_LINES[all_index].endrev = r - 1
 
-            elif add_N:  # PROCESSING ADDED LINES
-                assert line.startswith('+'), line
-                if all_index is None:
-                    all_index = find_index(ALL_LINES, newL - 1)
-                else:
-                    all_index += 1
+              del_N -= 1
+              if del_N == 0:
+                  all_index = None
 
-                x = struct()
-                x.text = line[1:]
-                x.begrev = r - 1
-                x.endrev = None
-
-                ALL_LINES.insert(all_index, x)
-
-                add_N -= 1
-                if add_N == 0:
-                    all_index = None
-
+          elif add_N:  # PROCESSING ADDED LINES
+            assert line.startswith('+'), line
+            if all_index is None:
+                  all_index = find_index(ALL_LINES, newL - 1)
             else:
-                if line.startswith('diff'):
-                    in_header_FL = True
-                else:
-                    assert 0, ("shouldn't reach here unless misparsed diff output", line)
+              all_index += 1
+
+            x = struct()
+            x.text = line[1:]
+            x.begrev = r - 1
+            x.endrev = None
+
+            ALL_LINES.insert(all_index, x)
+
+            add_N -= 1
+            if add_N == 0:
+                all_index = None
+
+          else:
+            if line.startswith('diff'):
+              in_header_FL = True
+            else:
+              assert 0, ("shouldn't reach here unless misparsed diff output", line)
 
         print()
         print_so_far(fn, ALL_LINES, revs)

@@ -134,8 +134,8 @@ def read_directory(absFilePath, name_directory):
                     commits = 0
                 insert_files_data(name_file, pos, commits)
                 if commits != 0:
-                    #original_encoding = detect_encoding(name_file)                    
-                    #convert_to_utf8(name_file, original_encoding)
+                    original_encoding = detect_encoding(name_file)                    
+                    convert_to_utf8(name_file, original_encoding)
                     git_blameall.main(name_file)
                 try:
                     with open(pos, 'rb') as file:
