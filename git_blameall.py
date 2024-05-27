@@ -285,8 +285,8 @@ def main(fn):
               else:
                   all_index = find_next_alive(ALL_LINES, all_index)
 
-              print("Expected line:", repr(line[1:]))
-              print("Actual line:", repr(ALL_LINES[all_index].text))
+              #print("Expected line:", repr(line[1:]))
+              #print("Actual line:", repr(ALL_LINES[all_index].text))
 
               assert ALL_LINES[all_index].text == line[1:], (
                 "diff processing screwed up, marking the wrong deletion line", ALL_LINES[all_index].text, line,
