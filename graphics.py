@@ -21,13 +21,13 @@ def get_graphs():
     except Exception as ex:
         print(f"Failed connection to database {DATABASE}: {str(ex)}")
 
-    commits_graph(conn)
-    languages_graph(conn)
-    collaborators_graph(conn)
-    churn_rate_graph(conn)
-    #orphan_lines_graph(conn)
-    remaining_lines_graph(conn)
-    remaining_lines_percentage_graph(conn)
+    #commits_graph(conn)
+    #languages_graph(conn)
+    #collaborators_graph(conn)
+    #churn_rate_graph(conn)
+    #remaining_lines_graph(conn)
+    #remaining_lines_percentage_graph(conn)
+    orphan_lines_graph(conn)
 
     print("Graphics created in '.png' files.")
 
@@ -132,7 +132,7 @@ def churn_rate_graph(conn):
     SELECT 
         r.Repo_Name,
         YEAR(c.Date_Start) AS Year,
-        SUM(CASE WHEN c.Comment_Boolean = 1 THEN 0 ELSE 1 END) AS Lines_Deleted,
+        SUM(CASE WHEN c.Comment_Boolean = 0 AND c.Longevity IS NOT NULL THEN 1 ELSE 0 END) AS Lines_Deleted,
         SUM(1) AS Total_Lines
     FROM {TABLE_1} AS r
     JOIN {TABLE_2} AS f ON r.ID = f.Repo_ID
@@ -156,42 +156,6 @@ def churn_rate_graph(conn):
     plt.xlabel('Year')
     plt.ylabel('Churn Rate')
     plt.title('Churn Rate Evolution Over Time')
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
-def orphan_lines_graph(conn):
-    # Consulta SQL
-    query = f'''
-    SELECT 
-        r.Repo_Name,
-        YEAR(c.Date_End) AS Year,
-        SUM(c.Words_Count * DATEDIFF(month, c.Date_End, GETDATE())) AS Inactive_Lines_Months
-    FROM {TABLE_3} AS c
-    LEFT JOIN {TABLE_2} AS f ON c.File_ID = f.File_ID
-    LEFT JOIN {TABLE_1} AS r ON f.Repo_ID = r.ID
-    WHERE c.Date_End IS NOT NULL AND DATEDIFF(month, c.Date_End, GETDATE()) > 0
-    GROUP BY r.Repo_Name, YEAR(c.Date_End)
-    ORDER BY Year
-    '''
-
-    # Ejecutar la consulta y cargar los datos en un DataFrame de pandas
-    df = pd.read_sql(query, conn)
-
-    # Convertir el año a tipo int para asegurar su correcta visualización
-    df['Year'] = df['Year'].astype(int)
-
-    # Crear la gráfica de evolución del número de líneas de desarrolladores inactivos multiplicado por los meses de inactividad
-    plt.figure(figsize=(12, 8))
-
-    # Iterar sobre cada repositorio único en el DataFrame y graficar
-    for repo_name, data in df.groupby('Repo_Name'):
-        plt.plot(data['Year'], data['Inactive_Lines_Months'], marker='o', linestyle='-', label=repo_name)
-
-    plt.xlabel('Year')
-    plt.ylabel('Inactive Lines x Months')
-    plt.title('Evolution of Inactive Developers Lines x Months Over Time')
     plt.legend(title='Repositories', bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.grid(True)
     plt.tight_layout()
@@ -207,7 +171,7 @@ def remaining_lines_graph(conn):
     FROM {TABLE_3} AS c
     LEFT JOIN {TABLE_2} AS f ON c.File_ID = f.File_ID
     LEFT JOIN {TABLE_1} AS r ON f.Repo_ID = r.ID
-    WHERE c.Longevity = '0'
+    WHERE c.Longevity = 'NULL' AND C.Comment_Boolean = '0'
     GROUP BY r.Repo_Name, YEAR(c.Date_Start)
     ORDER BY Year
     '''
@@ -231,6 +195,75 @@ def remaining_lines_graph(conn):
     plt.legend(title='Repositories', bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.grid(True)
     plt.tight_layout()
+    plt.show()
+
+def remaining_lines_percentage_graph(conn):
+    # Consulta SQL
+    query = f'''
+    SELECT 
+        r.Repo_Name,
+        YEAR(c.Date_Start) AS Year,
+        COUNT(*) AS Total_Lines_Count,
+        SUM(CASE WHEN c.Longevity = 'NULL' AND c.Comment_Boolean = '0' THEN 1 ELSE 0 END) AS Remaining_Lines_Count
+    FROM {TABLE_3} AS c
+    LEFT JOIN {TABLE_2} AS f ON c.File_ID = f.File_ID
+    LEFT JOIN {TABLE_1} AS r ON f.Repo_ID = r.ID
+    GROUP BY r.Repo_Name, YEAR(c.Date_Start)
+    ORDER BY Year
+    '''
+
+    # Ejecutar la consulta y cargar los datos en un DataFrame de pandas
+    df = pd.read_sql(query, conn)
+
+    # Convertir el año a tipo int para asegurar su correcta visualización
+    df['Year'] = df['Year'].astype(int)
+
+    # Calcular el porcentaje de líneas restantes
+    df['Remaining_Lines_Percentage'] = (df['Remaining_Lines_Count'] / df['Total_Lines_Count']) * 100
+
+    # Crear la gráfica de evolución del porcentaje de líneas restantes respecto al tiempo
+    plt.figure(figsize=(12, 8))
+
+    # Iterar sobre cada repositorio único en el DataFrame y graficar
+    for repo_name, data in df.groupby('Repo_Name'):
+        plt.plot(data['Year'], data['Remaining_Lines_Percentage'], marker='o', linestyle='-', label=repo_name)
+
+    plt.xlabel('Year')
+    plt.ylabel('Remaining Lines Percentage')
+    plt.title('Evolution of Remaining Lines Percentage Over Time')
+    plt.legend(title='Repositories', bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+def orphan_lines_graph(conn):
+    # Consulta SQL para obtener los datos necesarios
+    query = f'''
+        SELECT T1.Repo_Name, T3.Date_Start, COUNT(*) as Orphan_Lines_Count
+        FROM {TABLE_3} T3
+        JOIN {TABLE_2} T2 ON T3.File_ID = T2.File_ID
+        JOIN {TABLE_1} T1 ON T2.Repo_ID = T1.ID
+        WHERE T3.Author_End != ''
+        GROUP BY T1.Repo_Name, T3.Date_Start
+        ORDER BY T1.Repo_Name, T3.Date_Start
+    '''
+
+    # Ejecutar la consulta y guardar los resultados en un DataFrame
+    df = pd.read_sql(query, conn)
+
+    # Convertir la columna de fechas a tipo datetime
+    df['Date_Start'] = pd.to_datetime(df['Date_Start'])
+
+    # Crear la gráfica
+    plt.figure(figsize=(10, 6))
+    for repo_name, data in df.groupby('Repo_Name'):
+        plt.plot(data['Date_Start'], data['Orphan_Lines_Count'], label=repo_name)
+
+    plt.xlabel('Year')
+    plt.ylabel('Orphan Lines Count')
+    plt.title('Evolution of Orphan Lines Over Time')
+    plt.legend(title='Repositories', bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.grid(True)
     plt.show()
 
 if __name__ == "__main__":
