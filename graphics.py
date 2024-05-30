@@ -236,35 +236,44 @@ def remaining_lines_percentage_graph(conn):
     plt.tight_layout()
     plt.show()
 
+"""
 def orphan_lines_graph(conn):
     # Consulta SQL para obtener los datos necesarios
     query = f'''
-        SELECT T1.Repo_Name, T3.Date_Start, COUNT(*) as Orphan_Lines_Count
-        FROM {TABLE_3} T3
-        JOIN {TABLE_2} T2 ON T3.File_ID = T2.File_ID
-        JOIN {TABLE_1} T1 ON T2.Repo_ID = T1.ID
-        WHERE T3.Author_End != ''
-        GROUP BY T1.Repo_Name, T3.Date_Start
-        ORDER BY T1.Repo_Name, T3.Date_Start
+    SELECT r.Repo_Name, 
+        YEAR(c.Date_End) AS Year_End, 
+        MONTH(c.Date_End) AS Month_End, 
+        SUM(CASE WHEN c.Comment_Boolean = '0') AS Orphan_Lines_Count
+
+        
+    FROM {TABLE_1} r
+    INNER JOIN {TABLE_2} f ON r.ID = f.Repo_ID
+    INNER JOIN {TABLE_3} c ON f.File_ID = c.File_ID
+    WHERE c.Author_End IS NOT NULL
+    GROUP BY r.Repo_Name, YEAR(c.Date_End), MONTH(c.Date_End)
     '''
 
     # Ejecutar la consulta y guardar los resultados en un DataFrame
     df = pd.read_sql(query, conn)
 
-    # Convertir la columna de fechas a tipo datetime
-    df['Date_Start'] = pd.to_datetime(df['Date_Start'])
+    # Calcular líneas huérfanas multiplicadas por meses de inactividad
+    df['Orphan_Lines'] = df['Orphan_Lines_Count'] * df['Months_Inactive']
 
     # Crear la gráfica
     plt.figure(figsize=(10, 6))
-    for repo_name, data in df.groupby('Repo_Name'):
-        plt.plot(data['Date_Start'], data['Orphan_Lines_Count'], label=repo_name)
+
+    for repo_name, group in df.groupby('Repo_Name'):
+        plt.plot(group['Year_End'] + group['Month_End'] / 12, group['Orphan_Lines'], label=repo_name)
 
     plt.xlabel('Year')
-    plt.ylabel('Orphan Lines Count')
-    plt.title('Evolution of Orphan Lines Over Time')
+    plt.ylabel('Orphan Lines * Months of Inactivity')
+    plt.title('Orphan Lines Over Time')
     plt.legend(title='Repositories', bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.grid(True)
     plt.show()
+
+    """
+
 
 if __name__ == "__main__":
     get_graphs()
