@@ -36,8 +36,8 @@
 
 
 - ORPHAN_LINES_GRAPH. Esta función representa la cantidad de líneas que prevalecen de desarrolladores que no están activos en el proyecto, multiplicado por los meses de inactividad. 
-	> SELECT. Selecciona el nombre del repositorio, el año del primer commit y cuenta el número de líneas donde longevidad tiene valor NULL y c.Comment_Boolean = 0 (Líneas permanentes).
-
+	> ????????
+ 
 
 
 
