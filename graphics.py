@@ -29,7 +29,8 @@ def get_graphs():
     #churn_rate_graph(conn)
     #remaining_lines_graph(conn)
     #remaining_lines_percentage_graph(conn)
-    orphan_lines_graph(conn)
+    author_lines_graph(conn)
+    author_lines_percentage_graph(conn)
 
     print("Graphics created in '.png' files.")
 
@@ -238,14 +239,14 @@ def remaining_lines_percentage_graph(conn):
     plt.tight_layout()
     plt.show()
 
-def orphan_lines_graph(conn):
+def author_lines_graph(conn):
     # Consulta SQL para obtener la actividad de cada autor en cada repositorio
     query = f'''
     SELECT 
         r.Repo_Name,
         YEAR(c.Date_Start) AS Year,
         c.Author_Start AS Author,
-        COUNT(*) AS Total_Commits
+        COUNT(*) AS Lines_Count
     FROM {TABLE_3} AS c
     LEFT JOIN {TABLE_2} AS f ON c.File_ID = f.File_ID
     LEFT JOIN {TABLE_1} AS r ON f.Repo_ID = r.ID
@@ -264,16 +265,69 @@ def orphan_lines_graph(conn):
         
         # Iterar sobre cada autor único en el DataFrame y graficar
         for author, data in repo_data.groupby('Author'):
-            plt.plot(data['Year'], data['Total_Commits'], marker='o', linestyle='-', label=author)
+            plt.plot(data['Year'], data['Lines_Count'], marker='o', linestyle='-', label=author)
         
         plt.title(f'Author Activity Over Years in {repo_name}')
         plt.xlabel('Year')
-        plt.ylabel('Total Commits')
+        plt.ylabel('Lines Count')
         plt.legend(title='Authors', bbox_to_anchor=(1.05, 1), loc='upper left')
         plt.grid(True)
         plt.tight_layout()
         plt.show()
 
+def author_lines_percentage_graph(conn):
+    # Consulta SQL para obtener el número total de líneas en cada repositorio para cada año
+    total_lines_query = f'''
+    SELECT 
+        r.Repo_Name,
+        YEAR(c.Date_Start) AS Year,
+        COUNT(*) AS Total_Lines
+    FROM {TABLE_3} AS c
+    LEFT JOIN {TABLE_2} AS f ON c.File_ID = f.File_ID
+    LEFT JOIN {TABLE_1} AS r ON f.Repo_ID = r.ID
+    GROUP BY r.Repo_Name, YEAR(c.Date_Start)
+    '''
+
+    # Ejecutar la consulta y cargar los datos en un DataFrame de pandas
+    total_lines_df = pd.read_sql_query(total_lines_query, conn)
+
+    # Consulta SQL para obtener el número de líneas por autor en cada repositorio para cada año
+    author_lines_query = f'''
+    SELECT 
+        r.Repo_Name,
+        YEAR(c.Date_Start) AS Year,
+        c.Author_Start AS Author,
+        COUNT(*) AS Author_Lines
+    FROM {TABLE_3} AS c
+    LEFT JOIN {TABLE_2} AS f ON c.File_ID = f.File_ID
+    LEFT JOIN {TABLE_1} AS r ON f.Repo_ID = r.ID
+    GROUP BY r.Repo_Name, YEAR(c.Date_Start), c.Author_Start
+    '''
+
+    # Ejecutar la consulta y cargar los datos en un DataFrame de pandas
+    author_lines_df = pd.read_sql_query(author_lines_query, conn)
+
+    # Fusionar los datos de líneas totales y líneas por autor
+    merged_df = pd.merge(author_lines_df, total_lines_df, on=['Repo_Name', 'Year'])
+
+    # Calcular el porcentaje de líneas por autor respecto al número total de líneas del repositorio para cada año
+    merged_df['Lines_Percentage'] = (merged_df['Author_Lines'] / merged_df['Total_Lines']) * 100
+
+    # Crear una gráfica para cada repositorio
+    for repo_name, repo_data in merged_df.groupby('Repo_Name'):
+        plt.figure(figsize=(10, 6))
+        
+        # Iterar sobre cada autor único en el DataFrame y graficar
+        for author, data in repo_data.groupby('Author'):
+            plt.plot(data['Year'], data['Lines_Percentage'], marker='o', linestyle='-', label=author)
+        
+        plt.title(f'Author Lines Percentage Over Years in {repo_name}')
+        plt.xlabel('Year')
+        plt.ylabel('Lines Percentage')
+        plt.legend(title='Authors', bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 
 
 if __name__ == "__main__":
