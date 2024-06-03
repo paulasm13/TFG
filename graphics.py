@@ -1,6 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sqlalchemy import create_engine
+from datetime import datetime
+
 
 
 SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
@@ -236,43 +238,42 @@ def remaining_lines_percentage_graph(conn):
     plt.tight_layout()
     plt.show()
 
-"""
 def orphan_lines_graph(conn):
-    # Consulta SQL para obtener los datos necesarios
+    # Consulta SQL para obtener la actividad de cada autor en cada repositorio
     query = f'''
-    SELECT r.Repo_Name, 
-        YEAR(c.Date_End) AS Year_End, 
-        MONTH(c.Date_End) AS Month_End, 
-        SUM(CASE WHEN c.Comment_Boolean = '0') AS Orphan_Lines_Count
-
-        
-    FROM {TABLE_1} r
-    INNER JOIN {TABLE_2} f ON r.ID = f.Repo_ID
-    INNER JOIN {TABLE_3} c ON f.File_ID = c.File_ID
-    WHERE c.Author_End IS NOT NULL
-    GROUP BY r.Repo_Name, YEAR(c.Date_End), MONTH(c.Date_End)
+    SELECT 
+        r.Repo_Name,
+        YEAR(c.Date_Start) AS Year,
+        c.Author_Start AS Author,
+        COUNT(*) AS Total_Commits
+    FROM {TABLE_3} AS c
+    LEFT JOIN {TABLE_2} AS f ON c.File_ID = f.File_ID
+    LEFT JOIN {TABLE_1} AS r ON f.Repo_ID = r.ID
+    GROUP BY r.Repo_Name, YEAR(c.Date_Start), c.Author_Start
     '''
 
-    # Ejecutar la consulta y guardar los resultados en un DataFrame
-    df = pd.read_sql(query, conn)
+    # Ejecutar la consulta y cargar los datos en un DataFrame de pandas
+    df = pd.read_sql_query(query, conn)
 
-    # Calcular líneas huérfanas multiplicadas por meses de inactividad
-    df['Orphan_Lines'] = df['Orphan_Lines_Count'] * df['Months_Inactive']
+    # Convertir el año a tipo int para asegurar su correcta visualización
+    df['Year'] = df['Year'].astype(int)
 
-    # Crear la gráfica
-    plt.figure(figsize=(10, 6))
+    # Crear una gráfica para cada repositorio
+    for repo_name, repo_data in df.groupby('Repo_Name'):
+        plt.figure(figsize=(10, 6))
+        
+        # Iterar sobre cada autor único en el DataFrame y graficar
+        for author, data in repo_data.groupby('Author'):
+            plt.plot(data['Year'], data['Total_Commits'], marker='o', linestyle='-', label=author)
+        
+        plt.title(f'Author Activity Over Years in {repo_name}')
+        plt.xlabel('Year')
+        plt.ylabel('Total Commits')
+        plt.legend(title='Authors', bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 
-    for repo_name, group in df.groupby('Repo_Name'):
-        plt.plot(group['Year_End'] + group['Month_End'] / 12, group['Orphan_Lines'], label=repo_name)
-
-    plt.xlabel('Year')
-    plt.ylabel('Orphan Lines * Months of Inactivity')
-    plt.title('Orphan Lines Over Time')
-    plt.legend(title='Repositories', bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.grid(True)
-    plt.show()
-
-    """
 
 
 if __name__ == "__main__":
