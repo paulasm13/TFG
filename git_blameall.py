@@ -4,7 +4,6 @@ ARCHIVO PARA ANALIZAR UN FICHERO
 
 """
 
-
 import sys
 import subprocess
 import re
@@ -70,7 +69,6 @@ def find_index(ALL_LINES,L,current_rev=None):
     elif ALL_LINES[i].endrev == current_rev: # still count the line, it was erased during the current revision
       L-=1
     i+=1
-  # ffwd through deleted lines
   while i<len(ALL_LINES) and ALL_LINES[i].endrev!=None:
     i+=1
   return i
@@ -89,7 +87,7 @@ def print_so_far(fn, ALL_LINES,revs):
 
   try:
     conn = pyodbc.connect(connectionString)
-    print(f"Successful connection to database {DATABASE}")
+    #print(f"Successful connection to database {DATABASE}")
   except Exception as ex:
     print(f"Failed connection to database {DATABASE}: {str(ex)}")
 
@@ -101,9 +99,10 @@ def print_so_far(fn, ALL_LINES,revs):
   result = cursor.fetchone()
 
   if result[0] > 0:
-    print(f"The table '{TABLE}' exists in the database.")
+    ""
+    #print(f"The table '{TABLE}' exists in the database.")
   else:
-    print(f"The table '{TABLE}' does not exist in the database.")
+    #print(f"The table '{TABLE}' does not exist in the database.")
     create_table_query = f'''
     CREATE TABLE {TABLE} (
         Code_ID INT PRIMARY KEY,
@@ -243,7 +242,7 @@ def main(fn):
 
     print_so_far(fn, ALL_LINES, revs)
 
-    # process all the revisions
+    # Process all the revisions
     origL, del_N, newL, add_N = 0, 0, 0, 0
     for r in range(len(revs) - 1, 0, -1):
 
@@ -257,7 +256,7 @@ def main(fn):
             print(f"Command errored: {' '.join(cmd)}")
             continue
 
-        print('[cmd]', ' '.join(cmd))
+        #print('[cmd]', ' '.join(cmd))
         print()
 
         in_header_FL = True

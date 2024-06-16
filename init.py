@@ -1,3 +1,9 @@
+"""
+
+ARCHIVO PARA ANALIZAR UN REPOSITORIO 
+
+"""
+
 import os
 import sys
 import subprocess
@@ -17,11 +23,18 @@ TABLE_2 = 'Files'
 
 
 def detect_encoding(name_file):
-    """ Detects the encoding of a given file."""
-    with open(name_file, 'rb') as f:
-        raw_data = f.read()
-    result = chardet.detect(raw_data)
-    return result['encoding']
+    try:
+        with open(name_file, 'rb') as f:
+            raw_data = f.read()
+        # Empty file
+        if not raw_data:
+            return None
+        result = chardet.detect(raw_data)
+        print(f"RESULT: {result}")
+        return result['encoding']
+    except Exception as e:
+        print(f"Error detecting encoding for file {name_file}: {e}")
+
 
 def convert_to_utf8(name_file, original_encoding):
     """Converts a file to UTF-8 encoding."""
@@ -79,7 +92,7 @@ def run_url(protocol, type_git, user, repo):
     command_line = f"git clone {repo_url}"
     print('Run url...')
     # Run in the shell the command_line
-    subprocess.call(command_line)
+    subprocess.run(command_line, shell=True)
     get_directory(repo_url)
 
 
@@ -114,14 +127,16 @@ def read_directory(absFilePath, name_directory):
         directory = os.listdir(path)
         print(f"List of files and subdirectories: {path}")
         # File...
-        for i in range(len(directory)):
-            # Discard '.tar.gz' files
-            if directory[i].endswith('.tar.gz') or directory[i].endswith('.zip'):
+        for item in directory:
+            if not item:
                 continue
-            if '.' in directory[i] and not directory[i].startswith('.'):
-                print('Python File: ' + str(directory[i]))
-                name_file = str(directory[i])
-                pos = os.path.join(path, directory[i])
+            # Discard '.tar.gz' files
+            if item.endswith('.tar.gz') or item.endswith('.zip'):
+                continue
+            if '.' in item and not item.startswith('.'):
+                print('File: ' + item)
+                name_file = item
+                pos = f"{path}/{item}"
                 # GET ALL REVISIONS
                 os.chdir(path)
                 cmd = f'git log --follow -- {name_file}'
@@ -132,26 +147,35 @@ def read_directory(absFilePath, name_directory):
                     commits = int(len(commits_list))
                 else:
                     commits = 0
-                insert_files_data(name_file, pos, commits)
-                if commits != 0:
-                    original_encoding = detect_encoding(name_file)                    
-                    convert_to_utf8(name_file, original_encoding)
-                    git_blameall.main(name_file)
-                try:
-                    with open(pos, 'rb') as file:
-                        lexer = guess_lexer_for_filename(name_file, file.read().decode('utf-8'))
-                        language = lexer.name
-                except FileNotFoundError:
-                    print(f"File {name_file} could not be opened.")
-                except ClassNotFound:
-                    language = 'Archivo de datos'
-                insert_files_language(name_file, language)
+                original_encoding = detect_encoding(name_file)
+                print(f"ORIGINAL_ENCODING: {original_encoding}")
+                if original_encoding is None:
+                    print(f"Skipping file {name_file} due to unknown encoding")
+                if original_encoding is not None:
+                    print("NO NONE")
+                    if original_encoding != 'utf-8':
+                        print("NO UTF-8!!!")
+                        convert_to_utf8(name_file, original_encoding)
+                    print("SI UTF-8!!!")
+
+                    insert_files_data(name_file, pos, commits)
+                    if commits != 0:
+                        git_blameall.main(name_file)
+                    try:
+                        with open(pos, 'rb') as file:
+                            lexer = guess_lexer_for_filename(name_file, file.read().decode('utf-8'))
+                            language = lexer.name
+                    except FileNotFoundError:
+                        print(f"File {name_file} could not be opened.")
+                    except ClassNotFound:
+                        language = 'Archivo de datos'
+                    insert_files_language(name_file, language)
             # Subdirectory...
-            elif '.' not in directory[i]:
+            elif '.' not in item:
                 print('\nOpening another directory...\n')
-                path2 = os.path.join(absFilePath, directory[i])
+                path2 = f"{absFilePath}/{item}"
                 try:
-                    read_directory(path2, directory[i])
+                    read_directory(path2, item)
                 except NotADirectoryError:
                     pass
     except FileNotFoundError:
@@ -165,7 +189,6 @@ def get_bd1():
         # Connection to 'Analysis_Github_Repository' DATABASE
         connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
         conn = pyodbc.connect(connectionString)
-        print(f"Successful connection to database {NEW_DATABASE}")
     except pyodbc.Error as err:
         print(f"Failed connection to database {NEW_DATABASE}: {str(err)}")
         # Connection to MASTER DATABASE
@@ -186,7 +209,7 @@ def get_bd1():
         # Connection to 'Analysis_Github_Repository' DATABASE
         connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
         conn = pyodbc.connect(connectionString)
-        print(f"Successful connection to database {NEW_DATABASE}")
+        #print(f"Successful connection to database {NEW_DATABASE}")
         
 
 
@@ -197,7 +220,8 @@ def get_bd1():
     result = cursor_bd.fetchone()
 
     if result[0] > 0:
-        print(f"The table '{TABLE_1}' exists in the database.")
+        ""
+        #print(f"The table '{TABLE_1}' exists in the database.")
     else:
         print(f"The table '{TABLE_1}' does not exist in the database.")
         create_repo_table_query = f'''
@@ -219,7 +243,7 @@ def get_bd2():
 
     try:
         conn = pyodbc.connect(connectionString)
-        print(f"Successful connection to database {NEW_DATABASE}")
+        #print(f"Successful connection to database {NEW_DATABASE}")
     except Exception as ex:
         print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
 
@@ -257,7 +281,7 @@ def insert_repo_data(name_directory):
 
     try:
         conn = pyodbc.connect(connectionString)
-        print(f"Successful connection to database {NEW_DATABASE}")
+        #print(f"Successful connection to database {NEW_DATABASE}")
     except Exception as ex:
         print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
 
@@ -275,7 +299,7 @@ def insert_files_data(name_file, pos, commits):
 
     try:
         conn = pyodbc.connect(connectionString)
-        print(f"Successful connection to database {NEW_DATABASE}")
+        #print(f"Successful connection to database {NEW_DATABASE}")
     except Exception as ex:
         print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
 
@@ -297,7 +321,7 @@ def insert_files_language(name_file, language):
 
     try:
         conn = pyodbc.connect(connectionString)
-        print(f"Successful connection to database {NEW_DATABASE}")
+        #print(f"Successful connection to database {NEW_DATABASE}")
     except Exception as ex:
         print(f"Failed connection to database {NEW_DATABASE}: {str(ex)}")
 

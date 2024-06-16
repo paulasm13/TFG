@@ -4,7 +4,6 @@ from sqlalchemy import create_engine
 from datetime import datetime
 
 
-
 SERVER = 'LAPTOP-E26LIVT1\SQLEXPRESS'
 DATABASE = 'Analysis_Github_Repository'
 TABLE_1 = 'Repositories'
@@ -23,12 +22,12 @@ def get_graphs():
     except Exception as ex:
         print(f"Failed connection to database {DATABASE}: {str(ex)}")
 
-    #commits_graph(conn)
-    #languages_graph(conn)
-    #collaborators_graph(conn)
-    #churn_rate_graph(conn)
-    #remaining_lines_graph(conn)
-    #remaining_lines_percentage_graph(conn)
+    commits_graph(conn)
+    languages_graph(conn)
+    collaborators_graph(conn)
+    churn_rate_graph(conn)
+    remaining_lines_graph(conn)
+    remaining_lines_percentage_graph(conn)
     author_lines_graph(conn)
     author_lines_percentage_graph(conn)
 
