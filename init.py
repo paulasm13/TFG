@@ -1,3 +1,7 @@
+"""
+ARCHIVO PARA ANALIZAR UN REPOSITORIO
+"""
+
 import os
 import sys
 import subprocess
@@ -113,7 +117,7 @@ def read_directory(absFilePath, name_directory):
                 commits = len(commits_list)
                 original_encoding = detect_encoding(name_file)
                 print(f"ORIGINAL_ENCODING: {original_encoding}")
-                if original_encoding is not None:
+                if original_encoding is None:
                     print(f"Skipping file {name_file} due to unknown encoding")
                     continue
                 if original_encoding != 'utf-8':
