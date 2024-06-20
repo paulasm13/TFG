@@ -92,7 +92,8 @@ def print_so_far(fn, ALL_LINES, revs):
     cursor.execute(select_table_query)
     result = cursor.fetchone()
     if result[0] > 0:
-        print(f"The table '{TABLE}' exists in the database.")
+        #print(f"The table '{TABLE}' exists in the database.")
+        ""
     else:
         print(f"The table '{TABLE}' does not exist in the database.")
         create_table_query = f'''
@@ -111,13 +112,14 @@ def print_so_far(fn, ALL_LINES, revs):
             FOREIGN KEY (File_ID) REFERENCES {TABLE_FOREIGN}(File_ID)
         )
         '''
+        print(f"{TABLE} table created successfully")
         cursor.execute(create_table_query)
     head_rev = struct()
     head_rev.hash = ' ' * 8
     head_rev.date = ' ' * 10
     head_rev.author = ' ' * 8
     MAX_LINE_LENGTH = 255 
-    for line in enumerate(ALL_LINES):
+    for i, line in enumerate(ALL_LINES):
         beg = revs[line.begrev]
         end = revs[line.endrev] if line.endrev is not None else head_rev
         # Discard empty and long lines
@@ -146,7 +148,6 @@ def print_so_far(fn, ALL_LINES, revs):
             conn.commit()
     cursor.close()
     conn.close()
-
 
 def main(fn):
     Quiet = False
@@ -245,7 +246,6 @@ def main(fn):
     if not Quiet:
         sys.stderr.write('\n')
     print_so_far(fn, ALL_LINES, revs)
-
 
 if __name__ == '__main__':
     main()

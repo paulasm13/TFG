@@ -25,7 +25,8 @@ EXCLUDED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".pdf", ".exe", ".dll", 
 EXCLUDED_DIRECTORIES = ["node_modules", "vendor", "Pods"]
 
 
-def remove_excluded(repo_path):    
+def remove_excluded(repo_path):
+    print('\n')    
     def is_excluded(file_path):
         # Check excluded files
         for ext in EXCLUDED_EXTENSIONS:
@@ -63,11 +64,11 @@ def remove_excluded(repo_path):
                     print(f'Remove error directory {dir_path}: {e}')
 
     print(f'Total files removed: {len(files_removed)}')
-    print(f'Total directories removed: {len(directories_removed)}')
+    print(f'Total directories removed: {len(directories_removed)}\n')
 
 
 def remove_empty_files(repo_path):
-    empty_files_removed = [] 
+    empty_files_removed = []
     for root, _, files in os.walk(repo_path):
         for file in files:
             file_path = os.path.join(root, file)
@@ -79,7 +80,7 @@ def remove_empty_files(repo_path):
                     print(f'Empty file removed: {file_path}')
             except OSError as e:
                 print(f'Remove error file {file_path}: {e}')
-    print(f'Total empty files removed: {len(empty_files_removed)}')
+    print(f'Total empty files removed: {len(empty_files_removed)}\n')
         
 
 def detect_encoding(name_file):
@@ -142,7 +143,8 @@ def run_url(protocol, type_git, user, repo):
         print(f"Failed to clone repository {repo_url}")
         return
     # Extracting the directory name from the repo URL
-    name_directory = repo  
+    name_directory = repo
+    print("\n")
     remove_empty_files(name_directory)
     remove_excluded(name_directory)
     get_directory(repo_url)
@@ -275,7 +277,8 @@ def get_bd2():
     cursor_bd.execute(select_table_query)
     result = cursor_bd.fetchone()
     if result[0] > 0:
-        print(f"The table '{TABLE_2}' exists in the database.")
+        #print(f"The table '{TABLE_2}' exists in the database.")
+        ""
     else:
         print(f"The table '{TABLE_2}' does not exist in the database.")
         create_files_table_query = f'''
