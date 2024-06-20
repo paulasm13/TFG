@@ -1,5 +1,6 @@
 """
 ARCHIVO PARA ANALIZAR UN FICHERO
+
 """
 
 import sys
@@ -16,6 +17,7 @@ TABLE_FOREIGN = 'Files'
 class struct:
     pass
 
+
 def parse_chunk_header(s):
     Chunk_Header_Pat = re.compile('@@ -([0-9]+)(?:,([0-9]+))? \\+([0-9]+)(?:,([0-9]+))? @@')
     origL, del_N, newL, add_N = Chunk_Header_Pat.match(s).groups()
@@ -24,6 +26,7 @@ def parse_chunk_header(s):
     if add_N is None:
         add_N = 1
     return list(map(int, (origL, del_N, newL, add_N)))
+
 
 def get_initial_version(first_rev, fn):
     lines = []
@@ -51,6 +54,7 @@ def get_initial_version(first_rev, fn):
                 file_started_FL = True
     return lines
 
+
 def find_index(ALL_LINES, L, current_rev=None):
     i = 0
     while L:
@@ -68,11 +72,13 @@ def find_index(ALL_LINES, L, current_rev=None):
         i += 1
     return i
 
+
 def find_next_alive(ALL_LINES, i):
     while True:
         if ALL_LINES[i].endrev is None:
             return i
         i += 1
+
 
 def print_so_far(fn, ALL_LINES, revs):
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={DATABASE};Trusted_Connection=yes;'
@@ -85,17 +91,20 @@ def print_so_far(fn, ALL_LINES, revs):
     select_table_query = f"SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '{TABLE}'"
     cursor.execute(select_table_query)
     result = cursor.fetchone()
-    if result[0] == 0:
+    if result[0] > 0:
+        print(f"The table '{TABLE}' exists in the database.")
+    else:
+        print(f"The table '{TABLE}' does not exist in the database.")
         create_table_query = f'''
         CREATE TABLE {TABLE} (
             Code_ID INT PRIMARY KEY,
             File_ID INT,
-            File_Name VARCHAR(50) NOT NULL,
-            Author_Start VARCHAR(50),
+            File_Name VARCHAR(MAX) NOT NULL,
+            Author_Start VARCHAR(MAX),
             Date_Start DATE NOT NULL,
-            Author_End VARCHAR(50),
-            Date_End VARCHAR(50),
-            Longevity VARCHAR(50),
+            Author_End VARCHAR(MAX),
+            Date_End VARCHAR(MAX),
+            Longevity VARCHAR(MAX),
             Comment_Boolean INT NOT NULL,
             Words_Count INT NOT NULL,
             Code VARCHAR(MAX) NOT NULL,
@@ -107,35 +116,37 @@ def print_so_far(fn, ALL_LINES, revs):
     head_rev.hash = ' ' * 8
     head_rev.date = ' ' * 10
     head_rev.author = ' ' * 8
-    for i, line in enumerate(ALL_LINES):
+    MAX_LINE_LENGTH = 255 
+    for line in enumerate(ALL_LINES):
         beg = revs[line.begrev]
         end = revs[line.endrev] if line.endrev is not None else head_rev
-        if not line.text.strip():
-            continue
-        try:
-            cursor.execute(f"SELECT MAX(Code_ID) FROM {TABLE}")
-            last_id = cursor.fetchone()[0]
-            last_id = 0 if last_id is None else last_id + 1
-        except Exception as e:
-            print("ID error:", e)
-            return
-        cursor.execute(f"SELECT MAX(File_ID) FROM {TABLE_FOREIGN}")
-        file_id = cursor.fetchone()[0]
-        file_id = 0 if file_id is None else file_id
-        comment_boolean = 1 if line.text.strip().startswith(('#', '//')) else 0
-        words_count = len(line.text.split())
-        if line.endrev is not None:
-            beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
-            end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
-            longevity = (end_datetime - beg_datetime).days
-            data_to_insert = (last_id, file_id, fn, beg.author, beg.date, end.author, end.date, longevity, comment_boolean, words_count, line.text)
-        else:
-            data_to_insert = (last_id, file_id, fn, beg.author, beg.date, 'NULL', 'NULL', 'NULL', comment_boolean, words_count, line.text)
-        insert_query = f"INSERT INTO {TABLE} (Code_ID, File_ID, File_Name, Author_Start, Date_Start, Author_End, Date_End, Longevity, Comment_Boolean, Words_Count, Code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        cursor.execute(insert_query, data_to_insert)
-        conn.commit()
+        # Discard empty and long lines
+        if line.text.strip() and len(line.text) <= MAX_LINE_LENGTH:
+            try:
+                cursor.execute(f"SELECT MAX(Code_ID) FROM {TABLE}")
+                last_id = cursor.fetchone()[0]
+                last_id = 0 if last_id is None else last_id + 1
+            except Exception as e:
+                print("ID error:", e)
+                return
+            cursor.execute(f"SELECT MAX(File_ID) FROM {TABLE_FOREIGN}")
+            file_id = cursor.fetchone()[0]
+            file_id = 0 if file_id is None else file_id
+            comment_boolean = 1 if line.text.strip().startswith(('#', '//')) else 0
+            words_count = len(line.text.split())
+            if line.endrev is not None:
+                beg_datetime = datetime.strptime(beg.date, '%Y-%m-%d')
+                end_datetime = datetime.strptime(end.date, '%Y-%m-%d')
+                longevity = (end_datetime - beg_datetime).days
+                data_to_insert = (last_id, file_id, fn, beg.author, beg.date, end.author, end.date, longevity, comment_boolean, words_count, line.text)
+            else:
+                data_to_insert = (last_id, file_id, fn, beg.author, beg.date, 'NULL', 'NULL', 'NULL', comment_boolean, words_count, line.text)
+            insert_query = f"INSERT INTO {TABLE} (Code_ID, File_ID, File_Name, Author_Start, Date_Start, Author_End, Date_End, Longevity, Comment_Boolean, Words_Count, Code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            cursor.execute(insert_query, data_to_insert)
+            conn.commit()
     cursor.close()
     conn.close()
+
 
 def main(fn):
     Quiet = False
@@ -234,6 +245,7 @@ def main(fn):
     if not Quiet:
         sys.stderr.write('\n')
     print_so_far(fn, ALL_LINES, revs)
+
 
 if __name__ == '__main__':
     main()
