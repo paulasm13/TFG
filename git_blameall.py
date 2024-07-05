@@ -14,6 +14,7 @@ DATABASE = 'Analysis_Github_Repository'
 TABLE = 'Code'
 TABLE_FOREIGN = 'Files'
 
+
 class struct:
     pass
 
@@ -149,6 +150,7 @@ def print_so_far(fn, ALL_LINES, revs):
     cursor.close()
     conn.close()
 
+
 def main(fn):
     Quiet = False
     cmd = ['git', 'rev-list', 'HEAD', '--', fn]
@@ -188,7 +190,8 @@ def main(fn):
         x.begrev = len(revs) - 1
         x.endrev = None
         ALL_LINES.append(x)
-    print_so_far(fn, ALL_LINES, revs)
+    # Initial version
+    #print_so_far(fn, ALL_LINES, revs)
     origL, del_N, newL, add_N = 0, 0, 0, 0
     for r in range(len(revs) - 1, 0, -1):
         if not Quiet:
@@ -241,11 +244,14 @@ def main(fn):
                     in_header_FL = True
                 else:
                     assert 0, ("shouldn't reach here unless misparsed diff output", line)
+        # Modified lines
         print()
         print_so_far(fn, ALL_LINES, revs)
     if not Quiet:
         sys.stderr.write('\n')
+    # Alive lines
     print_so_far(fn, ALL_LINES, revs)
+
 
 if __name__ == '__main__':
     main()

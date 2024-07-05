@@ -1,4 +1,5 @@
 """
+
 ARCHIVO PARA ANALIZAR UN REPOSITORIO
 
 """
@@ -21,7 +22,6 @@ TABLE_2 = 'Files'
 EXCLUDED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".pdf", ".exe", ".dll", ".ico", ".db", 
     ".dat", ".class", ".o", ".pyc", ".mp3", ".mp4", ".wav", ".avi", ".bak", 
     ".tmp", ".docx", ".pptx", ".zip", ".tar.gz", ".rar"]
-
 EXCLUDED_DIRECTORIES = ["node_modules", "vendor", "Pods"]
 
 
@@ -157,7 +157,7 @@ def get_directory(repo_url):
         name_directory = name_directory[0:-4]
     print("The directory is: " + name_directory)
     insert_repo_data(name_directory)
-    get_bd2()
+    get_table2()
     get_path(name_directory)
 
 
@@ -217,7 +217,7 @@ def read_directory(absFilePath, name_directory):
         pass
 
 
-def get_bd1():
+def get_table1():
     # Check that the DB is exiting
     try:
         connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
@@ -264,7 +264,7 @@ def get_bd1():
     conn.close()
 
 
-def get_bd2():
+def get_table2():
     # Connection to 'Analysis_Github_Repository' DB
     connectionString = f'DRIVER={{SQL Server}};SERVER={SERVER};DATABASE={NEW_DATABASE};Trusted_Connection=yes;'
     try:
@@ -345,5 +345,5 @@ def insert_files_language(language, name_file):
 
 
 if __name__ == "__main__":
-    get_bd1()
+    get_table1()
     menu()
