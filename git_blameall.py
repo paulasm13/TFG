@@ -10,7 +10,7 @@ import pyodbc
 from datetime import datetime
 
 SERVER = 'LAPTOP-E26LIVT1\\SQLEXPRESS'
-DATABASE = 'Analysis_Github_Repository'
+DATABASE = 'NUEVO'
 TABLE = 'Code'
 TABLE_FOREIGN = 'Files'
 
@@ -177,7 +177,7 @@ def main(fn):
         revs.append(x)
     if not Quiet:
         sys.stderr.write('%s --- %s\n' % (revs[-1].date, revs[0].date))
-    forced_author_len = 8
+    forced_author_len = 100
     for x in revs:
         if len(x.author) > forced_author_len:
             x.author = x.author[:forced_author_len - 1] + '.'
@@ -191,7 +191,7 @@ def main(fn):
         x.endrev = None
         ALL_LINES.append(x)
     # Initial version
-    #print_so_far(fn, ALL_LINES, revs)
+    print_so_far(fn, ALL_LINES, revs)
     origL, del_N, newL, add_N = 0, 0, 0, 0
     for r in range(len(revs) - 1, 0, -1):
         if not Quiet:

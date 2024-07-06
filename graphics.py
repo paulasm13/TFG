@@ -23,14 +23,15 @@ def get_graphs():
     except Exception as ex:
         print(f"Failed connection to database {DATABASE}: {str(ex)}")
 
-    commits_graph(conn)
-    languages_graph(conn)
-    collaborators_graph(conn)
-    churn_rate_graph(conn)
-    alive_lines_graph(conn)
-    alive_lines_percentage_graph(conn)
-    author_lines_graph(conn)
-    author_lines_percentage_graph(conn)
+    commits_graph(conn)        
+    languages_graph(conn)      
+    collaborators_graph(conn)  
+    comments_graph(conn)
+    comments_percentage_graph(conn)
+    deleted_lines_graph(conn)            
+    alive_lines_percentage_graph(conn) 
+    author_activity_graph(conn)
+    author_activity_percentage_graph(conn)
 
     print("Graphics created in '.png' files.")
 
@@ -39,23 +40,16 @@ def get_graphs():
 
 def commits_graph(conn):
     query = f"""
-    SELECT 
-        t1.Repo_Name,
-        YEAR(t3.Date_Start) AS Year,
-        COUNT(t2.Commits) AS Commits
-    FROM 
-        {TABLE_1} t1
-    JOIN 
-        {TABLE_2} t2 ON t1.ID = t2.Repo_ID
-    JOIN 
-        {TABLE_3} t3 ON t2.File_ID = t3.File_ID
-    GROUP BY 
-        t1.Repo_Name, YEAR(t3.Date_Start)
-    ORDER BY 
-        t1.Repo_Name, Year;
+    SELECT t1.Repo_Name, YEAR(t3.Date_Start) AS Year,
+    COUNT(t2.Commits) AS Commits
+    FROM {TABLE_1} t1
+    JOIN {TABLE_2} t2 ON t1.ID = t2.Repo_ID
+    JOIN {TABLE_3} t3 ON t2.File_ID = t3.File_ID
+    GROUP BY t1.Repo_Name, YEAR(t3.Date_Start)
+    ORDER BY t1.Repo_Name, Year;
     """
     
-    # Data to DataFrame
+    # DataFrame
     data = pd.read_sql(query, conn)
     
     plt.figure(figsize=(12, 6))
@@ -68,34 +62,28 @@ def commits_graph(conn):
     plt.ylabel('Nº de commits')
     plt.title('Evolución del nº de commits')
     plt.legend(title='Repositorios')
+    plt.xticks(repo_data['Year'].unique())
     plt.grid(True)
     plt.show()
 
 
 def languages_graph(conn):
     query = f'''
-    SELECT 
-        t1.ID AS Repo_ID,
-        t1.Repo_Name,
-        t2.File_Language,
-        COUNT(*) AS File_Count
-    FROM 
-        {TABLE_1} t1
-    JOIN 
-        {TABLE_2} t2 ON t1.ID = t2.Repo_ID
-    GROUP BY 
-        t1.ID, t1.Repo_Name, t2.File_Language
-    ORDER BY 
-        t1.Repo_Name, t2.File_Language;
+    SELECT t1.ID AS Repo_ID, t1.Repo_Name, t2.File_Language,
+    COUNT(*) AS File_Count
+    FROM {TABLE_1} t1
+    JOIN {TABLE_2} t2 ON t1.ID = t2.Repo_ID
+    WHERE t2.File_Language != 'Archivo de datos'
+    GROUP BY t1.ID, t1.Repo_Name, t2.File_Language
+    ORDER BY t1.Repo_Name, t2.File_Language;
     '''
 
-    # Data in a DataFrame
+    # DataFrame
     df = pd.read_sql(query, conn)
 
     df['Total_Files'] = df.groupby('Repo_ID')['File_Count'].transform('sum')
     df['Percentage'] = (df['File_Count'] / df['Total_Files']) * 100
 
-    # For each repository
     repos = df['Repo_Name'].unique()
 
     for repo in repos:
@@ -105,27 +93,20 @@ def languages_graph(conn):
         plt.title(f'Presencia de lenguajes de programación en el repositorio: {repo}')
         plt.xlabel('Lenguaje de programación')
         plt.ylabel('Porcentaje (%)')
+        plt.ylim(0, 100)
         plt.xticks(rotation=45)
         plt.show()
 
 
 def collaborators_graph(conn):
     query = f'''
-    SELECT 
-        t1.Repo_Name, 
-        t3.Date_Start, 
-        COUNT(DISTINCT t3.Author_Start) AS Collaborators
-    FROM 
-        {TABLE_3} t3
-    JOIN 
-        {TABLE_2} t2 ON t3.File_ID = t2.File_ID
-    JOIN 
-        {TABLE_1} t1 ON t2.Repo_ID = t1.ID
-    GROUP BY 
-        t1.Repo_Name, 
-        t3.Date_Start
-    ORDER BY 
-        t3.Date_Start;
+    SELECT t1.Repo_Name, t3.Date_Start, 
+    COUNT(DISTINCT t3.Author_Start) AS Collaborators
+    FROM {TABLE_3} t3
+    JOIN {TABLE_2} t2 ON t3.File_ID = t2.File_ID
+    JOIN {TABLE_1} t1 ON t2.Repo_ID = t1.ID
+    GROUP BY t1.Repo_Name, t3.Date_Start
+    ORDER BY t3.Date_Start;
     '''
 
     df = pd.read_sql_query(query, conn)
@@ -145,209 +126,215 @@ def collaborators_graph(conn):
     plt.xlabel('Año')
     plt.ylabel('Nº de colaboradores')
     plt.title('Evolución del nº de colaboradores')
-    plt.legend(title='Rpositorios')
+    plt.legend(title='Repositorios')
+    plt.xticks(pivot_df.index.unique())
     plt.grid(True)
     plt.show()
 
 
-def churn_rate_graph(conn):
+def comments_graph(conn):
+    query = f'''
+    SELECT T1.Repo_Name, COUNT(T3.Code_ID) AS Num_Comments
+    FROM {TABLE_1} T1
+    JOIN {TABLE_2} T2 ON T1.ID = T2.Repo_ID
+    JOIN {TABLE_3} T3 ON T2.File_ID = T3.File_ID
+    WHERE T3.Comment_Boolean = 1 AND T3.Longevity = 'NULL'
+    GROUP BY T1.Repo_Name
+    ORDER BY T1.Repo_Name
+    '''
+
+    df = pd.read_sql(query, conn)
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(df['Repo_Name'], df['Num_Comments'])
+    plt.xlabel('Repositorio')
+    plt.ylabel('Nº de líneas de comentario')
+    plt.title('Comentarios por repositorio en valores absolutos')
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.show()
+
+
+def comments_percentage_graph(conn):
+    query = f'''
+    SELECT T1.Repo_Name, SUM(CASE WHEN T3.Comment_Boolean = 1 AND T3.Longevity = 'NULL' THEN 1 ELSE 0 END) AS Num_Comments,
+        COUNT(CASE WHEN T3.Longevity = 'NULL' THEN T3.Code_ID ELSE NULL END) AS Total_Lines
+    FROM {TABLE_1} T1
+    JOIN {TABLE_2} T2 ON T1.ID = T2.Repo_ID
+    JOIN {TABLE_3} T3 ON T2.File_ID = T3.File_ID
+    GROUP BY T1.Repo_Name
+    ORDER BY T1.Repo_Name
+    '''
+
+    df = pd.read_sql(query, conn)
+
+    df['Percentage_Comments'] = (df['Num_Comments'] / df['Total_Lines']) * 100
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(df['Repo_Name'], df['Percentage_Comments'])
+    plt.xlabel('Repositorio')
+    plt.ylabel('Porcentaje de líneas de comentario (%)')
+    plt.title('Comentarios por repositorio en valores relativos')
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.ylim(0, 100)
+    plt.show()
+
+
+def deleted_lines_graph(conn):
     query = f"""
-    SELECT t1.Repo_Name, t3.File_Name, t3.Date_Start, t3.Longevity, t3.Code
-    FROM {TABLE_1} t1
-    JOIN {TABLE_2} t2 ON t1.ID = t2.Repo_ID
-    JOIN {TABLE_3} t3 ON t2.File_ID = t3.File_ID
+    SELECT t1.Repo_Name, YEAR(t3.Date_Start) AS Year,
+           COUNT(CASE WHEN t3.Longevity = 'NULL' THEN 1 END) AS Alive_Lines,
+           COUNT(*) AS Total_Lines
+    FROM {TABLE_3} t3
+    JOIN {TABLE_2} t2 ON t3.File_ID = t2.File_ID
+    JOIN {TABLE_1} t1 ON t2.Repo_ID = t1.ID
+    GROUP BY t1.Repo_Name, YEAR(t3.Date_Start)
+    ORDER BY t1.Repo_Name, YEAR(t3.Date_Start);
     """
     
-    # Data in DataFrame
+    # DataFrame
     df = pd.read_sql_query(query, conn)
-    
-    #  Date_Start to datetime
-    df['Date_Start'] = pd.to_datetime(df['Date_Start'])
-    
-    df['Year'] = df['Date_Start'].dt.year
 
-    df_deleted = df[df['Longevity'].notnull()]
-    df_total = df
-    
-    deleted_lines_per_year = df_deleted.groupby(['Repo_Name', 'Year']).size().unstack(fill_value=0)
-    
-    total_lines_per_year = df_total.groupby(['Repo_Name', 'Year']).size().unstack(fill_value=0)
-    
-    churn_rate_per_year = (deleted_lines_per_year / total_lines_per_year) * 100
-    
-    plt.figure(figsize=(10, 6))
-    for repo in churn_rate_per_year.index:
-        plt.plot(churn_rate_per_year.columns, churn_rate_per_year.loc[repo], label=repo)
+    df['Deleted_Lines'] = (df['Total_Lines'] - df['Alive_Lines']) 
+
+    plt.figure(figsize=(14, 8))
+
+    repos = df['Repo_Name'].unique()
+
+    for repo in repos:
+        repo_data = df[df['Repo_Name'] == repo]
+        plt.plot(repo_data['Year'], repo_data['Deleted_Lines'], marker='o', label=repo)
     
     plt.xlabel('Año')
-    plt.ylabel('Tasa de Churn')
-    plt.title('Evolución de la Tasa de Churn')
+    plt.ylabel('Nº de líneas eliminadas')
+    plt.title('Evolución de líneas eliminadas a lo largo del tiempo')
     plt.legend(title='Repositorios')
     plt.grid(True)
+    plt.xticks(repo_data['Year'].unique())
     plt.show()
-
-
-def alive_lines_graph(conn):
-    query = f"""
-    SELECT t1.Repo_Name, t3.File_Name, t3.Date_Start, t3.Longevity, t3.Code
-    FROM {TABLE_1} t1
-    JOIN {TABLE_2} t2 ON t1.ID = t2.Repo_ID
-    JOIN {TABLE_3} t3 ON t2.File_ID = t3.File_ID
-    """
-    
-    # Data in DataFrame
-    df = pd.read_sql_query(query, conn)
-    
-    df['Date_Start'] = pd.to_datetime(df['Date_Start'])
-    
-    df['Year'] = df['Date_Start'].dt.year
-    
-    df_alive = df[df['Longevity'].isnull()]
-    
-    alive_lines_per_year = df_alive.groupby(['Repo_Name', 'Year']).size().unstack(fill_value=0).cumsum(axis=1)
-    
-    plt.figure(figsize=(10, 6))
-    for repo in alive_lines_per_year.index:
-        plt.plot(alive_lines_per_year.columns, alive_lines_per_year.loc[repo], label=repo)
-    
-    plt.xlabel('Año')
-    plt.ylabel('Nº de líneas permanentes')
-    plt.title('Evolución de líneas permanentes en valores absolutos')
-    plt.legend(title='Repositorios')
-    plt.grid(True)
-    plt.show()
-
 
 def alive_lines_percentage_graph(conn):
     query = f"""
-    SELECT t1.Repo_Name, t3.File_Name, t3.Date_Start, t3.Longevity, t3.Code
-    FROM {TABLE_1} t1
-    JOIN {TABLE_2} t2 ON t1.ID = t2.Repo_ID
-    JOIN {TABLE_3} t3 ON t2.File_ID = t3.File_ID
+    SELECT t1.Repo_Name, YEAR(t3.Date_Start) AS Year,
+           COUNT(CASE WHEN t3.Longevity = 'NULL' THEN 1 END) AS Alive_Lines,
+           COUNT(*) AS Total_Lines
+    FROM {TABLE_3} t3
+    JOIN {TABLE_2} t2 ON t3.File_ID = t2.File_ID
+    JOIN {TABLE_1} t1 ON t2.Repo_ID = t1.ID
+    GROUP BY t1.Repo_Name, YEAR(t3.Date_Start)
+    ORDER BY t1.Repo_Name, YEAR(t3.Date_Start);
     """
-        
-    # Data in DataFrame
+    
+    # DataFrame
     df = pd.read_sql_query(query, conn)
-    
-    #  Date_Start to datetime
-    df['Date_Start'] = pd.to_datetime(df['Date_Start'])
-    
-    df['Year'] = df['Date_Start'].dt.year
-    
-    df_alive = df[df['Longevity'].isnull()]
-    df_total = df
-    
-    alive_lines_per_year = df_alive.groupby(['Repo_Name', 'Year']).size().unstack(fill_value=0)
-    
-    total_lines_per_year = df_total.groupby(['Repo_Name', 'Year']).size().unstack(fill_value=0)
-    
-    alive_lines_per_year_percentage = (alive_lines_per_year / total_lines_per_year) * 100
 
-    plt.figure(figsize=(10, 6))
-    for repo in alive_lines_per_year_percentage.index:
-        plt.plot(alive_lines_per_year_percentage.columns, alive_lines_per_year_percentage.loc[repo], label=repo)
+    df['Alive_Lines_Percentage'] = (df['Alive_Lines'] / df['Total_Lines']) * 100
+
+    plt.figure(figsize=(14, 8))
+
+    repos = df['Repo_Name'].unique()
+
+    for repo in repos:
+        repo_data = df[df['Repo_Name'] == repo]
+        plt.plot(repo_data['Year'], repo_data['Alive_Lines_Percentage'], marker='o', label=repo)
     
     plt.xlabel('Año')
     plt.ylabel('Porcentaje de líneas permanentes (%)')
-    plt.title('Evolución de líneas permanentes en valores relativos')
+    plt.title('Evolución de líneas permanentes a lo largo del tiempo')
     plt.legend(title='Repositorios')
     plt.grid(True)
+    plt.xticks(repo_data['Year'].unique())
     plt.show()
 
 
-def author_lines_graph(conn):
-    query = f"""
-    WITH Lines_Per_Author AS (
-        SELECT 
-            T1.Repo_Name,
-            T3.Author_Start,
-            YEAR(T3.Date_Start) AS Year,
-            COUNT(*) AS Lines_Developed
-        FROM 
-            {TABLE_1} T1
-        JOIN 
-            {TABLE_2} T2 ON T1.ID = T2.Repo_ID
-        JOIN 
-            {TABLE_3} T3 ON T2.File_ID = T3.File_ID
-        GROUP BY 
-            T1.Repo_Name, T3.Author_Start, YEAR(T3.Date_Start)
-    )
-    SELECT * FROM Lines_Per_Author;
+def author_activity_graph(conn):
+    query_repo_name = f"""
+    SELECT DISTINCT T1.Repo_Name
+    FROM {TABLE_1} T1
+    JOIN {TABLE_2} T2 ON T1.ID = T2.Repo_ID
+    JOIN {TABLE_3} T3 ON T2.File_ID = T3.File_ID
     """
-    df = pd.read_sql(query, conn)
     
-    df_grouped = df.groupby(['Repo_Name', 'Year', 'Author_Start']).agg({'Lines_Developed': 'sum'}).reset_index()
+    query_lines_created = f"""
+    SELECT T1.Repo_Name, YEAR(T3.Date_Start) AS Year, T3.Author_Start,
+        COUNT(*) AS Lines_Created
+    FROM {TABLE_1} T1
+    JOIN {TABLE_2} T2 ON T1.ID = T2.Repo_ID
+    JOIN {TABLE_3} T3 ON T2.File_ID = T3.File_ID
+    WHERE T3.Author_Start != 'GitHub'
+    GROUP BY T1.Repo_Name, YEAR(T3.Date_Start), T3.Author_Start
+    ORDER BY T1.Repo_Name, Year, T3.Author_Start;
+    """
     
-    # Repositories list
-    repos = df_grouped['Repo_Name'].unique()
-    
-    for repo in repos:
-        df_repo = df_grouped[df_grouped['Repo_Name'] == repo]
-        authors = df_repo['Author_Start'].unique()
+    df_repo_name = pd.read_sql(query_repo_name, conn)
+    df_lines_created = pd.read_sql(query_lines_created, conn)
+
+    for repo_name in df_repo_name['Repo_Name'].unique():
+        df_repo = df_lines_created[df_lines_created['Repo_Name'] == repo_name]
         
         plt.figure(figsize=(10, 6))
         
-        for author in authors:
-            df_author = df_repo[df_repo['Author_Start'] == author]
-            plt.plot(df_author['Year'], df_author['Lines_Developed'], label=author)
-        
-        plt.xlabel('Año')
-        plt.ylabel('Nº de líneas contribuidas')
-        plt.title(f'Evolución de la actividad de cada colaborador del repositorio {repo} en valores absolutos')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
-    
-
-
-def author_lines_percentage_graph(conn):
-    query = f"""
-    WITH Lines_Per_Author AS (
-        SELECT 
-            T1.Repo_Name,
-            T3.Author_Start,
-            YEAR(T3.Date_Start) AS Year,
-            COUNT(*) AS Lines_Developed
-        FROM 
-            {TABLE_1} T1
-        JOIN 
-            {TABLE_2} T2 ON T1.ID = T2.Repo_ID
-        JOIN 
-            {TABLE_3} T3 ON T2.File_ID = T3.File_ID
-        GROUP BY 
-            T1.Repo_Name, T3.Author_Start, YEAR(T3.Date_Start)
-    )
-    SELECT * FROM Lines_Per_Author;
-    """
-
-    df = pd.read_sql(query, conn)
-    
-    df_grouped = df.groupby(['Repo_Name', 'Year', 'Author_Start']).agg({'Lines_Developed': 'sum'}).reset_index()
-
-    total_lines_by_author = df_grouped.groupby(['Repo_Name', 'Author_Start'])['Lines_Developed'].transform('sum')
-    df_grouped['Relative_Contribution'] = df_grouped['Lines_Developed'] / total_lines_by_author * 100
-    
-    # Repositories list
-    repos = df_grouped['Repo_Name'].unique()
-    
-    for repo in repos:
-        df_repo = df_grouped[df_grouped['Repo_Name'] == repo]
         authors = df_repo['Author_Start'].unique()
+        
+        for author in authors:
+            author_data = df_repo[df_repo['Author_Start'] == author]
+            plt.plot(author_data['Year'], author_data['Lines_Created'], marker='o', label=author)
+
+    plt.xlabel('Año')
+    plt.ylabel('Nº de líneas contribuidas')
+    plt.title(f'Evolución de la actividad de cada colaborador del repositorio {repo_name} en valores absolutos')
+    plt.legend(loc="upper right", frameon=False)
+    plt.grid(True)
+    plt.xticks(author_data['Year'].unique())
+    plt.tight_layout()
+    plt.show()
+    
+
+def author_activity_percentage_graph(conn):
+    query_lines_created = f"""
+    SELECT T1.Repo_Name, YEAR(T3.Date_Start) AS Year, T3.Author_Start,
+        COUNT(*) AS Lines_Created
+    FROM {TABLE_1} T1
+    JOIN {TABLE_2} T2 ON T1.ID = T2.Repo_ID
+    JOIN {TABLE_3} T3 ON T2.File_ID = T3.File_ID
+    WHERE T3.Author_Start != 'GitHub'
+    GROUP BY T1.Repo_Name, YEAR(T3.Date_Start), T3.Author_Start
+    ORDER BY T1.Repo_Name, Year, T3.Author_Start;
+    """
+    
+    df_lines_created = pd.read_sql(query_lines_created, conn)
+
+    # Total lines per repository
+    total_lines_by_repo_year = df_lines_created.groupby(['Repo_Name', 'Year'])['Lines_Created'].sum().reset_index()
+    total_lines_by_repo_year.rename(columns={'Lines_Created': 'Total_Lines_Created'}, inplace=True)
+    
+    df_merged = pd.merge(df_lines_created, total_lines_by_repo_year, on=['Repo_Name', 'Year'])
+    
+    df_merged['Percentage_Lines_Created'] = (df_merged['Lines_Created'] / df_merged['Total_Lines_Created']) * 100
+    
+    for repo_name in df_merged['Repo_Name'].unique():
+        df_repo = df_merged[df_merged['Repo_Name'] == repo_name]
         
         plt.figure(figsize=(10, 6))
         
+        authors = df_repo['Author_Start'].unique()
+        
         for author in authors:
-            df_author = df_repo[df_repo['Author_Start'] == author]
-            plt.plot(df_author['Year'], df_author['Relative_Contribution'], label=author)
+            author_data = df_repo[df_repo['Author_Start'] == author]
+            plt.plot(author_data['Year'], author_data['Percentage_Lines_Created'], marker='o', label=author)
         
         plt.xlabel('Año')
         plt.ylabel('Porcentaje de líneas contribuidas (%)')
-        plt.title(f'Evolución de la actividad de cada colaborador del repositorio {repo} en valores relativos')
-        plt.legend()
+        plt.title(f'Evolución de la actividad de cada colaborador del repositorio {repo_name} en valores relativos')
+        plt.legend(loc="upper right", frameon=False)
         plt.grid(True)
+        plt.xticks(author_data['Year'].unique())
+        plt.tight_layout()
         plt.show()
 
 
 if __name__ == "__main__":
     get_graphs()
+    
 
