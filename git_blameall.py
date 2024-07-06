@@ -10,7 +10,7 @@ import pyodbc
 from datetime import datetime
 
 SERVER = 'LAPTOP-E26LIVT1\\SQLEXPRESS'
-DATABASE = 'NUEVO'
+DATABASE = 'Analysis_Github_Repository'
 TABLE = 'Code'
 TABLE_FOREIGN = 'Files'
 

@@ -16,7 +16,7 @@ from pygments.util import ClassNotFound
 # Global variables
 SERVER = 'LAPTOP-E26LIVT1\\SQLEXPRESS'
 DATABASE = 'master'
-NEW_DATABASE = 'NUEVO'
+NEW_DATABASE = 'Analysis_Github_Repository'
 TABLE_1 = 'Repositories'
 TABLE_2 = 'Files'
 EXCLUDED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".pdf", ".exe", ".dll", ".ico", ".db", 
